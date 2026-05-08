@@ -1,0 +1,612 @@
+/* ================================================
+   login.css — BarangayConnect
+
+   TODO
+   ─────────
+   Fill in every TODO.
+
+   RULES
+   ─────
+   · No hardcoded colors — use variables from main.css
+   · No hardcoded spacing — use the spacing scale variables
+   · Don't rename any selector
+
+   VARIABLE CHEATSHEET  (all defined in main.css)
+   ────────────────────────────────────────────────
+   Colors:
+     --green-dark        the main dark green, left panel background
+     --green-mid         mid-tone green
+     --green-light       lighter green, good for hover states
+     --orange            the accent — highlights, CTAs
+     --off-white         warm off-white, right panel background
+     --white             pure white
+     --text-dark         near-black, used for headings
+     --gray-50 thru --gray-500
+     --overlay-white-04 thru --overlay-white-70
+
+   Spacing:
+     --space-xs  --space-sm  --space-md  --space-lg  --space-xl  --space-2xl
+
+   Type:
+     --font-display      heading font (Nunito)
+     --font-body         body font
+     --text-2xs thru --text-3xl
+     --fw-medium  --fw-semibold  --fw-bold  --fw-extrabold  --fw-black
+     --lh-none  --lh-tight  --lh-snug  --lh-relaxed  --lh-loose
+
+   Misc:
+     --radius-sm  --radius-md  --radius-lg  --radius-full
+     --shadow-sm  --shadow-md  --shadow-lg
+     --transition  --transition-slow
+
+================================================ */
+
+
+/* ================================================
+   1. PAGE LAYOUT
+================================================ */
+
+.login-page {
+  
+  /*
+    The page is split into two panels sitting side by side.
+    Both should be as tall as the screen.
+  */
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+
+/* ================================================
+   2. LEFT PANEL
+================================================ */
+
+.auth-left {
+  /*
+    Dark green panel on the left. Takes up a little less than
+    half the screen width — the right panel fills the rest.
+
+    Children stack top to bottom:
+    logo → badge → hero text → stats card → carousel
+
+    Has two big decorative blobs (::before and ::after) that are
+    absolutely positioned and bleed off the edges on purpose —
+    so this needs to be their positioning parent, and needs to
+    handle overflow so the blobs don't spill into the right panel.
+  */
+  position: relative;
+  width: 45%;
+  background: var(--green-dark);
+  padding: var(--space-xl) var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Blob — top-right corner ─────────────────── */
+/*
+  A big soft circle peeking in from the top-right corner.
+  Roughly half of it should be cut off by the panel edge.
+  Should never block clicks on anything.
+
+  The size, shape, and color are already set.
+*/
+.auth-left::before {
+  content: '';
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: var(--overlay-white-05);
+  pointer-events: none;
+  top: -50px;
+  right: -30px;
+}
+
+/* ── Blob — bottom-left corner ───────────────── */
+/*
+  Same idea, slightly bigger, bottom-left corner.
+*/
+.auth-left::after {
+  content: '';
+  position: absolute;
+  width: 350px;
+  height: 380px;
+  border-radius: 50%;
+  background: var(--overlay-white-04);
+  pointer-events: none;
+  bottom: -150px;
+  left: -80px;
+}
+
+/* Keeps content on top of the blobs — don't touch */
+.auth-left > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Logo ─────────────────────────────────────── */
+/*
+  Icon + wordmark in a row. Sits at the very top of the left panel.
+  Needs bottom margin to breathe from what's below it.
+*/
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  z-index: 2;
+  margin-bottom: var(--space-2xl);
+}
+
+.auth-logo__img {
+  width: 32px;
+  height: 32px;
+}
+
+.auth-logo__text {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-lg);
+  color: var(--white);
+  letter-spacing: -0.02em;
+}
+
+/* ── Badge pill ───────────────────────────────── */
+/*
+  Small frosted pill above the heading — "Get Connected" with a map pin icon.
+  Semi-transparent white background with a subtle border, fully rounded.
+  Only as wide as its content. Needs bottom margin before the heading.
+*/
+.auth-left__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--overlay-white-12);
+  border-radius: var(--radius-full);
+  color: var(--white);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-medium);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-md);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ── Hero section ─────────────────────────────── */
+/*
+  Wraps the badge, heading, and subtext.
+  Should stretch to fill the space between the logo and the
+  stats card — so the stats card gets pushed toward the bottom.
+  Children stack vertically inside it.
+*/
+.auth-left__hero {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.auth-left__heading {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: clamp(28px, 3.5vw, 35px);
+  color: var(--white);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-md);
+}
+
+.auth-left__heading .highlight {
+  color: var(--orange);
+}
+
+.auth-left__subtext {
+  max-width: 300px;
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.65);
+  line-height: var(--lh-relaxed);
+}
+
+
+/* ================================================
+   3. STATS CARD
+================================================ */
+
+/*
+  Four stat items in a frosted row. Sits between the hero
+  text and the testimonial carousel. Needs top and bottom
+  margin to breathe between both sections.
+*/
+.auth-stats-card {
+  display: flex;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--overlay-white-12);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-md);
+}
+
+.auth-stat-item {
+  /*
+    Each stat takes up an equal share of the card.
+    Icon on top, number below, label at the bottom — stacked and centered.
+    A thin vertical line on the right divides it from the next stat.
+  */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border-right: 1px solid var(--overlay-white-12);
+  padding: 0 var(--space-sm);
+}
+
+.auth-stat-item:last-child {
+  border-right: none;
+}
+
+.auth-stat-item__icon {
+  color: var(--orange);
+  margin-bottom: 2px;
+}
+
+.auth-stat-item__icon [data-lucide] {
+  width: 15px;
+  height: 15px;
+}
+
+.auth-stat-item__number {
+  font-family: var(--font-body);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-lg);
+  color: var(--white);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+  margin-bottom: -4px;
+}
+
+.auth-stat-item__label {
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-medium);
+  color: var(--overlay-white-70);
+  text-align: center;
+  white-space: nowrap;
+}
+
+
+/* ================================================
+   4. TESTIMONIAL CAROUSEL
+   ────────────────────────
+   The JS in index.html slides the track left/right using
+   translateX. Rules marked DO NOT CHANGE are tied to how
+   that works — leave them exactly as they are.
+   Fill in only the TODOs.
+================================================ */
+
+.auth-carousel {
+  /*
+    Slides that are off to the side should be invisible.
+    Needs rounded corners.
+  */
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+/* DO NOT CHANGE — JS moves this element with translateX */
+.auth-carousel__track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* DO NOT CHANGE — JS calculates translateX based on each slide being exactly the carousel width */
+.auth-carousel__slide {
+  min-width: 100%;
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--overlay-white-12);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.auth-carousel__stars {
+  display: flex;
+  gap: 2px;
+}
+
+.auth-carousel__stars span {
+  color: var(--orange);
+  font-size: var(--text-sm);
+}
+
+.auth-carousel__quote {
+  font-size: var(--text-sm);
+  color: var(--white);
+  line-height: var(--lh-snug);
+  font-style: italic;
+}
+
+.auth-carousel__author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.auth-carousel__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--overlay-white-12);
+  background: var(--overlay-white-08);
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-xs);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.auth-carousel__author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.auth-carousel__author-name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-xs);
+  color: var(--white);
+}
+
+.auth-carousel__author-role {
+  font-size: var(--text-2xs);
+  color: var(--overlay-white-70);
+}
+
+.auth-carousel__dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: var(--space-sm);
+}
+
+.auth-carousel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--overlay-white-12);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+/* DO NOT CHANGE — JS toggles this class to mark the current slide */
+.auth-carousel__dot.is-active {
+  width: 18px;
+  border-radius: var(--radius-full);
+  background: var(--orange);
+}
+
+
+/* ================================================
+   5. RIGHT PANEL
+================================================ */
+
+.auth-right {
+  /*
+    The form side. Fills whatever width is left after the left panel.
+    Off-white background. If the form gets long, this panel scrolls
+    on its own — not the whole page.
+  */
+  flex: 1;
+  background: var(--off-white);
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-right__inner {
+  /*
+    Caps the content width so it stays readable.
+    Centered horizontally inside the panel.
+    Comfortable padding on all sides.
+    Children stack vertically.
+  */
+  width: 100%;
+  max-width: 440px;
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+  "Don't have an account?" — small muted text with an orange link.
+  Should be pushed to the right end of the inner column.
+  Needs bottom margin before the heading below it.
+*/
+.auth-register-link {
+  align-self: flex-end;
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  margin-bottom: var(--space-xl);
+}
+
+.auth-register-link a {
+  /* TODO: color (orange), weight, no underline */
+  color: var(--orange);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+}
+
+.auth-register-link a:hover {
+  text-decoration: underline;
+}
+
+/*
+  "Welcome back" — big heading that lives outside the white card,
+  above it. Left-aligned. Needs bottom margin before the card.
+*/
+.auth-form__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-2xl);
+  color: var(--text-dark);
+}
+
+/*
+  The white card that wraps the entire form.
+  White background, subtle border, rounded corners, soft shadow.
+  Children stack vertically with consistent spacing between them.
+*/
+.auth-form-wrapper {
+  width: 110%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-form__subtitle {
+  font-size: var(--text-sm);
+  color: var(--gray-500); 
+  line-height: var(--lh-relaxed);
+  margin-bottom: 0;
+}
+
+
+/* ================================================
+   6. FORM OVERRIDES
+   ──────────────────
+   Base input/label/error styles live in main.css.
+   Only login-specific things go here.
+================================================ */
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* "Forgot password?" — sits just below the password field, right-aligned */
+.form-forgot {
+  text-align: right;
+  margin-top: calc(var(--space-xs) * -1);
+}
+
+.form-forgot .form-link {
+  font-size: var(--text-sm);
+}
+
+/*
+  The "or" text between the Log In and Create Account buttons.
+  Text is centered. A thin horizontal line runs on each side of it.
+  Those lines are the ::before and ::after below.
+*/
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  color: var(--gray-400);
+  font-size: var(--text-sm);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gray-200);
+}
+
+/*
+  Security notice at the bottom of the card.
+  Shield icon on the left, small muted text on the right.
+  Sits on a very light gray background inside a subtle rounded border.
+*/
+.auth-security-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  line-height: var(--lh-snug);
+}
+
+.auth-security-notice [data-lucide] {
+  width: 18px;
+  height: 18px;
+  color: var(--green-dark);
+  flex-shrink: 0;
+}
+
+
+/* ================================================
+   7. RESPONSIVE
+   ──────────────
+   ≤ 900px — panels stack vertically, stats + carousel hide
+   ≤ 520px — tighten form card padding
+================================================ */
+
+@media (max-width: 900px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .auth-left {
+    width: 100%;
+    min-height: auto;
+    padding: var(--space-xl);
+  }
+
+  .auth-stats-card,
+  .auth-carousel {
+    display: none;
+  }
+
+  .auth-left__hero {
+    flex: none;
+  }
+
+  .auth-left__heading {
+    font-size: clamp(28px, 6vw, 36px);
+    margin-bottom: var(--space-md);
+  }
+
+  .auth-right__inner {
+    padding: var(--space-xl);
+  }
+
+  .auth-register-link {
+    margin-bottom: var(--space-lg);
+  }
+}
+
+@media (max-width: 520px) {
+  .auth-form-wrapper {
+    padding: var(--space-lg);
+  }
+}
