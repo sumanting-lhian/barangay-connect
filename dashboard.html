@@ -1,0 +1,466 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FE 2 BOOGSH</title>
+</head>
+
+<body style="font-family: -apple-system, sans-serif; background-color: #f0f2f5; padding: 20px; color: #1c1e21; line-height: 1.6;">
+    
+    <!--COMMUNITY HUB SMTH-->
+    <header>
+        <h1>Community Hub</h1>
+        <a href="#bulletin"><button>Bulletin</button></a>
+        <a href="#polls"><button>Polls</button></a>
+        <a href="#calendar"><button>Calendar</button></a>
+        <a href="#gallery"><button>Gallery</button></a>
+        <a href="#youth-zone"><button>Youth Zone</button></a>
+        <a href="#pets"><button>Pet Board</button></a>
+    </header>
+
+    <hr>
+
+    <section id="bulletin">
+        <h2>Bulletin</h2>
+        <button>All</button>
+        <button>Announcements</button>
+        <button>Health</button>
+        <button>Infrastructure</button>
+        <button>Safety</button>
+        <button>Events</button>
+
+        <ul>
+            <li>
+                <span>Health - 2 hours ago</span>
+                <h3>Free Medical Mission this Saturday at the Barangay Hall</h3>
+                <p>Free check-ups, dental services, and medicine distribution for all residents. Bring your barangay ID and cedula for faster processing.</p>
+                <p><strong>Brgy. Health Center</strong>
+            </li>
+            <li>
+                <span>Infrastructure - 5 hours ago</span>
+                <h3>Road Repair Schedule — Rizal Street and Adjacent Areas</h3>
+                <p>Construction work begins Monday. Motorists are advised to use alternate routes. Expect road closures from 7AM to 5PM daily for two weeks.</p>
+                <p><strong>DPWH Liaison Office</strong>
+            </li>
+        </ul>
+    </section>
+
+    <hr>
+
+    <section id="polls">
+        <h2>Community Polls</h2>
+        <p>What new facility would you like most in our Barangay?</p>
+        <ul>
+            <li>Mini Park / Green Space - 42%</li>
+            <li>Covered Basketball Court - 31%</li>
+            <li>Community Library - 17%</li>
+            <li>Health Clinic Extension - 10%</li>
+        </ul>
+        <p>312 votes · Results shown</p>
+
+        <p>Best day for a community general assembly?</p>
+        <label><input type="radio" name="poll2"> Saturday Morning</label><br>
+        <label><input type="radio" name="poll2"> Sunday Afternoon</label><br>
+        <label><input type="radio" name="poll2"> Friday Evening</label><br>
+        <p>188 votes · Tap to vote</p>
+
+        <p>How would you rate barangay services this quarter? (Closed)</p>
+        <ul>
+            <li>Excellent - 44%</li>
+            <li>Good - 35%</li>
+            <li>Fair - 15%</li>
+            <li>Needs Improvement - 6%</li>
+        </ul>
+        <p>501 votes · Results shown</p>
+    </section>
+    
+    <hr>
+
+    <section id="calendar">
+        <h2>Calendar</h2>
+
+        <label for="calendar">Calendar:</label>
+        <input type="date" id="idk" name="basta">
+
+        <h3>Events on June 12</h3>
+        <ul>
+            <li><p><strong>Free Medical Mission</strong> - 7:00 AM – 5:00 PM | Barangay Hall </p></li>
+        </ul>
+        
+        <button>RSVP Now</button>
+    </section>  
+
+    <hr>
+
+    <section id="gallery">
+        <h2>Gallery</h2>
+        <button>All</button>
+        <button>Health</button>
+        <button>Sports</button>
+        <button>Events</button>
+        <button>Environment</button>
+        <button>Livelihood</button>
+        <button>Youth</button>
+
+        <ul>
+            <li>[Photo] Free Medical Mission - Health</li>
+            <li>[Photo] Blood Donation Drive - Health</li>
+            <li>[Photo] Barangay Basketball Tournament - Sports</li>
+            <li>[Photo] Fiesta 2025 - Events</li>
+        </ul>
+    </section>
+
+    <hr>
+
+    <section id="youth-zone">
+        <h2>Youth Zone</h2>
+            <strong>Experiencing bullying? You're not alone.</strong>
+            <span>Report incidents confidentially to our Youth Protection Officer.</span>
+            <a href="#anti-bullying-form"><button>Report Now</button></a>
+
+        <h3>Programs</h3>
+        <ul>
+            <li><strong>Basketball Summer League</strong> - Every Saturday, 8:00 AM (6 slots remaining) <button>Register</button></li>
+            <li><strong>Bayanihan Homework Hub</strong> - Mon-Fri, 3:00 PM – 5:00 PM <button>Register</button></li>
+            <li><strong>Digital Skills Workshop</strong> - Wednesdays, 1:00 PM – 4:00 PM (12 slots remaining) <button>Register</button></li>
+        </ul>
+    </section>
+
+    <hr>
+
+    <section id="pets">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h2 style="margin: 0;">Pet Board</h2>
+            <a href="#pet-board"><button>Post a Pet Report</button></a>        
+        </div>
+        
+        <button>All</button>
+        <button>Missing</button>
+        <button>Found</button>
+        <button>For Adoption</button>
+
+        <ul>
+            <li><strong>Brownie</strong> (Dog, Male, 2 years) - Missing <button>Contact Owner</button></li>
+            <li><strong>Mango</strong> (Cat, Female, 6 months) - For Adoption <button>Contact Owner</button></li>
+            <li><strong>Whitey</strong> (Dog, Unknown, Adult) - Found <button>Location Reported</button></li>
+            <li><strong>Angek</strong> (Dog, Male, 1 year) - For Adoption <button>Contact Owner</button></li>
+        </ul>
+    </section>
+
+    <div style="max-width: 850px; margin: auto;">  
+        
+        <!--CONCERNS-->
+        <section id="step1" style="margin-bottom: 40px;">
+            <div style="background: white; border: 1px solid #ddd; padding: 35px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="margin-top: 0;">Category</h2>
+                <p><strong>What type of concern is this?</strong></p>
+                <p>Select the category that best describes your concern.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 30px;">
+                    <label style="cursor: pointer;">
+                        <input type="radio" name="cat" style="display:none;">
+                        <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Flooded Road</strong></div>
+                    </label>
+                    
+                    <label style="cursor: pointer;">
+                        <input type="radio" name="cat" style="display:none;">
+                        <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Garbage</strong></div>
+                    </label>
+
+                    <label style="cursor: pointer;">
+                        <input type="radio" name="cat" style="display:none;">
+                        <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Noise</strong></div>
+                    </label>
+
+                    <label style="cursor: pointer;">
+                        <input type="radio" name="cat" style="display:none;">
+                        <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Infrastructure</strong></div>
+                    </label>
+
+                    <label style="cursor: pointer;">
+                        <input type="radio" name="cat" style="display:none;">
+                        <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Safety Hazard</strong></div>
+                    </label>
+
+                    <label style="cursor: pointer;">
+                        <input type="radio" name="cat" style="display:none;">
+                        <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Other</strong></div>
+                    </label>
+                </div>
+
+                <div style="text-align: center;">
+                    <a href="#step2" style="text-decoration: none;">
+                        <button type="button" style="padding: 12px 25px;  background: #f79341; color: rgb(0, 0, 0);  border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Submit ></button>
+                    </a>
+                </div>
+            </div>  
+        </section>
+
+        <section id="step2" style="margin-bottom: 40px; padding-top: 20px;">
+            <div style="background: white; border: 1px solid #ddd; padding: 35px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="margin-top: 0;">Description</h2>
+                <p><strong>Describe the concern</strong></p>
+                <p>Be as speficific as possible — include location and time occurrence.</p>
+
+                <textarea style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; margin-bottom: 20px;" rows="4" placeholder="e.g There's a large pothole chuchu"></textarea>
+                
+                <div style="display: flex; justify-content: flex-start; gap: 10px; margin-top: 20px;">
+                    <a href="#step1" style="text-decoration: none;">
+                        <button type="button" style="padding: 12px 25px; background: #e4e6eb; color: #050505; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                            Back
+                        </button>
+                    </a>
+                    <a href="#step3" style="text-decoration: none;">
+                        <button type="button" style="padding: 12px 25px; background: #f79341; color: rgb(0, 0, 0); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            Continue >
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="step3" style="margin-bottom: 80px; padding-top: 20px;">
+            <div style="background: white; border: 1px solid #ddd; padding: 35px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="margin-top: 0;">Photos</h2>
+                <p><strong>Add supporting photos</strong></p>
+                <p style="font-size: 13px;">Photos help our team better understand and prioritize the issue. (Optional)</p>
+
+
+                <input type="file" style="display: block; width: 100%; margin-bottom: 30px;">
+                
+                <div style="display: flex; justify-content: flex-start; gap: 10px; margin-top: 20px;">
+                    <a href="#step1" style="text-decoration: none;">
+                        <button type="button" style="padding: 12px 25px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                            Back
+                        </button>
+                    </a>
+    
+                    <button type="submit" style="padding: 12px 25px; background: #f79341; color: rgb(0, 0, 0); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        Submit Concern 
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <hr style="border: 0; border-top: 1px solid #ddd; margin-bottom: 60px;">
+
+        <!--PET REPORT-->
+
+        <section id="pet-board"></section>
+            <div style="background: white; border: 1px solid #ddd; padding: 35px; margin-bottom: 40px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="margin-top: 0;">Post a Pet Report</h2>
+                
+                <label>Report Type:</label><br>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="type" style="display:none;">
+                            <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Missing</strong></div>
+                        </label>
+
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="type" style="display:none;">
+                            <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>For Adoption</strong></div>
+                        </label>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>Name of Pet:</label>
+                    <input type="text" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;" placeholder="e.g. Brownie">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>Description:</label>
+                    <textarea style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;" rows="3" placeholder="Describe your pet — color, markings, collar details, last seen location, etc."></textarea>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label>Contact Number</label>
+                    <input type="text" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;" placeholder="e.g. 0912 - 345 - 6789">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label>Pet Photo:</label>
+                    <input type="file" style="display: block; margin-top: 5px;">
+                </div>
+                    
+                <button type="button" style="padding: 12px 25px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                    Cancel
+                </button>
+
+                <button type="submit" style="padding: 12px; background: #f79341; color: rgb(0, 0, 0); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                    Post Pet Report
+                </button>       
+            </div>
+        </section>
+
+        <!--ANTI-BULLYING REPORT-->
+        <section id="anti-bullying-form" style="background: white; border: 1px solid #ddd; padding: 35px; margin: 40px 0; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <div style="background: white; border: 1px solid #ddd; padding: 35px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="margin-top: 0;">Report Anti-Bullying</h2>
+                <p style="font-size: 15px; margin-bottom: 15px;">Safe - Confidential - Taken Seriously</p>
+               
+                <div style="margin-bottom: 15px;">
+                    <label><input type="checkbox"> Submitting Anonymously</label>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label>What type of bullying occurred?</label><br>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 30px;">
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="type" style="display:none;">
+                            <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Physical Bullying</strong></div>
+                        </label>
+                        
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="type" style="display:none;">
+                            <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Verbal Bullying</strong></div>
+                        </label>
+
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="type" style="display:none;">
+                            <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Cyberbullying</strong></div>
+                        </label>
+
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="type" style="display:none;">
+                            <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Social/Relational</strong></div>
+                        </label>
+
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="type" style="display:none;">
+                            <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; text-align: center;"><strong>Other</strong></div>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label>Where did it happened?</label>
+                    <input type="text" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;" placeholder="e.g. Inside the school">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label>Describe what happened?</label>
+                    <textarea style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;" rows="3" placeholder="Please describe the incident in as much as detailed as u're comfortable sharing."></textarea>
+                </div>
+
+                <button type="button" style="padding: 12px 25px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                    Cancel
+                </button>
+
+                <button type="submit" style="padding: 12px; background: #f79341; color: rgb(0, 0, 0); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                    Submit Report
+                </button>
+            </div>    
+        </section>
+
+        <!--APPOINTMENTS-->
+        <div style="background: white; border: 1px solid #ddd; padding: 35px; margin-bottom: 40px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h2 style="margin-top: 0;">Book an  Appointment</h2>
+            
+            <div style="margin-bottom: 15px;">
+                <label>What service do you need?</label>
+                <select style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px;">
+                    <option>Barangay Clearance (Walk-in clearance assistance)</option>
+                    <option>Certificate of Residency (Proof of residence verification)</option>
+                    <option>Health Consultant (At the Barangay Health Center)</option>
+                    <option>Business Permit (Guidance for business permit)</option>
+                    <option>Indigency Letter (Social Welfare assistance)</option>
+                    <option>Other Concern (General inquiry or assistance)</option>
+
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label>Preferred Date:</label>
+                    <input type="date" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+                </div>
+                
+                <div style="flex: 1;">
+                    <label>Preferred Time:</label>
+                    <select style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+                        <option>08:00 AM</option>
+                        <option>10:00 AM</option>
+                        <option>01:00 PM</option>
+                        <option>03:00 PM</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="button" style="padding: 12px 25px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                Back
+            </button>
+
+            <button type="submit" style="padding: 12px; background: #f79341; color: rgb(0, 0, 0); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                Confirm Appointment
+            </button>        </div>
+
+        <!--DOCUMENT REQ-->
+        <div style="background: white; border: 1px solid #ddd; padding: 35px; margin-bottom: 40px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h2 style="margin-top: 0;">Document Request</h2>
+            <div style="margin-bottom: 15px;">
+                <label>Type of Document:</label>
+                <select style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px;">
+                    <option>Barangay Clearance — ₱50.00</option>
+                    <option>Certificate of Residency — ₱30.00</option>
+                    <option>Certificate of Indigency — FREE</option>
+                    <option>First Time Job Seeker — FREE</option>
+                    <option>Barangay ID — ₱100.00</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label>Full Name:</label>
+                <div style="display: flex; gap: 5px; margin-top: 5px;">
+                    <input type="text" style="flex: 3; padding: 10px; border: 1px solid #ddd; border-radius: 6px;" placeholder="First Name">
+                    <input type="text" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px;" placeholder="M.I.">
+                    <input type="text" style="flex: 3; padding: 10px; border: 1px solid #ddd; border-radius: 6px;" placeholder="Last Name">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label>Purpose / Reason for Request:</label>
+                <select style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px;">
+                    <option>Employment</option>
+                    <option>School Requirement</option>
+                    <option>For Scholarship</option>
+                    <option>Bank Request</option>
+                    <option>Secret</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label>Number of Copies</label>
+                    <input type="number" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+                </div>
+
+                <div style="flex: 1;">
+                    <label>Preferred Pickup Date:</label>
+                    <input type="date" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label>Contact Number:</label>
+                <input type="text" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;" placeholder="e.g. 0912 - 345 - 6789">
+            </div>
+           
+            <div style="margin-bottom: 15px;">
+                <label>Additonal Notes: (Optional)</label>
+                <textarea style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;" rows="3" placeholder="Any special instructions or details..."></textarea>
+            </div>
+
+            <button type="button" style="padding: 12px 25px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                Cancel
+            </button>
+
+            <button type="submit" style="padding: 12px; background: #f79341; color: rgb(0, 0, 0); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                Submit Request
+            </button>        
+        </div>
+        
+    </div>
+</body>
+</html>

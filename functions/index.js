@@ -32,7 +32,6 @@
      exports.pollPagasaAlerts            → schedule: every 30 minutes
      exports.notifyOnLike                → trigger: likes/{likerId} created
      exports.notifyOnComment             → trigger: comments/{commentId} created
-================================================ */
 
 
 // ================================================

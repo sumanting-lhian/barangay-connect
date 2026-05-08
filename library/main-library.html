@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design Language Library</title>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <link rel="stylesheet" href="../css/main.css" />
+
+  <style>
+    :root {
+      /* Showcase-only tokens — do NOT duplicate main.css variables here */
+      --showcase-bg:      #0e1117;
+      --showcase-surface: #161b22;
+      --showcase-border:  rgba(255,255,255,0.08);
+      --showcase-text:    #e6edf3;
+      --showcase-muted:   rgba(230,237,243,0.50);
+      --sidebar-w:        240px;
+      --font-mono:        'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--showcase-bg); color: var(--showcase-text); display: flex; flex-direction: column; min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+    [data-lucide] { width: 18px; height: 18px; stroke-width: 2; flex-shrink: 0; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--showcase-surface);
+      border-right: 1px solid var(--showcase-border);
+      position: fixed; top: 0; left: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      overflow-y: auto; z-index: 100;
+    }
+    .sidebar-header { padding: 20px 20px 16px; border-bottom: 1px solid var(--showcase-border); }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 800; font-size: 0.95rem; color: var(--showcase-text); }
+    .sidebar-logo-icon { width: 30px; height: 30px; background: var(--green-dark); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .sidebar-logo-icon [data-lucide] { width: 16px; height: 16px; color: white; }
+    .sidebar-tag { margin-top: 6px; font-size: 0.68rem; font-weight: 700; color: var(--showcase-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .sidebar-nav { padding: 12px; flex: 1; }
+    .sidebar-group { margin-bottom: 18px; }
+    .sidebar-group-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--showcase-muted); padding: 0 8px; margin-bottom: 4px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 0.82rem; font-weight: 500; color: var(--showcase-muted); transition: background 0.2s, color 0.2s; cursor: pointer; text-decoration: none; }
+    .sidebar-link [data-lucide] { width: 14px; height: 14px; }
+    .sidebar-link:hover { background: rgba(255,255,255,0.06); color: var(--showcase-text); }
+    .sidebar-link.is-active { background: rgba(27,75,39,0.35); color: #7dd9a0; }
+
+    /* ── Main ── */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+
+    /* ── Hero ── */
+    .page-hero { padding: 40px 48px 32px; border-bottom: 1px solid var(--showcase-border); }
+    .page-hero h1 { font-family: var(--font-display); font-weight: 900; font-size: 2.2rem; color: var(--showcase-text); letter-spacing: -0.04em; }
+    .page-hero p { margin-top: 10px; font-size: 0.92rem; color: var(--showcase-muted); line-height: 1.7; max-width: 600px; }
+    .page-hero p code { font-family: var(--font-mono); font-size: 0.82rem; background: rgba(255,255,255,0.07); padding: 1px 6px; border-radius: 4px; color: #a5d6ff; }
+
+    /* ── Sections ── */
+    .sections { flex: 1; padding: 0 48px 80px; }
+    .section { margin-bottom: 64px; scroll-margin-top: 24px; }
+    .section-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 40px 0 24px; padding-bottom: 16px; border-bottom: 1px solid var(--showcase-border); }
+    .section-title { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; color: var(--showcase-text); letter-spacing: -0.02em; }
+    .section-id { font-family: var(--font-mono); font-size: 0.7rem; color: rgba(125,217,160,0.7); }
+    .section-desc { font-size: 0.86rem; color: var(--showcase-muted); line-height: 1.7; margin-bottom: 20px; max-width: 620px; }
+    .section-desc code { font-family: var(--font-mono); font-size: 0.82rem; background: rgba(255,255,255,0.07); padding: 1px 6px; border-radius: 4px; color: #a5d6ff; }
+
+    /* ── Component blocks ── */
+    .comp-block { border: 1px solid var(--showcase-border); border-radius: 14px; overflow: hidden; margin-bottom: 20px; }
+    .comp-block-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--showcase-border); }
+    .comp-block-title { font-family: var(--font-mono); font-size: 0.78rem; color: var(--showcase-muted); }
+    .comp-block-title strong { color: var(--showcase-text); font-weight: 600; }
+
+    .copy-btn { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; color: var(--showcase-muted); border: 1px solid var(--showcase-border); background: transparent; transition: all 0.2s; font-family: var(--font-mono); cursor: pointer; }
+    .copy-btn [data-lucide] { width: 12px; height: 12px; }
+    .copy-btn:hover { background: rgba(255,255,255,0.06); color: var(--showcase-text); }
+    .copy-btn.copied { color: #7dd9a0; border-color: rgba(125,217,160,0.4); }
+
+    /* Preview panes */
+    .comp-preview { position: relative; overflow: hidden; }
+    .comp-preview--page { background: #1e2840; }
+    .comp-preview--dark-hero {
+      background: linear-gradient(135deg, #1B4B27 0%, #0f2e18 100%);
+      min-height: 160px;
+      display: flex; flex-direction: column;
+    }
+    .comp-preview--footer { background: #3a3a3a; }
+
+    /* Code blocks */
+    .comp-code { background: #0d1117; padding: 20px 24px; overflow-x: auto; border-top: 1px solid var(--showcase-border); }
+    .comp-code pre { font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.7; color: #e6edf3; white-space: pre; }
+    .t-tag     { color: #79c0ff; }
+    .t-attr    { color: #ff7b72; }
+    .t-val     { color: #a5d6ff; }
+    .t-comment { color: #8b949e; font-style: italic; }
+
+    /* Role switcher */
+    .role-switcher {
+      display: flex; align-items: center; gap: 8px; padding: 12px 20px;
+      background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--showcase-border);
+      font-size: 0.8rem; color: var(--showcase-muted); font-family: var(--font-mono);
+    }
+    .role-btn { padding: 4px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; font-family: var(--font-display); border: 1.5px solid; cursor: pointer; background: transparent; transition: all 0.2s; }
+    .role-btn--resident { color: var(--green-dark); border-color: var(--green-dark); }
+    .role-btn--officer  { color: var(--orange-hover); border-color: var(--orange); }
+    .role-btn--admin    { color: var(--red-dark); border-color: var(--red-dark); }
+    .role-btn.is-active { background: currentColor; }
+    .role-btn.is-active span { color: white; }
+    .role-btn--resident.is-active { color: white; background: var(--green-dark); }
+    .role-btn--officer.is-active  { color: var(--black); background: var(--orange); border-color: var(--orange); }
+    .role-btn--admin.is-active    { color: white; background: var(--red-dark); }
+
+    .hero-placeholder {
+      flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px;
+      font-family: var(--font-display); font-weight: 700; font-size: 0.85rem;
+      color: rgba(255,255,255,0.30); letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    .note {
+      display: flex; align-items: flex-start; gap: 10px; padding: 14px 18px;
+      background: rgba(255,161,53,0.08); border: 1px solid rgba(255,161,53,0.2);
+      border-radius: 10px; margin-bottom: 16px; font-size: 0.84rem;
+      color: rgba(255,200,100,0.85); line-height: 1.6;
+    }
+    .note [data-lucide] { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--orange); }
+    .note code { font-family: var(--font-mono); background: rgba(255,255,255,0.07); padding: 1px 5px; border-radius: 4px; font-size: 0.78rem; }
+
+    .prop-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 20px; }
+    .prop-table th { text-align: left; padding: 8px 14px; border-bottom: 1px solid var(--showcase-border); font-family: var(--font-mono); font-size: 0.72rem; color: rgba(125,217,160,0.7); font-weight: 600; }
+    .prop-table td { padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--showcase-muted); vertical-align: top; }
+    .prop-table td:first-child { font-family: var(--font-mono); color: #a5d6ff; }
+    .prop-table td:nth-child(2) { color: #d2a8ff; }
+    .prop-table tr:last-child td { border-bottom: none; }
+
+    .comp-preview .dl-type-row > span,
+    .comp-preview .dl-type-row > p { color: rgba(220, 235, 255, 0.88) !important; }
+    .comp-preview [style*="color:var(--gray-500)"],
+    .comp-preview [style*="color: var(--gray-500)"] { color: rgba(180, 205, 240, 0.80) !important; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <img src="../assets/images/logo.png" alt="BarangayConnect" style="width:30px;height:30px;object-fit:contain;" />
+      BarangayConnect
+    </div>
+    <div class="sidebar-tag">Design Language</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Design Language</div>
+      <a class="sidebar-link" href="#design-colors"><i data-lucide="palette"></i> Colors</a>
+      <a class="sidebar-link" href="#design-alpha"><i data-lucide="droplets"></i> Alpha &amp; Overlays</a>
+      <a class="sidebar-link" href="#design-type"><i data-lucide="type"></i> Typography</a>
+      <a class="sidebar-link" href="#design-type-tokens"><i data-lucide="pilcrow"></i> Type Scale &amp; Weights</a>
+      <a class="sidebar-link" href="#design-space"><i data-lucide="move-horizontal"></i> Spacing &amp; Radius</a>
+      <a class="sidebar-link" href="#design-shadow"><i data-lucide="layers"></i> Shadows</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Navbar</div>
+      <a class="sidebar-link" href="#navbar-resident"><i data-lucide="user"></i> Resident</a>
+      <a class="sidebar-link" href="#navbar-officer"><i data-lucide="shield"></i> Officer</a>
+      <a class="sidebar-link" href="#navbar-admin"><i data-lucide="settings-2"></i> Admin</a>
+      <a class="sidebar-link" href="#navbar-transparent"><i data-lucide="layers"></i> Transparent Hero</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Footer</div>
+      <a class="sidebar-link" href="#footer-default"><i data-lucide="layout-panel-left"></i> Default</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Reference</div>
+      <a class="sidebar-link" href="#api"><i data-lucide="book-open"></i> Props &amp; Classes</a>
+      <a class="sidebar-link" href="#js"><i data-lucide="code-2"></i> JS Snippets</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Libraries</div>
+      <a class="sidebar-link is-active" href="main-library.html"><i data-lucide="palette"></i> Design Language</a>
+      <a class="sidebar-link" href="components-library.html"><i data-lucide="layers"></i> Components</a>
+      <a class="sidebar-link" href="frames-library.html"><i data-lucide="monitor"></i> Frames &amp; Modals</a>
+      <a class="sidebar-link" href="button-library.html"><i data-lucide="mouse-pointer-click"></i> Buttons</a>
+    </div>
+  </nav>
+</aside>
+
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<main class="main">
+
+  <div class="page-hero">
+    <h1>Design Language</h1>
+    <p>
+      The foundational tokens and shared layout components for BarangayConnect — all defined in a single
+      <code>main.css</code> file. This page covers the full color palette and alpha overlays, the two
+      typefaces and their scale, spacing and border-radius tokens, shadow levels, and the role-aware
+      navbar with its three variants (Resident, Officer, Admin) plus the site footer.
+    </p>
+  </div>
+
+  <div class="sections">
+
+    <!-- ══════════════════════════════════════════
+         DESIGN LANGUAGE — COLORS
+    ══════════════════════════════════════════ -->
+    <section class="section" id="design-colors">
+      <div class="section-header">
+        <h2 class="section-title">Color Palette</h2>
+        <span class="section-id">:root — main.css</span>
+      </div>
+      <p class="section-desc">
+        All color tokens are CSS custom properties defined in <code>main.css</code>.
+        Reference them anywhere with <code>var(--token-name)</code>. Never hardcode hex values in page CSS.
+      </p>
+
+      <style>
+        .dl-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+        .dl-swatch { border-radius: 10px; overflow: hidden; border: 1px solid var(--showcase-border); }
+        .dl-swatch__chip { height: 60px; width: 100%; }
+        .dl-swatch__body { padding: 10px 12px; background: var(--showcase-surface); }
+        .dl-swatch__name { font-family: var(--font-mono); font-size: 0.7rem; color: #a5d6ff; display: block; margin-bottom: 2px; }
+        .dl-swatch__hex { font-family: var(--font-mono); font-size: 0.68rem; color: var(--showcase-muted); }
+        .dl-swatch__use { font-size: 0.65rem; color: var(--showcase-muted); margin-top: 3px; line-height: 1.4; display: block; }
+        .dl-group-label { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--showcase-muted); margin-bottom: 10px; margin-top: 24px; }
+        .dl-group-label:first-child { margin-top: 0; }
+
+        .dl-type-row { display: flex; align-items: baseline; gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--showcase-border); flex-wrap: wrap; }
+        .dl-type-row:last-child { border-bottom: none; }
+        .dl-type-meta { width: 180px; flex-shrink: 0; }
+        .dl-type-meta-name { font-family: var(--font-mono); font-size: 0.72rem; color: #a5d6ff; }
+        .dl-type-meta-sub { font-family: var(--font-mono); font-size: 0.65rem; color: var(--showcase-muted); margin-top: 2px; }
+
+        .dl-scale { display: flex; flex-direction: column; gap: 10px; }
+        .dl-scale-row { display: flex; align-items: center; gap: 16px; }
+        .dl-scale-label { font-family: var(--font-mono); font-size: 0.72rem; color: #a5d6ff; width: 120px; flex-shrink: 0; }
+        .dl-scale-value { font-family: var(--font-mono); font-size: 0.65rem; color: var(--showcase-muted); width: 48px; flex-shrink: 0; }
+        .dl-scale-bar { height: 28px; border-radius: 6px; background: var(--green-dark); }
+        .dl-radius-bar { height: 40px; width: 80px; background: var(--green-dark); flex-shrink: 0; }
+        .dl-shadow-box { height: 48px; width: 140px; background: white; border-radius: 8px; flex-shrink: 0; }
+      </style>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Brand Colors</strong> — the primary palette</span>
+        </div>
+        <div class="comp-preview" style="background: var(--showcase-bg); display: block; padding: 24px;">
+          <div class="dl-group-label">Green — Primary / Official</div>
+          <div class="dl-swatches">
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#1B4B27"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--green-dark</span><span class="dl-swatch__hex">#1B4B27</span><span class="dl-swatch__use">Navbar, buttons, headings</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#12361B"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--green-hover</span><span class="dl-swatch__hex">#12361B</span><span class="dl-swatch__use">Hover state of green</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#102A16"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--green-active</span><span class="dl-swatch__hex">#102A16</span><span class="dl-swatch__use">Active/pressed state</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#2d5a3d"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--green-mid</span><span class="dl-swatch__hex">#2d5a3d</span><span class="dl-swatch__use">Decorative circles</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#4a8c5c"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--green-light</span><span class="dl-swatch__hex">#4a8c5c</span><span class="dl-swatch__use">Focus rings on inputs</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#2a4a38"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--green-muted</span><span class="dl-swatch__hex">#2a4a38</span><span class="dl-swatch__use">Left panel texture</span></div></div>
+          </div>
+
+          <div class="dl-group-label">Orange — CTA / Action</div>
+          <div class="dl-swatches">
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#FFA135"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--orange</span><span class="dl-swatch__hex">#FFA135</span><span class="dl-swatch__use">Primary CTA, tabs, avatar border</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#DB8B2F"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--orange-hover</span><span class="dl-swatch__hex">#DB8B2F</span><span class="dl-swatch__use">Hover state for orange, officer text</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#92400E"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--orange-active</span><span class="dl-swatch__hex">#92400E</span><span class="dl-swatch__use">Active/pressed state</span></div></div>
+          </div>
+
+          <div class="dl-group-label">Red — Destructive / Urgent</div>
+          <div class="dl-swatches">
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#DC2626"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--red</span><span class="dl-swatch__hex">#DC2626</span><span class="dl-swatch__use">Destructive actions, alerts</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#821414"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--red-hover</span><span class="dl-swatch__hex">#821414</span><span class="dl-swatch__use">Hover on red buttons</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#7A1A1A"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--red-dark</span><span class="dl-swatch__hex">#7A1A1A</span><span class="dl-swatch__use">Admin role color, close btn</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Neutrals</strong> — backgrounds, borders, text</span>
+        </div>
+        <div class="comp-preview" style="background: var(--showcase-bg); display: block; padding: 24px;">
+          <div class="dl-swatches">
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#ffffff; border-bottom: 1px solid #e5e7eb;"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--white</span><span class="dl-swatch__hex">#ffffff</span><span class="dl-swatch__use">Cards, modals, panels</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#f9fafb"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--off-white</span><span class="dl-swatch__hex">#f9fafb</span><span class="dl-swatch__use">Page background</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#f3f4f6"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--gray-50</span><span class="dl-swatch__hex">#f3f4f6</span><span class="dl-swatch__use">Hover states on rows</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#e5e7eb"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--gray-100</span><span class="dl-swatch__hex">#e5e7eb</span><span class="dl-swatch__use">Borders, dividers, chips</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#d1d5db"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--gray-200</span><span class="dl-swatch__hex">#d1d5db</span><span class="dl-swatch__use">Input borders (default)</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#9ca3af"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--gray-400</span><span class="dl-swatch__hex">#9ca3af</span><span class="dl-swatch__use">Placeholders, icons</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#6b7280"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--gray-500</span><span class="dl-swatch__hex">#6b7280</span><span class="dl-swatch__use">Secondary text</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#374151"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--gray-700</span><span class="dl-swatch__hex">#374151</span><span class="dl-swatch__use">Labels, form text</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#1a1a1a"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--text-dark</span><span class="dl-swatch__hex">#1a1a1a</span><span class="dl-swatch__use">Body copy, headings</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#4a4a4a"></div><div class="dl-swatch__body"><span class="dl-swatch__name">footer bg</span><span class="dl-swatch__hex">#4a4a4a</span><span class="dl-swatch__use">Site footer background</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Status &amp; Semantic Colors</strong> — badges, progress indicators</span>
+        </div>
+        <div class="comp-preview" style="background: var(--showcase-bg); display: block; padding: 24px;">
+          <div class="dl-group-label">Status — used in .badge and .step-progress</div>
+          <div class="dl-swatches">
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#f59e0b"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--status-pending</span><span class="dl-swatch__hex">#f59e0b</span><span class="dl-swatch__use">Pending badge, waiting</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#3b82f6"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--status-inprogress</span><span class="dl-swatch__hex">#3b82f6</span><span class="dl-swatch__use">In-progress badge</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#10b981"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--status-resolved</span><span class="dl-swatch__hex">#10b981</span><span class="dl-swatch__use">Resolved / done</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#9ca3af"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--status-draft</span><span class="dl-swatch__hex">#9ca3af</span><span class="dl-swatch__use">Draft state</span></div></div>
+          </div>
+          <div class="dl-group-label">Priority — concern and report severity</div>
+          <div class="dl-swatches">
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#ef4444"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--priority-high</span><span class="dl-swatch__hex">#ef4444</span><span class="dl-swatch__use">High priority, errors</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#f97316"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--priority-medium</span><span class="dl-swatch__hex">#f97316</span><span class="dl-swatch__use">Medium priority</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:#22c55e"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--priority-low</span><span class="dl-swatch__hex">#22c55e</span><span class="dl-swatch__use">Low priority</span></div></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         DESIGN LANGUAGE — ALPHA & OVERLAYS
+    ══════════════════════════════════════════ -->
+    <section class="section" id="design-alpha">
+      <div class="section-header">
+        <h2 class="section-title">Alpha &amp; Overlays</h2>
+        <span class="section-id">rgba tints — main.css</span>
+      </div>
+      <p class="section-desc">
+        Transparent brand tints for surfaces, hover fills, and icon containers. Use these instead of
+        hardcoding <code>rgba()</code> values — the tokens keep overlays consistent across light and dark contexts.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Alpha Tints</strong> — transparent brand overlays used for surfaces, hover fills, and icon containers</span>
+        </div>
+        <div class="comp-preview" style="background: var(--showcase-bg); display: block; padding: 24px;">
+          <div class="dl-group-label">Green Alpha — light background surfaces</div>
+          <div class="dl-swatches">
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(27,75,39,0.06)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--alpha-green-06</span><span class="dl-swatch__hex">rgba(27,75,39,.06)</span><span class="dl-swatch__use">Nav link hover bg</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(27,75,39,0.08)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--alpha-green-08</span><span class="dl-swatch__hex">rgba(27,75,39,.08)</span><span class="dl-swatch__use">Poll bar fill</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(27,75,39,0.10)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--alpha-green-10</span><span class="dl-swatch__hex">rgba(27,75,39,.10)</span><span class="dl-swatch__use">Icon badge bg, stat card</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(27,75,39,0.12)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--alpha-green-12</span><span class="dl-swatch__hex">rgba(27,75,39,.12)</span><span class="dl-swatch__use">Selected slot card, poll selected</span></div></div>
+          </div>
+          <div class="dl-group-label">Orange Alpha</div>
+          <div class="dl-swatches">
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(255,161,53,0.14)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--alpha-orange-14</span><span class="dl-swatch__hex">rgba(255,161,53,.14)</span><span class="dl-swatch__use">Icon badge bg orange</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(255,161,53,0.35)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--alpha-orange-35</span><span class="dl-swatch__hex">rgba(255,161,53,.35)</span><span class="dl-swatch__use">Call circle shadow, step connector</span></div></div>
+          </div>
+          <div class="dl-group-label">Red Alpha</div>
+          <div class="dl-swatches">
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(220,38,38,0.08)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--alpha-red-08</span><span class="dl-swatch__hex">rgba(220,38,38,.08)</span><span class="dl-swatch__use">Icon badge bg red</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(220,38,38,0.10)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--alpha-red-10</span><span class="dl-swatch__hex">rgba(220,38,38,.10)</span><span class="dl-swatch__use">Stat card red bg</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(122,26,26,0.08)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--alpha-red-dark-08</span><span class="dl-swatch__hex">rgba(122,26,26,.08)</span><span class="dl-swatch__use">Anonymous toggle row bg</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(122,26,26,0.12)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--alpha-red-dark-12</span><span class="dl-swatch__hex">rgba(122,26,26,.12)</span><span class="dl-swatch__use">Admin toggle ring</span></div></div>
+          </div>
+          <div class="dl-group-label">White Overlays — on dark green panels</div>
+          <div class="dl-swatches" style="background:var(--green-dark);padding:16px;border-radius:12px;">
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(255,255,255,0.10)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--overlay-white-10</span><span class="dl-swatch__hex">rgba(255,255,255,.10)</span><span class="dl-swatch__use">Category pill idle bg</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(255,255,255,0.15)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--overlay-white-15</span><span class="dl-swatch__hex">rgba(255,255,255,.15)</span><span class="dl-swatch__use">Logo icon bg, modal close btn</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(255,255,255,0.20)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--overlay-white-20</span><span class="dl-swatch__hex">rgba(255,255,255,.20)</span><span class="dl-swatch__use">Avatar border, step connector active</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(255,255,255,0.55)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--overlay-white-55</span><span class="dl-swatch__hex">rgba(255,255,255,.55)</span><span class="dl-swatch__use">Stat label on dark</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(255,255,255,0.70)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--overlay-white-70</span><span class="dl-swatch__hex">rgba(255,255,255,.70)</span><span class="dl-swatch__use">Bell icon, subtext on dark</span></div></div>
+          </div>
+          <div class="dl-group-label" style="margin-top:24px;">Black Overlays — modal backdrops, shadows</div>
+          <div class="dl-swatches">
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(0,0,0,0.10)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--overlay-black-10</span><span class="dl-swatch__hex">rgba(0,0,0,.10)</span><span class="dl-swatch__use">Shadow-md, dismiss btn</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(0,0,0,0.25)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--overlay-black-25</span><span class="dl-swatch__hex">rgba(0,0,0,.25)</span><span class="dl-swatch__use">Drawer backdrop</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(0,0,0,0.45)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--overlay-black-45</span><span class="dl-swatch__hex">rgba(0,0,0,.45)</span><span class="dl-swatch__use">Profile backdrop</span></div></div>
+            <div class="dl-swatch"><div class="dl-swatch__chip" style="background:rgba(0,0,0,0.55)"></div><div class="dl-swatch__body"><span class="dl-swatch__name">--overlay-black-55</span><span class="dl-swatch__hex">rgba(0,0,0,.55)</span><span class="dl-swatch__use">Modal overlay backdrop</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         DESIGN LANGUAGE — TYPOGRAPHY
+    ══════════════════════════════════════════ -->
+    <section class="section" id="design-type">
+      <div class="section-header">
+        <h2 class="section-title">Typography</h2>
+        <span class="section-id">--font-display / --font-body</span>
+      </div>
+      <p class="section-desc">
+        Two typefaces. <strong>Circular Std</strong> for everything that needs personality — headings, labels, buttons, badges.
+        <strong>Poppins</strong> for body copy — descriptions, paragraphs, data.
+        Never use Circular Std for long body text; never use Poppins for buttons.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Circular Std</strong> — <code>var(--font-display)</code> — headings, buttons, badges, labels</span>
+        </div>
+        <div class="comp-preview comp-preview--col" style="gap: 12px; background: #1b2333;">
+          <div class="dl-type-row">
+            <div class="dl-type-meta"><span class="dl-type-meta-name">900 / display</span><span class="dl-type-meta-sub">Page headings, hero text</span></div>
+            <span style="font-family:var(--font-display),sans-serif;font-weight:900;font-size:2rem;color:#e6edf3;letter-spacing:-0.03em;">Barangay Bancod</span>
+          </div>
+          <div class="dl-type-row">
+            <div class="dl-type-meta"><span class="dl-type-meta-name">800 / subheading</span><span class="dl-type-meta-sub">Card titles, section heads</span></div>
+            <span style="font-family:var(--font-display),sans-serif;font-weight:800;font-size:1.4rem;color:#e6edf3;">Free Medical Mission</span>
+          </div>
+          <div class="dl-type-row">
+            <div class="dl-type-meta"><span class="dl-type-meta-name">700 / label</span><span class="dl-type-meta-sub">Form labels, nav links, list items</span></div>
+            <span style="font-family:var(--font-display),sans-serif;font-weight:700;font-size:1rem;color:#e6edf3;">Document Request Status</span>
+          </div>
+          <div class="dl-type-row">
+            <div class="dl-type-meta"><span class="dl-type-meta-name">600 / caption</span><span class="dl-type-meta-sub">Secondary labels, meta text</span></div>
+            <span style="font-family:var(--font-display),sans-serif;font-weight:600;font-size:0.85rem;color:rgba(230,237,243,0.6);">2 hours ago · Barangay Hall</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Poppins</strong> — <code>var(--font-body)</code> — body copy, descriptions, data</span>
+        </div>
+        <div class="comp-preview comp-preview--col" style="gap: 12px; background: #1b2333;">
+          <div class="dl-type-row">
+            <div class="dl-type-meta"><span class="dl-type-meta-name">500 / body</span><span class="dl-type-meta-sub">Descriptions, excerpts</span></div>
+            <span style="font-family:'Poppins',sans-serif;font-weight:500;font-size:0.95rem;color:#e6edf3;line-height:1.65;max-width:400px;">Free check-ups, dental services, and medicine distribution for all residents. Bring your barangay ID and cedula for faster processing.</span>
+          </div>
+          <div class="dl-type-row">
+            <div class="dl-type-meta"><span class="dl-type-meta-name">400 / base</span><span class="dl-type-meta-sub">Paragraphs, sub-text</span></div>
+            <span style="font-family:'Poppins',sans-serif;font-weight:400;font-size:0.88rem;color:rgba(230,237,243,0.6);line-height:1.6;max-width:400px;">Your registration is pending admin review. This usually takes 1–2 business days. You will receive an SMS once approved.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>JetBrains Mono</strong> — for class names, code, and token references in showcase pages only</span>
+        </div>
+        <div class="comp-preview" style="background: #0d1117; padding: 20px 24px; display: flex; gap: 24px; flex-wrap: wrap;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:#a5d6ff;">.navbar__link.is-active</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:#ff7b72;">.btn--orange</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:#7dd9a0;">var(--green-dark)</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         DESIGN LANGUAGE — TYPE SCALE & WEIGHTS
+    ══════════════════════════════════════════ -->
+    <section class="section" id="design-type-tokens">
+      <div class="section-header">
+        <h2 class="section-title">Type Scale &amp; Weights</h2>
+        <span class="section-id">--text-* / --fw-* / --lh-*</span>
+      </div>
+      <p class="section-desc">
+        Token-based size, weight, and line-height scales. Always reference a token —
+        never write raw <code>font-size</code> or <code>font-weight</code> values in component CSS.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Type Scale</strong> — <code>--text-2xs</code> through <code>--text-4xl</code></span>
+        </div>
+        <div class="comp-preview comp-preview--col" style="gap: 10px; background: #1b2333; padding: 28px 32px;">
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--text-2xs · 0.68rem</span><span class="dl-type-meta-sub">Tiny labels, timestamps, eyebrow text</span></div><span style="font-family:var(--font-display),sans-serif;font-size:0.68rem;color:rgba(230,237,243,0.6);font-weight:600;text-transform:uppercase;letter-spacing:0.12em;">BARANGAY BANCOD</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--text-xs · 0.75rem</span><span class="dl-type-meta-sub">Caption/meta, badge content</span></div><span style="font-family:var(--font-display),sans-serif;font-size:0.75rem;color:rgba(230,237,243,0.6);font-weight:600;">2 hours ago · Published</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--text-sm · 0.82rem</span><span class="dl-type-meta-sub">Secondary body, card descriptions</span></div><span style="font-family:'Poppins',sans-serif;font-size:0.82rem;color:rgba(230,237,243,0.6);">Free check-ups, dental services, and medicine distribution for all residents.</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--text-base-sm · 0.88rem</span><span class="dl-type-meta-sub">Compact body, form labels</span></div><span style="font-family:var(--font-display),sans-serif;font-size:0.88rem;color:#e6edf3;font-weight:600;">Email address</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--text-base · 0.95rem</span><span class="dl-type-meta-sub">Primary body, most UI copy</span></div><span style="font-family:'Poppins',sans-serif;font-size:0.95rem;color:#e6edf3;">Your registration is under review by a barangay officer.</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--text-lg · 1.05rem</span><span class="dl-type-meta-sub">Card titles, section labels</span></div><span style="font-family:var(--font-display),sans-serif;font-size:1.05rem;color:#e6edf3;font-weight:800;">Barangay Clearance</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--text-xl · 1.20rem</span><span class="dl-type-meta-sub">Modal titles, widget headings</span></div><span style="font-family:var(--font-display),sans-serif;font-size:1.20rem;color:#e6edf3;font-weight:900;">Post a Pet Report</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--text-2xl · 1.60rem</span><span class="dl-type-meta-sub">Page sub-headings, success titles</span></div><span style="font-family:var(--font-body),sans-serif;font-size:1.60rem;color:#e6edf3;font-weight:900;letter-spacing:-0.02em;">Registration Submitted!</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--text-3xl · 1.90rem</span><span class="dl-type-meta-sub">Page headings, register header</span></div><span style="font-family:var(--font-display),sans-serif;font-size:1.90rem;color:#e6edf3;font-weight:900;letter-spacing:-0.03em;">Create your account</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--text-4xl · 2.00rem</span><span class="dl-type-meta-sub">Display text, auth hero</span></div><span style="font-family:var(--font-display),sans-serif;font-size:2.00rem;color:#e6edf3;font-weight:900;letter-spacing:-0.04em;">Sign in</span></div>
+        </div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Font Weights</strong> — <code>--fw-normal</code> through <code>--fw-black</code></span>
+        </div>
+        <div class="comp-preview comp-preview--col" style="gap: 8px; background: #1b2333; padding: 28px 32px;">
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--fw-normal · 400</span><span class="dl-type-meta-sub">Paragraph / Poppins body copy</span></div><span style="font-family:var(--font-body),sans-serif;font-size:1.1rem;font-weight:400;color:#e6edf3;">BarangayConnect</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--fw-medium · 500</span><span class="dl-type-meta-sub">Secondary labels, Poppins semibody</span></div><span style="font-family:var(--font-body),sans-serif;font-size:1.1rem;font-weight:500;color:#e6edf3;">BarangayConnect</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--fw-semibold · 600</span><span class="dl-type-meta-sub">Nav links, form labels, metadata</span></div><span style="font-family:var(--font-display),sans-serif;font-size:1.1rem;font-weight:600;color:#e6edf3;">BarangayConnect</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--fw-bold · 700</span><span class="dl-type-meta-sub">Buttons, card titles, nav items</span></div><span style="font-family:var(--font-display),sans-serif;font-size:1.1rem;font-weight:700;color:#e6edf3;">BarangayConnect</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--fw-extrabold · 800</span><span class="dl-type-meta-sub">Section headings, modal titles</span></div><span style="font-family:var(--font-display),sans-serif;font-size:1.1rem;font-weight:800;color:#e6edf3;">BarangayConnect</span></div>
+          <div class="dl-type-row" style="gap: 32px;"><div class="dl-type-meta"><span class="dl-type-meta-name">--fw-black · 900</span><span class="dl-type-meta-sub">Hero text, page headings, logo</span></div><span style="font-family:var(--font-display),sans-serif;font-size:1.1rem;font-weight:900;color:#e6edf3;">BarangayConnect</span></div>
+        </div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Line Heights</strong> — <code>--lh-none</code> through <code>--lh-loose</code></span>
+        </div>
+        <div class="comp-preview comp-preview--col" style="gap: 20px; background: #1b2333; padding: 28px 32px;">
+          <div class="dl-type-row" style="gap: 32px; align-items: flex-start;"><div class="dl-type-meta"><span class="dl-type-meta-name">--lh-none · 1</span><span class="dl-type-meta-sub">Stat numbers, single-line display</span></div><span style="font-family:var(--font-display),sans-serif;font-size:0.88rem;font-weight:700;color:#e6edf3;line-height:1;background:rgba(27,75,39,0.15);padding:8px 12px;border-radius:8px;">2,418<br>Residents</span></div>
+          <div class="dl-type-row" style="gap: 32px; align-items: flex-start;"><div class="dl-type-meta"><span class="dl-type-meta-name">--lh-tight · 1.2</span><span class="dl-type-meta-sub">Headings, card titles</span></div><span style="font-family:var(--font-display),sans-serif;font-size:0.88rem;font-weight:700;color:#e6edf3;line-height:1.2;background:rgba(27,75,39,0.15);padding:8px 12px;border-radius:8px;">Free Medical Mission<br>this Saturday at the Hall</span></div>
+          <div class="dl-type-row" style="gap: 32px; align-items: flex-start;"><div class="dl-type-meta"><span class="dl-type-meta-name">--lh-snug · 1.4</span><span class="dl-type-meta-sub">Compact body, descriptions</span></div><span style="font-family:'Poppins',sans-serif;font-size:0.88rem;color:#e6edf3;line-height:1.4;background:rgba(27,75,39,0.15);padding:8px 12px;border-radius:8px;">Brown Aspin, last seen near<br>Rizal Street. Has a red collar.</span></div>
+          <div class="dl-type-row" style="gap: 32px; align-items: flex-start;"><div class="dl-type-meta"><span class="dl-type-meta-name">--lh-normal · 1.5</span><span class="dl-type-meta-sub">Standard body text</span></div><span style="font-family:'Poppins',sans-serif;font-size:0.88rem;color:#e6edf3;line-height:1.5;background:rgba(27,75,39,0.15);padding:8px 12px;border-radius:8px;">Your account is pending<br>admin review. Please wait.</span></div>
+          <div class="dl-type-row" style="gap: 32px; align-items: flex-start;"><div class="dl-type-meta"><span class="dl-type-meta-name">--lh-relaxed · 1.6</span><span class="dl-type-meta-sub">Readable paragraphs, default body</span></div><span style="font-family:'Poppins',sans-serif;font-size:0.88rem;color:#e6edf3;line-height:1.6;background:rgba(27,75,39,0.15);padding:8px 12px;border-radius:8px;">Access services, report concerns,<br>and stay connected with your barangay.</span></div>
+          <div class="dl-type-row" style="gap: 32px; align-items: flex-start;"><div class="dl-type-meta"><span class="dl-type-meta-name">--lh-loose · 1.7</span><span class="dl-type-meta-sub">Long-form / help copy</span></div><span style="font-family:'Poppins',sans-serif;font-size:0.88rem;color:#e6edf3;line-height:1.7;background:rgba(27,75,39,0.15);padding:8px 12px;border-radius:8px;">This platform digitizes and centralizes<br>community services for Barangay Bancod.</span></div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         DESIGN LANGUAGE — SPACING & RADIUS
+    ══════════════════════════════════════════ -->
+    <section class="section" id="design-space">
+      <div class="section-header">
+        <h2 class="section-title">Spacing &amp; Border Radius</h2>
+        <span class="section-id">--space-* / --radius-*</span>
+      </div>
+      <p class="section-desc">
+        Use spacing tokens for all <code>padding</code>, <code>margin</code>, and <code>gap</code> values.
+        Never hardcode pixel values in component CSS — always reference a token.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Spacing scale</strong></span>
+        </div>
+        <div class="comp-preview comp-preview--col" style="background: var(--showcase-bg); padding: 28px 24px;">
+          <div class="dl-scale">
+            <div class="dl-scale-row"><span class="dl-scale-label">--space-xs</span><span class="dl-scale-value">4px</span><div class="dl-scale-bar" style="width: 4px;"></div></div>
+            <div class="dl-scale-row"><span class="dl-scale-label">--space-sm</span><span class="dl-scale-value">8px</span><div class="dl-scale-bar" style="width: 8px;"></div></div>
+            <div class="dl-scale-row"><span class="dl-scale-label">--space-md</span><span class="dl-scale-value">16px</span><div class="dl-scale-bar" style="width: 16px;"></div></div>
+            <div class="dl-scale-row"><span class="dl-scale-label">--space-lg</span><span class="dl-scale-value">24px</span><div class="dl-scale-bar" style="width: 24px;"></div></div>
+            <div class="dl-scale-row"><span class="dl-scale-label">--space-xl</span><span class="dl-scale-value">32px</span><div class="dl-scale-bar" style="width: 32px;"></div></div>
+            <div class="dl-scale-row"><span class="dl-scale-label">--space-2xl</span><span class="dl-scale-value">48px</span><div class="dl-scale-bar" style="width: 48px;"></div></div>
+            <div class="dl-scale-row"><span class="dl-scale-label">--space-3xl</span><span class="dl-scale-value">64px</span><div class="dl-scale-bar" style="width: 64px;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Border radius scale</strong></span>
+        </div>
+        <div class="comp-preview" style="background: var(--showcase-bg); padding: 28px 24px; gap: 24px; flex-wrap: wrap; align-items: flex-end; display: flex;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div class="dl-radius-bar" style="border-radius: 4px; width: 48px; height: 32px;"></div><span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--showcase-muted);">--radius-xs<br>4px</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div class="dl-radius-bar" style="border-radius: 8px;"></div><span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--showcase-muted);">--radius-sm<br>8px</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div class="dl-radius-bar" style="border-radius: 12px;"></div><span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--showcase-muted);">--radius-md<br>12px</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div class="dl-radius-bar" style="border-radius: 16px;"></div><span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--showcase-muted);">--radius-lg<br>16px</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div class="dl-radius-bar" style="border-radius: 24px;"></div><span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--showcase-muted);">--radius-xl<br>24px</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div class="dl-radius-bar" style="border-radius: 9999px;"></div><span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--showcase-muted);">--radius-full<br>9999px</span></div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         DESIGN LANGUAGE — SHADOWS
+    ══════════════════════════════════════════ -->
+    <section class="section" id="design-shadow">
+      <div class="section-header">
+        <h2 class="section-title">Shadows</h2>
+        <span class="section-id">--shadow-sm / --shadow-md / --shadow-lg</span>
+      </div>
+      <p class="section-desc">
+        Three shadow levels. <strong>sm</strong> = resting cards and inputs.
+        <strong>md</strong> = hovered cards, dropdowns.
+        <strong>lg</strong> = modals, drawers, floating panels.
+        Always use the token — never write <code>box-shadow</code> manually in component CSS.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Shadow scale</strong></span>
+        </div>
+        <div class="comp-preview" style="background: #56585c; gap: 32px; flex-wrap: wrap; align-items: center; justify-content: center; padding: 40px; display: flex;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:14px;"><div class="dl-shadow-box" style="box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);"></div><span style="font-family:var(--font-mono);font-size:0.7rem;color:rgba(180,205,240,0.8);">--shadow-sm<br>Resting cards</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:14px;"><div class="dl-shadow-box" style="box-shadow: 0 4px 12px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06);"></div><span style="font-family:var(--font-mono);font-size:0.7rem;color:rgba(180,205,240,0.8);">--shadow-md<br>Hover / dropdown</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:14px;"><div class="dl-shadow-box" style="box-shadow: 0 10px 30px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);"></div><span style="font-family:var(--font-mono);font-size:0.7rem;color:rgba(180,205,240,0.8);">--shadow-lg<br>Modals / drawers</span></div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         RESIDENT NAVBAR
+    ══════════════════════════════════════════ -->
+    <section class="section" id="navbar-resident">
+      <div class="section-header">
+        <h2 class="section-title">Navbar — Resident</h2>
+        <span class="section-id">.navbar  /  body.role-resident</span>
+      </div>
+      <p class="section-desc">
+        The standard navbar shown to logged-in residents. Only the four core nav links are visible.
+        The role badge reads "Resident" in green. Orange dot on the bell indicates unread notifications.
+        Remove <code>.navbar__bell-dot</code> when there are none.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Resident</strong> — Home active, unread notification</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--page">
+          <header class="navbar" style="position:relative;">
+            <div class="navbar__inner">
+              <a href="#" class="navbar__logo">
+                <img src="../assets/images/green-border-logo.png" alt="BarangayConnect" style="width:30px;height:30px;object-fit:contain;" />
+                <span class="navbar__logo-text">BarangayConnect</span>
+              </a>
+              <nav class="navbar__nav">
+                <a href="#" class="navbar__link is-active">Home</a>
+                <a href="#" class="navbar__link">Community</a>
+                <a href="#" class="navbar__link">Services</a>
+                <a href="#" class="navbar__link">My Barangay</a>
+              </nav>
+              <div class="navbar__actions">
+                <span class="navbar__role navbar__role--resident">Resident</span>
+                <button class="navbar__bell" aria-label="Notifications"><i data-lucide="bell"></i><span class="navbar__bell-dot"></span></button>
+                <button class="navbar__avatar" aria-label="Open profile">JD</button>
+              </div>
+            </div>
+          </header>
+        </div>
+        <div class="comp-code"><pre><span class="t-comment">&lt;!-- Add role class to body --&gt;</span>
+<span class="t-tag">&lt;body</span> <span class="t-attr">class</span>=<span class="t-val">"role-resident"</span><span class="t-tag">&gt;</span>
+
+<span class="t-tag">&lt;header</span> <span class="t-attr">class</span>=<span class="t-val">"navbar"</span> <span class="t-attr">id</span>=<span class="t-val">"mainNavbar"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__inner"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/"</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__logo"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;img</span> <span class="t-attr">src</span>=<span class="t-val">"assets/images/logo.png"</span> <span class="t-attr">alt</span>=<span class="t-val">"BarangayConnect"</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__logo-img"</span> <span class="t-tag">/&gt;</span>
+      <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__logo-text"</span><span class="t-tag">&gt;</span>BarangayConnect<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;/a&gt;</span>
+    <span class="t-tag">&lt;nav</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__nav"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/"</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__link is-active"</span><span class="t-tag">&gt;</span>Home<span class="t-tag">&lt;/a&gt;</span>
+      <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/community"</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__link"</span><span class="t-tag">&gt;</span>Community<span class="t-tag">&lt;/a&gt;</span>
+      <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/services"</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__link"</span><span class="t-tag">&gt;</span>Services<span class="t-tag">&lt;/a&gt;</span>
+      <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/my-barangay"</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__link"</span><span class="t-tag">&gt;</span>My Barangay<span class="t-tag">&lt;/a&gt;</span>
+    <span class="t-tag">&lt;/nav&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__actions"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__role navbar__role--resident"</span><span class="t-tag">&gt;</span>Resident<span class="t-tag">&lt;/span&gt;</span>
+      <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__bell"</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Notifications"</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"bell"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+        <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__bell-dot"</span><span class="t-tag">&gt;&lt;/span&gt;</span> <span class="t-comment">&lt;!-- remove if no unread --&gt;</span>
+      <span class="t-tag">&lt;/button&gt;</span>
+      <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__avatar"</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Open profile"</span><span class="t-tag">&gt;</span>JD<span class="t-tag">&lt;/button&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/header&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         OFFICER NAVBAR
+    ══════════════════════════════════════════ -->
+    <section class="section" id="navbar-officer">
+      <div class="section-header">
+        <h2 class="section-title">Navbar — Officer</h2>
+        <span class="section-id">.navbar  /  body.role-officer</span>
+      </div>
+      <p class="section-desc">
+        Officer view adds the <strong>Officer Panel</strong> link in orange. The role badge reads "Officer".
+        Just swap <code>body.role-resident</code> → <code>body.role-officer</code>.
+        The HTML for the nav items stays identical — CSS does the hiding/showing.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Officer Panel</strong> — active (orange dot)</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--page">
+          <header class="navbar" style="position:relative;">
+            <div class="navbar__inner">
+              <a href="#" class="navbar__logo">
+                <img src="../assets/images/green-border-logo.png" alt="BarangayConnect" style="width:30px;height:30px;object-fit:contain;" />
+                <span class="navbar__logo-text">BarangayConnect</span>
+              </a>
+              <nav class="navbar__nav">
+                <a href="#" class="navbar__link">Home</a>
+                <a href="#" class="navbar__link">Community</a>
+                <a href="#" class="navbar__link">Services</a>
+                <a href="#" class="navbar__link">My Barangay</a>
+                <a href="#" class="navbar__link navbar__link--officer is-active">Officer Panel</a>
+              </nav>
+              <div class="navbar__actions">
+                <span class="navbar__role navbar__role--officer">Officer</span>
+                <button class="navbar__bell" aria-label="Notifications"><i data-lucide="bell"></i></button>
+                <button class="navbar__avatar" aria-label="Open profile">MB</button>
+              </div>
+            </div>
+          </header>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;body</span> <span class="t-attr">class</span>=<span class="t-val">"role-officer"</span><span class="t-tag">&gt;</span>  <span class="t-comment">&lt;!-- ← only change needed --&gt;</span>
+
+<span class="t-comment">&lt;!-- nav items — add officer & admin links always: --&gt;</span>
+<span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/officer"</span>
+   <span class="t-attr">class</span>=<span class="t-val">"navbar__link navbar__link--officer navbar__item--officer"</span><span class="t-tag">&gt;</span>
+  Officer Panel
+<span class="t-tag">&lt;/a&gt;</span>
+<span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/admin"</span>
+   <span class="t-attr">class</span>=<span class="t-val">"navbar__link navbar__link--admin navbar__item--admin"</span><span class="t-tag">&gt;</span>
+  Admin Panel
+<span class="t-tag">&lt;/a&gt;</span>
+
+<span class="t-comment">&lt;!-- role badge --&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__role navbar__role--officer"</span><span class="t-tag">&gt;</span>Officer<span class="t-tag">&lt;/span&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         ADMIN NAVBAR
+    ══════════════════════════════════════════ -->
+    <section class="section" id="navbar-admin">
+      <div class="section-header">
+        <h2 class="section-title">Navbar — Admin</h2>
+        <span class="section-id">.navbar  /  body.role-admin</span>
+      </div>
+      <p class="section-desc">
+        Admins see both <strong>Officer Panel</strong> and <strong>Admin Panel</strong>.
+        The active panel link is highlighted in its own accent color (red for admin).
+        Badge reads "Admin" in dark red.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Admin Panel</strong> — active (red dot)</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--page">
+          <header class="navbar" style="position:relative;">
+            <div class="navbar__inner">
+              <a href="#" class="navbar__logo">
+                <img src="../assets/images/green-border-logo.png" alt="BarangayConnect" style="width:30px;height:30px;object-fit:contain;" />
+                <span class="navbar__logo-text">BarangayConnect</span>
+              </a>
+              <nav class="navbar__nav">
+                <a href="#" class="navbar__link">Home</a>
+                <a href="#" class="navbar__link">Community</a>
+                <a href="#" class="navbar__link">Services</a>
+                <a href="#" class="navbar__link">My Barangay</a>
+                <a href="#" class="navbar__link navbar__link--officer">Officer Panel</a>
+                <a href="#" class="navbar__link navbar__link--admin is-active">Admin Panel</a>
+              </nav>
+              <div class="navbar__actions">
+                <span class="navbar__role navbar__role--admin">Admin</span>
+                <button class="navbar__bell" aria-label="Notifications"><i data-lucide="bell"></i><span class="navbar__bell-dot"></span></button>
+                <button class="navbar__avatar" aria-label="Open profile">RC</button>
+              </div>
+            </div>
+          </header>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;body</span> <span class="t-attr">class</span>=<span class="t-val">"role-admin"</span><span class="t-tag">&gt;</span>  <span class="t-comment">&lt;!-- shows both panel links --&gt;</span>
+
+<span class="t-comment">&lt;!-- Admin Panel link active --&gt;</span>
+<span class="t-tag">&lt;a</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__link navbar__link--admin navbar__item--admin is-active"</span>
+   <span class="t-attr">href</span>=<span class="t-val">"/admin"</span><span class="t-tag">&gt;</span>Admin Panel<span class="t-tag">&lt;/a&gt;</span>
+
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"navbar__role navbar__role--admin"</span><span class="t-tag">&gt;</span>Admin<span class="t-tag">&lt;/span&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         TRANSPARENT HERO VARIANT
+    ══════════════════════════════════════════ -->
+    <section class="section" id="navbar-transparent">
+      <div class="section-header">
+        <h2 class="section-title">Navbar — Transparent (Hero)</h2>
+        <span class="section-id">.navbar--transparent</span>
+      </div>
+      <p class="section-desc">
+        Add <code>.navbar--transparent</code> when the navbar sits over a dark photo or hero section.
+        A scroll listener removes it once the user scrolls past <code>80px</code>, restoring the white bar.
+        Include the provided JS snippet once per page.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Transparent</strong> — white text, no background</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--dark-hero">
+          <header class="navbar navbar--transparent" style="position:relative;">
+            <div class="navbar__inner">
+              <a href="#" class="navbar__logo">
+                <img src="../assets/images/logo.png" alt="BarangayConnect" style="width:30px;height:30px;object-fit:contain;" />
+                <span class="navbar__logo-text" style="color:white;">BarangayConnect</span>
+              </a>
+              <nav class="navbar__nav">
+                <a href="#" class="navbar__link is-active">Home</a>
+                <a href="#" class="navbar__link">Community</a>
+                <a href="#" class="navbar__link">Services</a>
+                <a href="#" class="navbar__link">My Barangay</a>
+              </nav>
+              <div class="navbar__actions">
+                <span class="navbar__role navbar__role--resident" style="border-color:rgba(255,255,255,0.6);color:white;">Resident</span>
+                <button class="navbar__bell" aria-label="Notifications" style="color:rgba(255,255,255,0.8);"><i data-lucide="bell"></i><span class="navbar__bell-dot"></span></button>
+                <button class="navbar__avatar" aria-label="Open profile">JD</button>
+              </div>
+            </div>
+          </header>
+          <div class="hero-placeholder">↑ Navbar floats over hero content here</div>
+        </div>
+        <div class="comp-code"><pre><span class="t-comment">&lt;!-- Add class to header; JS removes it on scroll --&gt;</span>
+<span class="t-tag">&lt;header</span> <span class="t-attr">class</span>=<span class="t-val">"navbar navbar--transparent"</span> <span class="t-attr">id</span>=<span class="t-val">"mainNavbar"</span><span class="t-tag">&gt;</span>
+  ...
+<span class="t-tag">&lt;/header&gt;</span>
+
+<span class="t-comment">/* JS — paste once before &lt;/body&gt; */</span>
+(function () {
+  const nav = document.getElementById('mainNavbar');
+  if (!nav) return;
+  const THRESHOLD = 80;
+  function update() {
+    nav.classList.toggle('navbar--transparent', window.scrollY &lt; THRESHOLD);
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();</pre></div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         FOOTER
+    ══════════════════════════════════════════ -->
+    <section class="section" id="footer-default">
+      <div class="section-header">
+        <h2 class="section-title">Site Footer</h2>
+        <span class="section-id">.site-footer</span>
+      </div>
+      <p class="section-desc">
+        A simple dark-gray footer. Logo is inverted white. The tagline shows the barangay name and copyright year.
+        Update the barangay name and the year dynamically via JS if needed.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Default footer</strong> — dark gray</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--footer">
+          <footer class="site-footer">
+            <div class="site-footer__inner">
+              <div class="site-footer__brand">
+                <div class="site-footer__brand-logo">
+                  <img src="../assets/images/logo.png" alt="BarangayConnect" style="width:30px;height:30px;object-fit:contain;" />
+                  <span class="site-footer__logo-text">BarangayConnect</span>
+                </div>
+                <p class="site-footer__tagline">Barangay Bancod, Indang, Cavite &copy; 2026</p>
+              </div>
+              <nav class="site-footer__links" aria-label="Footer navigation">
+                <a href="#" class="site-footer__link">Privacy Policy</a>
+                <a href="#" class="site-footer__link">Terms of Use</a>
+                <a href="#" class="site-footer__link">Contact Us</a>
+                <a href="#" class="site-footer__link">Sitemap</a>
+              </nav>
+            </div>
+          </footer>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;footer</span> <span class="t-attr">class</span>=<span class="t-val">"site-footer"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"site-footer__inner"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"site-footer__brand"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"site-footer__brand-logo"</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;img</span> <span class="t-attr">src</span>=<span class="t-val">"assets/images/logo.png"</span> <span class="t-attr">alt</span>=<span class="t-val">"BarangayConnect"</span> <span class="t-attr">class</span>=<span class="t-val">"site-footer__logo-img"</span> <span class="t-tag">/&gt;</span>
+        <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"site-footer__logo-text"</span><span class="t-tag">&gt;</span>BarangayConnect<span class="t-tag">&lt;/span&gt;</span>
+      <span class="t-tag">&lt;/div&gt;</span>
+      <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"site-footer__tagline"</span><span class="t-tag">&gt;</span>Barangay Bancod, Indang, Cavite &amp;copy; 2026<span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;nav</span> <span class="t-attr">class</span>=<span class="t-val">"site-footer__links"</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Footer navigation"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/privacy"</span>  <span class="t-attr">class</span>=<span class="t-val">"site-footer__link"</span><span class="t-tag">&gt;</span>Privacy Policy<span class="t-tag">&lt;/a&gt;</span>
+      <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/terms"</span>    <span class="t-attr">class</span>=<span class="t-val">"site-footer__link"</span><span class="t-tag">&gt;</span>Terms of Use<span class="t-tag">&lt;/a&gt;</span>
+      <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/contact"</span>  <span class="t-attr">class</span>=<span class="t-val">"site-footer__link"</span><span class="t-tag">&gt;</span>Contact Us<span class="t-tag">&lt;/a&gt;</span>
+      <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/sitemap"</span>  <span class="t-attr">class</span>=<span class="t-val">"site-footer__link"</span><span class="t-tag">&gt;</span>Sitemap<span class="t-tag">&lt;/a&gt;</span>
+    <span class="t-tag">&lt;/nav&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/footer&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         API / CLASS REFERENCE
+    ══════════════════════════════════════════ -->
+    <section class="section" id="api">
+      <div class="section-header">
+        <h2 class="section-title">Class Reference</h2>
+        <span class="section-id">props &amp; modifiers</span>
+      </div>
+
+      <p class="section-desc" style="margin-bottom:16px;">Navbar classes</p>
+      <table class="prop-table">
+        <thead><tr><th>Class</th><th>Applied to</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>.navbar</td><td>&lt;header&gt;</td><td>Base sticky navbar, white bg, shadow</td></tr>
+          <tr><td>.navbar--transparent</td><td>&lt;header&gt;</td><td>Clear bg + white text for hero sections</td></tr>
+          <tr><td>.navbar__link.is-active</td><td>&lt;a&gt;</td><td>Green color + orange dot indicator below</td></tr>
+          <tr><td>.navbar__link--officer</td><td>&lt;a&gt;</td><td>Orange color for Officer Panel link</td></tr>
+          <tr><td>.navbar__link--admin</td><td>&lt;a&gt;</td><td>Dark red color for Admin Panel link</td></tr>
+          <tr><td>.navbar__item--officer</td><td>&lt;a&gt;</td><td>Hidden unless body.role-officer / .role-admin</td></tr>
+          <tr><td>.navbar__item--admin</td><td>&lt;a&gt;</td><td>Hidden unless body.role-admin</td></tr>
+          <tr><td>.navbar__role--resident</td><td>&lt;span&gt;</td><td>Green outlined role badge</td></tr>
+          <tr><td>.navbar__role--officer</td><td>&lt;span&gt;</td><td>Orange outlined role badge</td></tr>
+          <tr><td>.navbar__role--admin</td><td>&lt;span&gt;</td><td>Dark red outlined role badge</td></tr>
+          <tr><td>.navbar__bell-dot</td><td>&lt;span&gt;</td><td>Orange unread dot on bell — remove when clear</td></tr>
+        </tbody>
+      </table>
+
+      <p class="section-desc" style="margin-bottom:16px;">Body role classes</p>
+      <table class="prop-table">
+        <thead><tr><th>Body class</th><th>Officer Panel visible</th><th>Admin Panel visible</th></tr></thead>
+        <tbody>
+          <tr><td>role-resident</td><td>No</td><td>No</td></tr>
+          <tr><td>role-officer</td><td>Yes</td><td>No</td></tr>
+          <tr><td>role-admin</td><td>Yes</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════
+         JS SNIPPETS
+    ══════════════════════════════════════════ -->
+    <section class="section" id="js">
+      <div class="section-header">
+        <h2 class="section-title">JS Snippets</h2>
+        <span class="section-id">copy-paste into your page</span>
+      </div>
+      <p class="section-desc">
+        These snippets are self-contained and can be pasted just before <code>&lt;/body&gt;</code>
+        on any page using the navbar. The role-setter is typically called after Firebase Auth
+        resolves the user's Firestore document.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Full navbar JS</strong> — transparent scroll + active link + mobile drawer</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-code"><pre><span class="t-comment">/* ── Navbar JS — paste once before &lt;/body&gt; on every page ─────────────── */</span>
+(function () {
+  'use strict';
+
+  const nav       = document.getElementById('mainNavbar');
+  const hamburger = document.querySelector('.navbar__hamburger');
+  const drawer    = document.querySelector('.navbar__mobile-drawer');
+  const links     = document.querySelectorAll('.navbar__link');
+
+  <span class="t-comment">/* 1. Transparent on scroll */</span>
+  if (nav && nav.classList.contains('navbar--transparent')) {
+    const THRESHOLD = 80;
+    function updateTransparency() {
+      nav.classList.toggle('navbar--transparent', window.scrollY &lt; THRESHOLD);
+    }
+    window.addEventListener('scroll', updateTransparency, { passive: true });
+    updateTransparency();
+  }
+
+  <span class="t-comment">/* 2. Active link — marks current page */</span>
+  const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+  links.forEach(link =&gt; {
+    const href = link.getAttribute('href').replace(/\/$/, '') || '/';
+    if (href === currentPath) link.classList.add('is-active');
+  });
+
+  <span class="t-comment">/* 3. Mobile drawer toggle */</span>
+  if (hamburger && drawer) {
+    hamburger.addEventListener('click', () =&gt; {
+      const open = drawer.classList.toggle('is-open');
+      hamburger.setAttribute('aria-expanded', String(open));
+    });
+    document.addEventListener('click', e =&gt; {
+      if (!nav.contains(e.target)) drawer.classList.remove('is-open');
+    });
+  }
+
+  <span class="t-comment">/* 4. Set role class — call after auth resolves */</span>
+  window.setNavRole = function (role) {
+    document.body.classList.remove('role-resident', 'role-officer', 'role-admin');
+    document.body.classList.add('role-' + role);
+    const badge = document.querySelector('.navbar__role');
+    if (badge) {
+      badge.className = 'navbar__role navbar__role--' + role;
+      badge.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+    }
+  };
+})();</pre></div>
+      </div>
+    </section>
+
+  </div><!-- /sections -->
+</main><!-- /main -->
+
+
+<script>
+  lucide.createIcons();
+
+  /* ── Copy code ── */
+  function copyCode(btn) {
+    const pre = btn.closest('.comp-block').querySelector('.comp-code pre');
+    if (!pre) return;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.classList.add('copied');
+      btn.innerHTML = '<i data-lucide="check"></i> Copied!';
+      lucide.createIcons();
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = '<i data-lucide="copy"></i> Copy';
+        lucide.createIcons();
+      }, 2000);
+    });
+  }
+
+  /* ── Sidebar active link on scroll (FIXED) ── */
+  const sections = document.querySelectorAll('.section[id]');
+  const sidebarLinks = document.querySelectorAll('.sidebar-link[href^="#"]');
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        sidebarLinks.forEach(l => {
+          if (l.getAttribute('href').startsWith('#')) l.classList.remove('is-active');
+        });
+        const a = document.querySelector(`.sidebar-link[href="#${e.target.id}"]`);
+        if (a) a.classList.add('is-active');
+      }
+    });
+  }, { threshold: 0, rootMargin: '-80px 0px -40% 0px' });
+
+  sections.forEach(s => obs.observe(s));
+</script>
+
+</body>
+</html>

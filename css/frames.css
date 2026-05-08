@@ -1,0 +1,2378 @@
+/* ================================================================
+   frames.css — BarangayConnect
+   Layout-level containers and composite UI frames.
+   Import AFTER components.css on every page that uses them.
+   CSS custom properties live in main.css — do NOT redeclare :root here.
+
+   WHAT IS IN HERE:
+     Composite UI frames that combine structure + image + content —
+     pet cards, post cards, modals, drawers, calendar, panels.
+     Think of these as "assembled UI sections".
+
+   WHAT IS NOT IN HERE:
+     · Atomic badges / tags / pills   → components.css
+     · Buttons / toggles              → buttons.css
+     · Form inputs / navbar / footer  → main.css
+
+   REQUIRED IMPORT ORDER:
+     <link rel="stylesheet" href="css/main.css" />
+     <link rel="stylesheet" href="css/buttons.css" />
+     <link rel="stylesheet" href="css/components.css" />
+     <link rel="stylesheet" href="css/frames.css" />
+
+   QUICK REFERENCE:
+     ── Cards ────────────────────────────────────────────────────────
+     Pet card         → .pet-card + .pet-card__img-wrap / __body / __name / __meta
+     Pet status badge → .pet-status .pet-status--missing / --adoption / --found
+     Program card     → .program-card + .program-card__icon--green / --orange / etc.
+     Event image card → .event-img-card + .event-img-card__tag
+     Doc request card → .doc-card + .doc-card__icon / __name / __fee / __free
+     ── Posts / Feed ─────────────────────────────────────────────────
+     Bulletin row     → .post-row / .post-row--accented.post-row--green/orange/red/blue
+     Featured post    → .post-featured
+     ── Modal System ─────────────────────────────────────────────────
+     Backdrop         → .modal-overlay.is-open > .modal
+     Modal header     → .modal__header .modal__header--green / --red
+     Modal info strip → .modal__info-strip
+     Modal body       → .modal__body
+     Modal footer     → .modal__footer
+     Close button     → .modal__close (use with .btn--close from buttons.css)
+     Confirm modal    → .modal--confirm (.modal--confirm-warning for orange)
+     JS open/close    → openModal('id') / closeModal('id') / closeOnBackdrop(e)
+     ── Modal Internals ──────────────────────────────────────────────
+     Report type btns → .report-type-toggle + .report-type-toggle__btn--missing/adoption/found
+     Bullying grid    → .bullying-grid + .bullying-option.is-selected
+     Doc type list    → .doc-type-list + .doc-type-row
+     Anonymous toggle → .anon-toggle-row (pairs with .toggle-wrap from buttons.css)
+     Section label    → .modal-section-label
+     Char count hint  → .char-count
+     ── Calendar ─────────────────────────────────────────────────────
+     Calendar widget  → .cal + .cal__header / __nav-btn / __weekdays / __grid
+     Day states       → .cal__day .cal__day--today / --selected / --has-event / --empty
+     Event list       → .cal__events-header + .event-item.event-item--orange/red/blue
+     ── Contacts & Slots ─────────────────────────────────────────────
+     Contact row      → .contact-row + .contact-row__icon--orange/green/red/blue/gray
+     Walk-in slot     → .slot-card
+     Date slot card   → .date-slot-card.is-selected
+     ── Overlays & Panels ────────────────────────────────────────────
+     Profile drawer   → .profile-drawer.is-open + .profile-drawer-backdrop
+     Notif panel      → .notif-panel + .notif-item.notif-item--unread
+     Notif icon color → .notif-item__icon--red/green/orange/blue/gray/purple
+     Empty state      → .notif-empty
+     ── Decorative ───────────────────────────────────────────────────
+     Marquee banner   → .marquee-banner / .marquee-banner--dark
+     Marquee text     → .marquee-text / .marquee-text--solid
+   ================================================================ */
+
+
+/* ================================================================
+   1. PET STATUS OVERLAY
+   ----------------------------------------------------------------
+   Absolute badge placed on top of a pet card image.
+
+   Usage:
+     <div class="pet-card__img-wrap">
+       <img src="..." class="pet-card__img" alt="Brownie" />
+       <span class="pet-status pet-status--missing">Missing</span>
+     </div>
+   ================================================================ */
+.pet-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-extrabold);
+  white-space: nowrap;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  letter-spacing: 0.02em;
+}
+
+.pet-status--missing  { background: var(--red);        color: var(--white); }
+.pet-status--adoption { background: var(--orange);     color: var(--black); }
+.pet-status--found    { background: var(--green-dark); color: var(--white); }
+
+
+/* ================================================================
+   2. PET CARD
+   ----------------------------------------------------------------
+   Full-bleed image card with status overlay, pet details,
+   and a contact/location action at the bottom.
+
+   Usage:
+     <div class="pet-card">
+       <div class="pet-card__img-wrap">
+         <img src="..." class="pet-card__img" alt="..." />
+         <span class="pet-status pet-status--missing">Missing</span>
+       </div>
+       <div class="pet-card__body">
+         <h3 class="pet-card__name">Brownie</h3>
+         <p class="pet-card__meta">Dog · Male · 2 years</p>
+         <p class="pet-card__desc">Brown Aspin, last seen near Rizal Street.</p>
+         <button class="btn btn--green btn--full btn--sm">
+           <i data-lucide="phone"></i> Contact Owner
+         </button>
+       </div>
+     </div>
+   ================================================================ */
+.pet-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--gray-100);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.pet-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.pet-card__img-wrap {
+  position: relative;
+  width: 100%;
+  padding-top: 72%;
+  overflow: hidden;
+  background: var(--gray-100);
+}
+
+.pet-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.pet-card:hover .pet-card__img { transform: scale(1.04); }
+
+.pet-card__body {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.pet-card__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-lg);
+  color: var(--text-dark);
+  line-height: var(--lh-tight);
+}
+
+.pet-card__meta {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--gray-400);
+}
+
+.pet-card__desc {
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  line-height: var(--lh-normal);
+  flex: 1;
+  margin-bottom: 4px;
+}
+
+
+/* ================================================================
+   3. MODAL / OVERLAY SYSTEM
+   ----------------------------------------------------------------
+   Fullscreen backdrop + centered modal card.
+   Toggle .is-open on .modal-overlay via JS.
+   Modal headers come in --green (community) and --red (alert).
+
+   JS to open/close:
+     document.getElementById('myModal').classList.toggle('is-open');
+
+   Usage:
+     <div class="modal-overlay" id="petModal">
+       <div class="modal">
+         <div class="modal__header modal__header--green">
+           <div class="modal__header-icon">
+             <i data-lucide="paw-print"></i>
+           </div>
+           <div class="modal__header-content">
+             <p class="modal__header-label">Community Pet Board</p>
+             <h2 class="modal__header-title">Post a Pet Report</h2>
+             <p class="modal__header-sub">Report a missing pet or one up for adoption</p>
+           </div>
+           <button class="btn btn--close btn--sm modal__close" aria-label="Close">
+             <i data-lucide="x"></i>
+           </button>
+         </div>
+         <div class="modal__body">
+           ...form content...
+         </div>
+         <div class="modal__footer">
+           <button class="btn btn--outline">Cancel</button>
+           <button class="btn btn--orange btn--full">
+             <i data-lucide="paw-print"></i> Post Pet Report
+           </button>
+         </div>
+       </div>
+     </div>
+   ================================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-black-55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: var(--space-md);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+  overflow-y: auto;
+}
+
+.modal-overlay.is-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  animation: modalSlideIn 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+  position: relative;
+}
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* ---- Modal Header ---- */
+.modal__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-xl);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.modal__header--green { background: var(--green-dark); color: var(--white); }
+.modal__header--red   { background: var(--red-dark);  color: var(--white); }
+
+/* Decorative blobs */
+.modal__header::before,
+.modal__header::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: var(--overlay-white-07);
+  pointer-events: none;
+}
+.modal__header::before { width: 120px; height: 120px; right: -30px; top: -40px; }
+.modal__header::after  { width: 80px;  height: 80px;  right: 60px;  bottom: -30px; }
+
+.modal__header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--overlay-white-15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.modal__header-icon [data-lucide],
+.modal__header-icon svg { width: 22px; height: 22px; color: var(--white); stroke-width: 2; }
+
+.modal__header-content {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.modal__header-label {
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--overlay-white-55);
+  margin-bottom: 3px;
+}
+
+.modal__header-title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-xl);
+  line-height: var(--lh-tight);
+  color: var(--white);
+}
+
+.modal__header-sub {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.60);
+  margin-top: 4px;
+  line-height: var(--lh-snug);
+}
+
+/* Close button override inside modal header */
+.modal__close {
+  position: absolute !important;
+  top: var(--space-md) !important;
+  right: var(--space-md) !important;
+  background: var(--overlay-white-15) !important;
+  color: var(--white) !important;
+  z-index: 2;
+  border: none !important;
+}
+.modal__close:hover { background: var(--overlay-white-25) !important; }
+
+/* ---- Modal Info Strip (below header) ---- */
+.modal__info-strip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-100);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+/* ---- Modal Body ---- */
+.modal__body {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ---- Modal Footer ---- */
+.modal__footer {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-xl) var(--space-xl);
+  flex-shrink: 0;
+  border-top: 1px solid var(--gray-100);
+}
+
+
+/* ================================================================
+   4. REPORT TYPE TOGGLE
+   ----------------------------------------------------------------
+   Two-button radio-style toggle used in the Pet Report modal.
+
+   Usage:
+     <div class="report-type-toggle">
+       <button class="btn report-type-toggle__btn report-type-toggle__btn--missing is-active">
+         Missing
+       </button>
+       <button class="btn report-type-toggle__btn report-type-toggle__btn--adoption">
+         For Adoption
+       </button>
+     </div>
+   ================================================================ */
+.report-type-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.report-type-toggle__btn {
+  border-radius: var(--radius-md) !important;
+  border: 1.5px solid var(--gray-200) !important;
+  background: var(--white) !important;
+  color: var(--gray-500) !important;
+  font-weight: var(--fw-bold);
+  justify-content: center;
+  padding: 10px 16px;
+  transition: all var(--transition);
+}
+
+.report-type-toggle__btn--missing.is-active  {
+  background: var(--red) !important;
+  color: var(--white) !important;
+  border-color: var(--red) !important;
+}
+
+.report-type-toggle__btn--adoption.is-active {
+  background: var(--orange) !important;
+  color: var(--black) !important;
+  border-color: var(--orange) !important;
+}
+
+.report-type-toggle__btn--found.is-active {
+  background: var(--green-dark) !important;
+  color: var(--white) !important;
+  border-color: var(--green-dark) !important;
+}
+
+
+/* ================================================================
+   5. BULLYING TYPE SELECTOR GRID
+   ----------------------------------------------------------------
+   2-column grid of clickable option cards. Used in the
+   anti-bullying report modal.
+
+   Usage:
+     <div class="bullying-grid">
+       <button class="bullying-option is-selected">
+         <span class="bullying-option__title">Physical Bullying</span>
+         <span class="bullying-option__sub">Hitting, pushing, or physical harm</span>
+       </button>
+       ...
+     </div>
+   ================================================================ */
+.bullying-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.bullying-option {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--transition), background var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bullying-option:hover { border-color: #fecaca; background: #fff8f8; }
+
+.bullying-option.is-selected {
+  background: #fff0f0;
+  border-color: var(--red);
+}
+
+.bullying-option__title {
+  font-family: var(--font-display);
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-bold);
+  color: var(--text-dark);
+  line-height: var(--lh-snug);
+}
+
+.bullying-option__sub {
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  line-height: var(--lh-snug);
+}
+
+/* Char count hint */
+.char-count {
+  font-size: var(--text-xs);
+  color: var(--gray-400);
+  text-align: right;
+  font-family: var(--font-display);
+}
+
+
+/* ================================================================
+   6. BULLETIN BOARD POST ROWS
+   ----------------------------------------------------------------
+   Compact post rows for the bulletin/news feed.
+   .post-row—accented adds a left color stripe.
+
+   Usage (compact):
+     <div class="post-row">
+       <div class="post-row__tags">
+         <span class="tag tag--green">Health</span>
+         <span class="post-row__time">2 hours ago</span>
+       </div>
+       <h3 class="post-row__title">Free Medical Mission...</h3>
+       <p class="post-row__excerpt">Free check-ups, dental services...</p>
+       <div class="post-row__footer">
+         <div class="post-row__avatar-wrap">
+           <img src="..." class="post-row__avatar" alt="..." />
+         </div>
+         <span class="post-row__author">Brgy. Health Center</span>
+         <div class="reaction-bar" style="margin-left:auto">...</div>
+       </div>
+     </div>
+
+   Usage (accented):
+     <div class="post-row post-row--accented post-row--amber">
+       ...same structure...
+     </div>
+   ================================================================ */
+.post-row {
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--gray-100);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.post-row:last-child { border-bottom: none; }
+
+/* Left accent stripe variants */
+.post-row--accented {
+  padding-left: var(--space-md);
+  border-left: 3.5px solid var(--gray-300);
+  border-bottom: none;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: var(--space-md);
+}
+.post-row--accented.post-row--green  { border-left-color: var(--green-dark); }
+.post-row--accented.post-row--orange { border-left-color: var(--orange); }
+.post-row--accented.post-row--red    { border-left-color: var(--red); }
+.post-row--accented.post-row--blue   { border-left-color: #3b82f6; }
+
+.post-row__tags {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.post-row__time {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+  font-weight: var(--fw-medium);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.post-row__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  line-height: var(--lh-snug);
+}
+
+.post-row__excerpt {
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  line-height: var(--lh-normal)5;
+}
+
+.post-row__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: 2px;
+}
+
+.post-row__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--gray-200);
+  border: 1.5px solid var(--gray-100);
+}
+
+.post-row__author {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-700);
+  font-family: var(--font-display);
+}
+
+
+/* ================================================================
+   7. FEATURED POST CARD
+   ----------------------------------------------------------------
+   Dark green hero card for pinned/featured announcements.
+
+   Usage:
+     <div class="post-featured">
+       <span class="badge-featured">
+         <span class="badge-featured__label">Featured</span>
+         <span class="badge-featured__sep">·</span>
+         <span class="badge-featured__category">Health</span>
+       </span>
+       <h2 class="post-featured__title">Free Medical Mission this Saturday...</h2>
+       <p class="post-featured__body">Free check-ups, dental services...</p>
+       <div class="post-featured__footer">
+         <img class="post-featured__avatar" src="..." alt="..." />
+         <div class="post-featured__author">
+           <span class="post-featured__author-name">Barangay Health Center</span>
+           <span class="post-featured__author-time">2 hours ago</span>
+         </div>
+         <span class="post-featured__replies">
+           <i data-lucide="message-circle"></i> 14 replies
+         </span>
+       </div>
+     </div>
+   ================================================================ */
+.post-featured {
+  background: var(--green-dark);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.post-featured::before {
+  content: '';
+  position: absolute;
+  right: -50px;
+  top: -50px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: var(--overlay-white-05);
+  pointer-events: none;
+}
+
+.post-featured::after {
+  content: '';
+  position: absolute;
+  right: 60px;
+  bottom: -60px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: var(--overlay-white-04);
+  pointer-events: none;
+}
+
+.post-featured__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: clamp(1.2rem, 3vw, 1.65rem);
+  color: var(--white);
+  line-height: var(--lh-tight)8;
+  letter-spacing: -0.025em;
+  position: relative;
+  z-index: 1;
+}
+
+.post-featured__body {
+  font-size: var(--text-base);
+  color: rgba(255,255,255,0.72);
+  line-height: var(--lh-relaxed)5;
+  position: relative;
+  z-index: 1;
+}
+
+.post-featured__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--overlay-white-12);
+  margin-top: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.post-featured__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--overlay-white-20);
+  flex-shrink: 0;
+  border: 2px solid var(--overlay-white-20);
+}
+
+.post-featured__author {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.post-featured__author-name {
+  font-family: var(--font-display);
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-bold);
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-featured__author-time {
+  font-size: var(--text-xs);
+  color: rgba(255,255,255,0.48);
+}
+
+.post-featured__replies {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.58);
+  font-weight: var(--fw-medium);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.post-featured__replies [data-lucide],
+.post-featured__replies svg { width: 14px; height: 14px; }
+
+
+/* ================================================================
+   8. CALENDAR WIDGET
+   ----------------------------------------------------------------
+   Month view calendar with event dot indicators.
+   Controlled by JS (prev/next month, click to select).
+
+   Usage:
+     <div class="cal">
+       <div class="cal__header">
+         <span class="cal__month">June 2025</span>
+         <div class="cal__nav">
+           <button class="cal__nav-btn"><i data-lucide="chevron-left"></i></button>
+           <button class="cal__nav-btn"><i data-lucide="chevron-right"></i></button>
+         </div>
+       </div>
+       <div class="cal__weekdays">
+         <span>Sun</span><span>Mon</span>...
+       </div>
+       <div class="cal__grid">
+         <button class="cal__day cal__day--empty"></button>
+         <button class="cal__day">1</button>
+         <button class="cal__day cal__day--has-event">8</button>
+         <button class="cal__day cal__day--today">12</button>
+         <button class="cal__day cal__day--selected">15</button>
+       </div>
+     </div>
+   ================================================================ */
+.cal {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-100);
+  width: 100%;
+}
+
+.cal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.cal__month {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: 1rem;
+  color: var(--text-dark);
+  letter-spacing: -0.02em;
+}
+
+.cal__nav { display: flex; gap: 4px; }
+
+.cal__nav-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+  color: var(--gray-500);
+}
+.cal__nav-btn [data-lucide], .cal__nav-btn svg { width: 14px; height: 14px; stroke-width: 2.5; }
+.cal__nav-btn:hover { background: var(--gray-100); border-color: var(--gray-400); color: var(--text-dark); }
+
+.cal__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 6px;
+}
+
+.cal__weekdays span {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  color: var(--gray-400);
+  padding: 4px 0;
+  letter-spacing: 0.02em;
+}
+
+.cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cal__day {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.cal__day:hover:not(.cal__day--empty) { background: var(--gray-100); }
+.cal__day--empty { pointer-events: none; opacity: 0; }
+
+.cal__day--other-month { color: var(--gray-300); }
+
+.cal__day--today {
+  background: var(--green-dark);
+  color: var(--white);
+  font-weight: var(--fw-black);
+}
+.cal__day--today:hover { background: var(--green-hover); }
+
+.cal__day--selected:not(.cal__day--today) {
+  background: var(--alpha-green-12);
+  color: var(--green-dark);
+  font-weight: var(--fw-extrabold);
+}
+
+/* Event dot */
+.cal__day--has-event::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+.cal__day--today.cal__day--has-event::after {
+  background: var(--overlay-white-75);
+}
+
+
+/* ================================================================
+   9. EVENT ITEM
+   ----------------------------------------------------------------
+   Event listing card shown below the calendar.
+
+   Usage:
+     <div class="cal__events-header">Events on June 12</div>
+     <div class="event-item">
+       <div class="event-item__accent"></div>
+       <div class="event-item__body">
+         <h3 class="event-item__title">Free Medical Mission</h3>
+         <p class="event-item__meta">
+           <i data-lucide="clock"></i> 7:00 AM – 5:00 PM
+         </p>
+         <p class="event-item__meta">
+           <i data-lucide="map-pin"></i> Barangay Hall
+         </p>
+       </div>
+       <button class="btn btn--orange btn--sm">RSVP Now</button>
+     </div>
+   ================================================================ */
+.cal__events-header {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  margin-bottom: var(--space-md);
+}
+
+.event-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-100);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow var(--transition);
+}
+
+.event-item:hover { box-shadow: var(--shadow-md); }
+
+.event-item__accent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--green-dark);
+  border-radius: 4px 0 0 4px;
+}
+
+/* Color accent variants */
+.event-item--orange .event-item__accent { background: var(--orange); }
+.event-item--red    .event-item__accent { background: var(--red); }
+.event-item--blue   .event-item__accent { background: #3b82f6; }
+
+.event-item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.event-item__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  line-height: var(--lh-tight);
+}
+
+.event-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  font-weight: var(--fw-medium);
+}
+.event-item__meta [data-lucide],
+.event-item__meta svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+
+/* ================================================================
+   10. CONTACT ROW
+   ----------------------------------------------------------------
+   Used for Emergency Contacts and Local Services Directory.
+   Icon bg color communicates category.
+
+   Emergency:
+     <div class="contact-row">
+       <div class="contact-row__icon contact-row__icon--orange">
+         <i data-lucide="shield"></i>
+       </div>
+       <div class="contact-row__body">
+         <span class="contact-row__name">Brgy. Tanod Command Post</span>
+         <span class="contact-row__sub">Peace & Order</span>
+         <a href="tel:028123456" class="contact-row__phone">(02) 8123-4567</a>
+       </div>
+       <button class="btn btn--call btn--sm"><i data-lucide="phone"></i> Call</button>
+     </div>
+
+   Service Directory:
+     <div class="contact-row">
+       <div class="contact-row__icon contact-row__icon--green">
+         <i data-lucide="droplets"></i>
+       </div>
+       <div class="contact-row__body">
+         <span class="contact-row__name">Mang Tony's Plumbing</span>
+         <a href="tel:09171234567" class="contact-row__phone">0917-123-4567</a>
+         <span class="contact-row__rating">★ 4.8</span>
+       </div>
+       <button class="btn btn--call-circle" aria-label="Call">
+         <i data-lucide="phone-call"></i>
+       </button>
+     </div>
+   ================================================================ */
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-100);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
+}
+
+.contact-row:hover { box-shadow: var(--shadow-md); }
+
+.contact-row__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.contact-row__icon [data-lucide], .contact-row__icon svg { width: 20px; height: 20px; }
+
+.contact-row__icon--orange { background: var(--orange); color: var(--black); }
+.contact-row__icon--green  { background: var(--green-dark); color: var(--white); }
+.contact-row__icon--red    { background: var(--red); color: var(--white); }
+.contact-row__icon--blue   { background: #2563eb; color: var(--white); }
+.contact-row__icon--gray   { background: var(--gray-700); color: var(--white); }
+
+.contact-row__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contact-row__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contact-row__sub {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-medium);
+  color: var(--gray-400);
+}
+
+.contact-row__phone {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--orange-hover);
+  font-family: var(--font-display);
+  text-decoration: none;
+}
+.contact-row__phone:hover { text-decoration: underline; }
+
+.contact-row__rating {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  color: #f59e0b;
+}
+
+
+/* ================================================================
+   11. DOCUMENT REQUEST CARD
+   ----------------------------------------------------------------
+   Card shown in the document request grid section.
+
+   Usage:
+     <div class="doc-card">
+       <div class="doc-card__icon">
+         <i data-lucide="file-text"></i>
+       </div>
+       <h3 class="doc-card__name">Barangay Clearance</h3>
+       <p class="doc-card__desc">General purpose clearance for employment.</p>
+       <div class="doc-card__badges">
+         <span class="badge badge--inprogress">1–2 business days</span>
+         <span class="doc-card__fee">₱50.00</span>
+       </div>
+       <button class="btn btn--green btn--full btn--sm">Request</button>
+     </div>
+   ================================================================ */
+.doc-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  border: 1px solid var(--gray-100);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  transition: box-shadow var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.doc-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--gray-200);
+  transform: translateY(-1px);
+}
+
+.doc-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--alpha-green-10);
+  color: var(--green-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+.doc-card__icon [data-lucide], .doc-card__icon svg { width: 22px; height: 22px; stroke-width: 2; }
+
+.doc-card__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  line-height: var(--lh-tight)5;
+}
+
+.doc-card__desc {
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  line-height: var(--lh-normal)5;
+  flex: 1;
+}
+
+.doc-card__badges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.doc-card__fee {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  color: var(--green-dark);
+}
+
+/* Free badge */
+.doc-card__free {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  color: #065f46;
+  background: #d1fae5;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+
+/* ================================================================
+   12. DOCUMENT TYPE LIST ROW  (inside modal)
+   ----------------------------------------------------------------
+   Selectable row used in the "Select a Document Type" modal.
+
+   Usage:
+     <div class="doc-type-list">
+       <button class="doc-type-row">
+         <div class="doc-type-row__icon"><i data-lucide="file-text"></i></div>
+         <div class="doc-type-row__body">
+           <span class="doc-type-row__name">Barangay Clearance</span>
+           <span class="doc-type-row__meta">1–2 business days · ₱50.00</span>
+         </div>
+         <span class="doc-type-row__chevron"><i data-lucide="chevron-right"></i></span>
+       </button>
+       ...
+     </div>
+   ================================================================ */
+.doc-type-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.doc-type-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-sm);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.doc-type-row:last-child { border-bottom: none; }
+.doc-type-row:hover { background: var(--gray-50); }
+
+.doc-type-row__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--green-dark);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.doc-type-row__icon [data-lucide], .doc-type-row__icon svg { width: 18px; height: 18px; }
+
+.doc-type-row__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.doc-type-row__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+}
+
+.doc-type-row__meta {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+}
+
+.doc-type-row__chevron {
+  color: var(--gray-300);
+  flex-shrink: 0;
+}
+.doc-type-row__chevron [data-lucide],
+.doc-type-row__chevron svg { width: 16px; height: 16px; stroke-width: 2.5; }
+
+
+/* ================================================================
+   13. SLOT CARDS
+   ----------------------------------------------------------------
+   Small cards showing walk-in availability for a service.
+
+   Walk-in slot:
+     <div class="slot-card">
+       <div class="slot-card__icon"><i data-lucide="file-text"></i></div>
+       <div class="slot-card__body">
+         <span class="slot-card__name">Barangay Clearance</span>
+         <span class="slot-card__sub">Walk-in assistance for clearance documents</span>
+         <span class="slot-card__avail">● 8 slots available today</span>
+       </div>
+     </div>
+
+   Date slot:
+     <button class="date-slot-card is-selected">
+       <i class="date-slot-card__icon" data-lucide="calendar"></i>
+       <div class="date-slot-card__body">
+         <span class="date-slot-card__date">June 13, Friday</span>
+         <span class="date-slot-card__slots">● 12 slots available</span>
+       </div>
+     </button>
+   ================================================================ */
+.slot-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-100);
+  box-shadow: var(--shadow-sm);
+}
+
+.slot-card__icon {
+  color: var(--green-dark);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.slot-card__icon [data-lucide], .slot-card__icon svg { width: 22px; height: 22px; }
+
+.slot-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.slot-card__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+}
+
+.slot-card__sub {
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  line-height: var(--lh-snug);
+}
+
+.slot-card__avail {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  color: var(--green-dark);
+  margin-top: 2px;
+}
+
+/* Date slot card (clickable) */
+.date-slot-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--gray-200);
+  cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+  width: 100%;
+  text-align: left;
+}
+
+.date-slot-card:hover { border-color: var(--gray-400); box-shadow: var(--shadow-sm); }
+
+.date-slot-card.is-selected {
+  border-color: var(--green-dark);
+  background: var(--alpha-green-04);
+  box-shadow: 0 0 0 3px var(--alpha-green-08);
+}
+
+.date-slot-card__icon {
+  color: var(--green-dark);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.date-slot-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.date-slot-card__date {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base-sm);
+  color: var(--text-dark);
+}
+
+.date-slot-card__slots {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--green-dark);
+}
+
+
+/* ================================================================
+   14. MODAL FORM SECTION LABEL
+   ----------------------------------------------------------------
+   Reusable heading inside modal bodies.
+
+   Usage:
+     <p class="modal-section-label">Bullying Type *</p>
+   ================================================================ */
+.modal-section-label {
+  font-family: var(--font-display);
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-bold);
+  color: var(--text-dark);
+  margin-bottom: -4px;
+}
+
+/* Anonymous toggle row */
+.anon-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--alpha-red-dark-08);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--alpha-red-dark-15);
+}
+
+.anon-toggle-row__icon {
+  color: var(--red-dark);
+  flex-shrink: 0;
+}
+.anon-toggle-row__icon [data-lucide], .anon-toggle-row__icon svg { width: 18px; height: 18px; }
+
+.anon-toggle-row__body { flex: 1; min-width: 0; }
+
+.anon-toggle-row__title {
+  font-family: var(--font-display);
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-bold);
+  color: var(--text-dark);
+}
+
+.anon-toggle-row__sub {
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  margin-top: 1px;
+}
+
+
+/* ================================================================
+   15. CONFIRM MODAL  (Sign Out, Delete, etc.)
+   ----------------------------------------------------------------
+   A small, neutral centered modal for destructive confirmations.
+   No colored header — just an icon, title, body text, and
+   two-button footer. Pair with the base .modal-overlay system.
+
+   Usage:
+     <div class="modal-overlay" id="signoutModal" onclick="closeOnBackdrop(event)">
+       <div class="modal modal--confirm">
+         <div class="modal-confirm__icon">
+           <i data-lucide="triangle-alert"></i>
+         </div>
+         <h2 class="modal-confirm__title">Sign out?</h2>
+         <p class="modal-confirm__body">
+           You'll be signed out of your BarangayConnect account on this device.
+         </p>
+         <div class="modal-confirm__footer">
+           <button class="btn btn--outline" onclick="closeModal('signoutModal')">Cancel</button>
+           <button class="btn btn--red btn--full">Sign Out</button>
+         </div>
+       </div>
+     </div>
+   ================================================================ */
+.modal--confirm {
+  max-width: 340px;
+  padding: var(--space-xl) var(--space-xl) var(--space-lg);
+  text-align: center;
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  overflow: visible;
+}
+
+.modal-confirm__icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #fff3f3;
+  border: 2px solid #fecaca;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+}
+.modal-confirm__icon [data-lucide],
+.modal-confirm__icon svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2;
+  color: var(--red);
+}
+
+.modal-confirm__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-xl);
+  color: var(--text-dark);
+  margin-bottom: var(--space-sm);
+  letter-spacing: -0.02em;
+}
+
+.modal-confirm__body {
+  font-size: var(--text-base-sm);
+  color: var(--gray-500);
+  line-height: var(--lh-relaxed)5;
+  margin-bottom: var(--space-xl);
+  max-width: 260px;
+}
+
+.modal-confirm__footer {
+  display: flex;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.modal-confirm__footer .btn--outline {
+  flex: 1;
+}
+
+.modal-confirm__footer .btn--red {
+  flex: 1;
+}
+
+/* Variant — orange warning (for less destructive actions) */
+.modal--confirm.modal--confirm-warning .modal-confirm__icon {
+  background: #fff8ed;
+  border-color: #fed7aa;
+}
+.modal--confirm.modal--confirm-warning .modal-confirm__icon [data-lucide],
+.modal--confirm.modal--confirm-warning .modal-confirm__icon svg {
+  color: var(--orange-hover);
+}
+
+
+/* ================================================================
+   16. PROFILE DRAWER
+   ----------------------------------------------------------------
+   Slides in from the right. Has a green user-info card at the top
+   and a vertical menu list below. Use .is-open to show/hide.
+
+   Usage:
+     <div class="profile-drawer" id="profileDrawer">
+       <div class="profile-drawer__header">
+         <button class="btn btn--close btn--sm profile-drawer__close"
+                 onclick="document.getElementById('profileDrawer').classList.remove('is-open')">
+           <i data-lucide="x"></i>
+         </button>
+         <div class="profile-drawer__avatar">JD</div>
+         <p class="profile-drawer__name">Juan Dela Cruz</p>
+         <p class="profile-drawer__role">Resident · Barangay Bancod</p>
+         <span class="profile-drawer__id">
+           <i data-lucide="id-card"></i> BRY-2024-00142
+         </span>
+       </div>
+       <nav class="profile-drawer__menu">
+         <button class="profile-drawer__item profile-drawer__item--demo">
+           <div class="profile-drawer__item-icon"><i data-lucide="shield"></i></div>
+           <div class="profile-drawer__item-body">
+             <span class="profile-drawer__item-title">[DEMO] Officer Panel</span>
+             <span class="profile-drawer__item-sub">Manage services & report</span>
+           </div>
+         </button>
+         <button class="profile-drawer__item">
+           <div class="profile-drawer__item-icon"><i data-lucide="user-pen"></i></div>
+           <div class="profile-drawer__item-body">
+             <span class="profile-drawer__item-title">Edit Profile</span>
+             <span class="profile-drawer__item-sub">Update your personal info</span>
+           </div>
+         </button>
+         <button class="profile-drawer__item profile-drawer__item--signout">
+           <div class="profile-drawer__item-icon"><i data-lucide="log-out"></i></div>
+           <div class="profile-drawer__item-body">
+             <span class="profile-drawer__item-title">Sign Out</span>
+           </div>
+         </button>
+       </nav>
+     </div>
+
+   JS:
+     document.getElementById('profileDrawer').classList.toggle('is-open');
+   ================================================================ */
+.profile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 300px;
+  max-width: 100vw;
+  background: var(--white);
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 40px rgba(0,0,0,0.16);
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.profile-drawer.is-open { transform: translateX(0); }
+
+/* Backdrop */
+.profile-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-black-45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 590;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.profile-drawer-backdrop.is-open { opacity: 1; pointer-events: all; }
+
+/* Header (green card) */
+.profile-drawer__header {
+  background: var(--green-dark);
+  padding: var(--space-xl) var(--space-lg) var(--space-lg);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.profile-drawer__header::before {
+  content: '';
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: var(--overlay-white-06);
+  right: -70px;
+  top: -70px;
+  pointer-events: none;
+}
+
+.profile-drawer__header::after {
+  content: '';
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: var(--overlay-white-04);
+  left: -40px;
+  bottom: -60px;
+  pointer-events: none;
+}
+
+.profile-drawer__close {
+  position: absolute !important;
+  top: var(--space-md) !important;
+  right: var(--space-md) !important;
+  background: var(--overlay-white-15) !important;
+  color: var(--white) !important;
+  z-index: 2;
+}
+.profile-drawer__close:hover { background: var(--overlay-white-25) !important; }
+
+.profile-drawer__avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--overlay-white-20);
+  border: 2.5px solid rgba(255,255,255,0.30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.profile-drawer__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-drawer__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-lg);
+  color: var(--white);
+  line-height: var(--lh-tight);
+  position: relative;
+  z-index: 1;
+}
+
+.profile-drawer__role {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.58);
+  margin-top: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+.profile-drawer__id {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--orange);
+  color: var(--black);
+  padding: 5px 13px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-extrabold);
+  margin-top: var(--space-sm);
+  letter-spacing: 0.03em;
+  position: relative;
+  z-index: 1;
+  width: fit-content;
+}
+.profile-drawer__id [data-lucide],
+.profile-drawer__id svg { width: 11px; height: 11px; }
+
+/* Menu */
+.profile-drawer__menu {
+  flex: 1;
+  padding: var(--space-sm) 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-drawer__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 14px var(--space-lg);
+  cursor: pointer;
+  transition: background var(--transition);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  border-bottom: 1px solid var(--gray-50);
+}
+.profile-drawer__item:last-child { border-bottom: none; }
+.profile-drawer__item:hover { background: var(--gray-50); }
+
+.profile-drawer__item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--gray-100);
+  color: var(--gray-500);
+  transition: background var(--transition);
+}
+.profile-drawer__item-icon [data-lucide],
+.profile-drawer__item-icon svg { width: 17px; height: 17px; }
+
+/* Demo role items */
+.profile-drawer__item--demo .profile-drawer__item-icon {
+  background: #fff0f0;
+  color: var(--red);
+}
+.profile-drawer__item--demo .profile-drawer__item-title { color: var(--red); }
+
+/* Sign Out */
+.profile-drawer__item--signout { margin-top: auto; }
+.profile-drawer__item--signout .profile-drawer__item-icon {
+  background: #fff0f0;
+  color: var(--red);
+}
+.profile-drawer__item--signout .profile-drawer__item-title { color: var(--red); }
+
+.profile-drawer__item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-drawer__item-title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  line-height: var(--lh-tight);
+}
+
+.profile-drawer__item-sub {
+  font-size: var(--text-xs);
+  color: var(--gray-400);
+  margin-top: 1px;
+}
+
+
+/* ================================================================
+   17. NOTIFICATION PANEL
+   ----------------------------------------------------------------
+   Dropdown panel with a dark green header, list of notification
+   items (with unread dots), dismiss buttons, and an empty state.
+
+   Usage:
+     <div class="notif-panel">
+       <div class="notif-panel__header">
+         <span class="notif-panel__icon"><i data-lucide="bell"></i></span>
+         <span class="notif-panel__title">Notifications</span>
+         <span class="notif-panel__badge">3 new</span>
+         <button class="notif-panel__close"><i data-lucide="x"></i></button>
+       </div>
+       <button class="notif-panel__clear">Clear all notifications</button>
+       <div class="notif-panel__list">
+         <div class="notif-item notif-item--unread">
+           <div class="notif-item__icon notif-item__icon--red">
+             <i data-lucide="triangle-alert"></i>
+           </div>
+           <div class="notif-item__body">
+             <p class="notif-item__title">Weather Advisory</p>
+             <p class="notif-item__desc">Typhoon Signal No.1 is in effect...</p>
+           </div>
+           <span class="notif-item__dot"></span>
+           <button class="notif-item__dismiss"><i data-lucide="x"></i></button>
+         </div>
+       </div>
+     </div>
+
+   Empty state:
+     <div class="notif-panel__list">
+       <div class="notif-empty">
+         <div class="notif-empty__icon"><i data-lucide="bell"></i></div>
+         <p class="notif-empty__title">All caught up!</p>
+         <p class="notif-empty__sub">No new notifications at the moment.</p>
+       </div>
+     </div>
+   ================================================================ */
+.notif-panel {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg), 0 0 0 1px var(--overlay-black-06);
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 540px;
+}
+
+.notif-panel__header {
+  background: var(--green-dark);
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.notif-panel__icon {
+  color: var(--overlay-white-70);
+  display: flex;
+  align-items: center;
+}
+.notif-panel__icon [data-lucide],
+.notif-panel__icon svg { width: 18px; height: 18px; }
+
+.notif-panel__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-base);
+  color: var(--white);
+  flex: 1;
+}
+
+.notif-panel__badge {
+  background: var(--orange);
+  color: var(--black);
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-extrabold);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.notif-panel__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--overlay-white-15);
+  border: none;
+  cursor: pointer;
+  color: var(--white);
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+.notif-panel__close [data-lucide],
+.notif-panel__close svg { width: 14px; height: 14px; stroke-width: 2.5; }
+.notif-panel__close:hover { background: var(--overlay-white-28); }
+
+.notif-panel__clear {
+  display: block;
+  padding: 9px var(--space-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-400);
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--gray-100);
+  cursor: pointer;
+  transition: color var(--transition);
+  font-family: var(--font-display);
+  width: 100%;
+}
+.notif-panel__clear:hover { color: var(--red); }
+
+.notif-panel__list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Individual notification item */
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: 14px var(--space-lg);
+  border-bottom: 1px solid var(--gray-100);
+  position: relative;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-item:hover { background: var(--gray-50); }
+.notif-item--unread { background: var(--alpha-green-03); }
+
+.notif-item__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.notif-item__icon [data-lucide],
+.notif-item__icon svg { width: 17px; height: 17px; }
+
+.notif-item__icon--red    { background: #fff0f0; color: var(--red); }
+.notif-item__icon--green  { background: #f0fdf4; color: var(--green-dark); }
+.notif-item__icon--orange { background: #fff8ed; color: var(--orange-hover); }
+.notif-item__icon--blue   { background: #eff6ff; color: #2563eb; }
+.notif-item__icon--gray   { background: var(--gray-100); color: var(--gray-500); }
+.notif-item__icon--purple { background: #faf5ff; color: #7c3aed; }
+
+.notif-item__body {
+  flex: 1;
+  min-width: 0;
+  padding-right: var(--space-xl);
+}
+
+.notif-item__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base-sm);
+  color: var(--text-dark);
+  line-height: var(--lh-snug);
+}
+
+.notif-item__desc {
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  line-height: var(--lh-normal);
+  margin-top: 2px;
+}
+
+/* Unread orange dot */
+.notif-item__dot {
+  position: absolute;
+  top: 18px;
+  right: 34px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--orange);
+  flex-shrink: 0;
+}
+
+/* Dismiss X button — revealed on hover */
+.notif-item__dismiss {
+  position: absolute;
+  top: 14px;
+  right: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--gray-300);
+  opacity: 0;
+  transition: opacity var(--transition), background var(--transition), color var(--transition);
+}
+.notif-item:hover .notif-item__dismiss { opacity: 1; }
+.notif-item__dismiss:hover { background: var(--gray-100); color: var(--gray-600); }
+.notif-item__dismiss [data-lucide],
+.notif-item__dismiss svg { width: 12px; height: 12px; stroke-width: 2.5; }
+
+/* Empty state */
+.notif-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px var(--space-xl);
+  gap: var(--space-sm);
+  text-align: center;
+}
+
+.notif-empty__icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-sm);
+}
+.notif-empty__icon [data-lucide],
+.notif-empty__icon svg { width: 32px; height: 32px; color: var(--gray-400); }
+
+.notif-empty__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-lg);
+  color: var(--text-dark);
+}
+
+.notif-empty__sub {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+  line-height: var(--lh-normal)5;
+  max-width: 200px;
+}
+
+
+/* ================================================================
+   18. MARQUEE TEXT BANNER
+   ----------------------------------------------------------------
+   Infinite horizontal scrolling outlined text. Great for
+   decorative section breaks or the barangay motto strip.
+   The text loops seamlessly — duplicate it twice in .marquee-track.
+   Admin-editable via JS by updating the text content.
+
+   Usage:
+     <div class="marquee-banner">
+       <div class="marquee-track">
+         <span class="marquee-text">MAGKAISA · UMUNLAD · BANCOD ·</span>
+         <span class="marquee-text" aria-hidden="true">MAGKAISA · UMUNLAD · BANCOD ·</span>
+       </div>
+     </div>
+
+   Dark variant:
+     <div class="marquee-banner marquee-banner--dark">...</div>
+
+   Slow/fast:
+     Override --marquee-duration on the element.
+     .marquee-banner { --marquee-duration: 40s; }
+   ================================================================ */
+.marquee-banner {
+  overflow: hidden;
+  white-space: nowrap;
+  padding: var(--space-md) 0;
+  background: var(--white);
+  border-top: 1px solid var(--gray-100);
+  border-bottom: 1px solid var(--gray-100);
+  position: relative;
+  --marquee-duration: 32s;
+}
+
+.marquee-track {
+  display: inline-flex;
+  animation: marquee-scroll var(--marquee-duration) linear infinite;
+  will-change: transform;
+}
+
+.marquee-banner:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-text {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: var(--lh-none);
+  color: transparent;
+  -webkit-text-stroke: 2px var(--gray-200);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  padding-right: 60px;
+  white-space: nowrap;
+  display: inline-block;
+  user-select: none;
+}
+
+/* Gradient fade edges */
+.marquee-banner::before,
+.marquee-banner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  z-index: 2;
+  pointer-events: none;
+}
+.marquee-banner::before {
+  left: 0;
+  background: linear-gradient(to right, var(--white) 0%, transparent 100%);
+}
+.marquee-banner::after {
+  right: 0;
+  background: linear-gradient(to left, var(--white) 0%, transparent 100%);
+}
+
+/* Dark green variant */
+.marquee-banner--dark {
+  background: var(--green-dark);
+  border-color: var(--green-muted);
+}
+.marquee-banner--dark .marquee-text {
+  -webkit-text-stroke: 2px rgba(255,255,255,0.14);
+}
+.marquee-banner--dark::before {
+  background: linear-gradient(to right, var(--green-dark) 0%, transparent 100%);
+}
+.marquee-banner--dark::after {
+  background: linear-gradient(to left, var(--green-dark) 0%, transparent 100%);
+}
+
+/* Filled / solid text variant (no stroke) */
+.marquee-text--solid {
+  color: var(--gray-100);
+  -webkit-text-stroke: 0;
+}
+.marquee-banner--dark .marquee-text--solid {
+  color: rgba(255,255,255,0.08);
+  -webkit-text-stroke: 0;
+}
+
+
+/* ================================================================
+   19. PROGRAM / YOUTH ZONE CARD
+   ----------------------------------------------------------------
+   Full-bleed image card for community programs, sports leagues,
+   and youth events. The icon tile floats over the image bottom edge.
+
+   Usage:
+     <div class="program-card">
+       <div class="program-card__img-wrap">
+         <img class="program-card__img" src="..." alt="Basketball League" />
+       </div>
+       <div class="program-card__body">
+         <div class="program-card__icon program-card__icon--green">
+           <i data-lucide="trophy"></i>
+         </div>
+         <h3 class="program-card__title">Basketball Summer League</h3>
+         <p class="program-card__desc">Open to youth ages 13–25. Team registration now open.</p>
+         <p class="program-card__meta">
+           <i data-lucide="clock"></i> Every Saturday · 8:00 AM
+         </p>
+         <div class="program-card__footer">
+           <span class="badge-slots"><i data-lucide="users"></i> 6 slots remaining</span>
+           <button class="btn btn--primary btn--sm">Register</button>
+         </div>
+       </div>
+     </div>
+   ================================================================ */
+.program-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--gray-100);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.program-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.program-card__img-wrap {
+  position: relative;
+  width: 100%;
+  padding-top: 58%;
+  overflow: hidden;
+  background: var(--gray-100);
+}
+
+.program-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.program-card:hover .program-card__img { transform: scale(1.04); }
+
+.program-card__body {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+/* Icon tile — floats over the image/body boundary */
+.program-card__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: calc(-23px - var(--space-md));
+  position: relative;
+  z-index: 2;
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+  margin-bottom: var(--space-sm);
+  border: 2.5px solid var(--white);
+}
+.program-card__icon [data-lucide],
+.program-card__icon svg { width: 22px; height: 22px; }
+
+.program-card__icon--green  { background: var(--green-dark); color: var(--white); }
+.program-card__icon--orange { background: var(--orange); color: var(--black); }
+.program-card__icon--red    { background: var(--red); color: var(--white); }
+.program-card__icon--blue   { background: #2563eb; color: var(--white); }
+.program-card__icon--purple { background: #7c3aed; color: var(--white); }
+
+.program-card__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-lg);
+  color: var(--text-dark);
+  line-height: var(--lh-tight)5;
+}
+
+.program-card__desc {
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  line-height: var(--lh-normal)5;
+  flex: 1;
+}
+
+.program-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  font-weight: var(--fw-medium);
+}
+.program-card__meta [data-lucide],
+.program-card__meta svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+.program-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--gray-100);
+}
+
+
+/* ================================================================
+   20. EVENT IMAGE CARD  (category tag overlay)
+   ----------------------------------------------------------------
+   Card with a full-bleed photo and a category tag pill overlaid
+   at the bottom-left of the image. Used for event listings and
+   announcement previews with photos.
+
+   Usage:
+     <div class="event-img-card">
+       <div class="event-img-card__img-wrap">
+         <img class="event-img-card__img" src="..." alt="Medical Mission" />
+         <span class="event-img-card__tag tag tag--green">
+           <i data-lucide="heart-pulse"></i> Health
+         </span>
+       </div>
+       <div class="event-img-card__body">
+         <h3 class="event-img-card__title">Free Medical Mission</h3>
+         <p class="event-img-card__meta">June 12 · 7:00 AM – 5:00 PM · Barangay Hall</p>
+       </div>
+     </div>
+   ================================================================ */
+.event-img-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-100);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.event-img-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.event-img-card__img-wrap {
+  position: relative;
+  width: 100%;
+  padding-top: 60%;
+  overflow: hidden;
+  background: var(--gray-100);
+}
+
+.event-img-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.event-img-card:hover .event-img-card__img { transform: scale(1.04); }
+
+/* Tag pill sits over the image at the bottom-left */
+.event-img-card__tag {
+  position: absolute;
+  bottom: var(--space-sm);
+  left: var(--space-sm);
+  z-index: 2;
+  /* Slightly glassy on photo */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.14);
+}
+
+.event-img-card__body {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.event-img-card__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  line-height: var(--lh-snug);
+}
+
+.event-img-card__meta {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+  font-weight: var(--fw-medium);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.event-img-card__meta [data-lucide],
+.event-img-card__meta svg { width: 12px; height: 12px; flex-shrink: 0; }

@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frames Libary</title>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/buttons.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/frames.css" />
+
+  <style>
+    :root {
+      /* Showcase-only tokens — do NOT duplicate main.css variables here */
+      --showcase-bg:      #0e1117;
+      --showcase-surface: #161b22;
+      --showcase-border:  rgba(255,255,255,0.08);
+      --showcase-text:    #e6edf3;
+      --showcase-muted:   rgba(230,237,243,0.50);
+      --sidebar-w:        240px;
+      --font-mono:        'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--showcase-bg); color: var(--showcase-text); display: flex; min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+    button { font-family: inherit; }
+    [data-lucide] { width: 18px; height: 18px; stroke-width: 2; flex-shrink: 0; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--showcase-surface);
+      border-right: 1px solid var(--showcase-border);
+      position: fixed; top: 0; left: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      overflow-y: auto; z-index: 100;
+    }
+
+    .sidebar-header { padding: 20px 20px 16px; border-bottom: 1px solid var(--showcase-border); }
+
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 800; font-size: 0.95rem; color: var(--showcase-text); }
+    .sidebar-logo-icon { width: 30px; height: 30px; background: var(--green-dark); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .sidebar-logo-icon [data-lucide] { width: 16px; height: 16px; color: white; }
+    .sidebar-tag { margin-top: 6px; font-size: 0.68rem; font-weight: 700; color: var(--showcase-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    .sidebar-nav { padding: 12px; flex: 1; }
+    .sidebar-group { margin-bottom: 18px; }
+    .sidebar-group-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--showcase-muted); padding: 0 8px; margin-bottom: 4px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 0.82rem; font-weight: 500; color: var(--showcase-muted); transition: background 0.2s, color 0.2s; cursor: pointer; }
+    .sidebar-link [data-lucide] { width: 14px; height: 14px; }
+    .sidebar-link:hover { background: rgba(255,255,255,0.06); color: var(--showcase-text); }
+    .sidebar-link.is-active { background: rgba(27,75,39,0.35); color: #7dd9a0; }
+
+    /* ── Main ── */
+    .main { margin-left: var(--sidebar-w); flex: 1; padding: 40px 48px 80px; max-width: 960px; }
+
+    /* ── Hero ── */
+    .page-hero { margin-bottom: 48px; }
+    .page-hero h1 { font-family: var(--font-display); font-weight: 900; font-size: 2.2rem; color: var(--showcase-text); letter-spacing: -0.04em; }
+    .page-hero p { margin-top: 10px; font-size: 0.92rem; color: var(--showcase-muted); line-height: 1.7; max-width: 560px; }
+    .page-hero p code { font-family: var(--font-mono); font-size: 0.82rem; background: rgba(255,255,255,0.07); padding: 1px 6px; border-radius: 4px; color: #a5d6ff; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 64px; scroll-margin-top: 24px; }
+    .section-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--showcase-border); }
+    .section-title { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; color: var(--showcase-text); letter-spacing: -0.02em; }
+    .section-id { font-family: var(--font-mono); font-size: 0.7rem; color: rgba(125,217,160,0.7); }
+    .section-desc { font-size: 0.86rem; color: var(--showcase-muted); line-height: 1.7; margin-bottom: 20px; max-width: 600px; }
+    .section-desc code { font-family: var(--font-mono); font-size: 0.82rem; background: rgba(255,255,255,0.07); padding: 1px 6px; border-radius: 4px; color: #a5d6ff; }
+
+    /* ── Component Block ── */
+    .comp-block { border: 1px solid var(--showcase-border); border-radius: 14px; overflow: hidden; margin-bottom: 20px; }
+    .comp-block-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--showcase-border); }
+    .comp-block-title { font-family: var(--font-mono); font-size: 0.78rem; color: var(--showcase-muted); }
+    .comp-block-title strong { color: var(--showcase-text); font-weight: 600; }
+
+    .copy-btn { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; color: var(--showcase-muted); border: 1px solid var(--showcase-border); background: transparent; transition: all 0.2s; font-family: var(--font-mono); cursor: pointer; }
+    .copy-btn [data-lucide] { width: 12px; height: 12px; }
+    .copy-btn:hover { background: rgba(255,255,255,0.06); color: var(--showcase-text); }
+    .copy-btn.copied { color: #7dd9a0; border-color: rgba(125,217,160,0.4); }
+
+    /* Preview backgrounds */
+    .comp-preview { padding: 32px 28px; background: #1b2333; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+    .comp-preview--gray  { background: #1e2840; }
+    .comp-preview--dark  { background: var(--green-dark); }
+    .comp-preview--col   { flex-direction: column; align-items: stretch; }
+    .comp-preview--grid  { display: grid; }
+
+    /* Code block */
+    .comp-code { background: #0d1117; padding: 20px 24px; overflow-x: auto; border-top: 1px solid var(--showcase-border); }
+    .comp-code pre { font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.7; color: #e6edf3; white-space: pre; }
+    .t-tag     { color: #79c0ff; }
+    .t-attr    { color: #ff7b72; }
+    .t-val     { color: #a5d6ff; }
+    .t-comment { color: #8b949e; font-style: italic; }
+    .t-class   { color: #d2a8ff; }
+
+    .divider-line { height: 1px; background: var(--showcase-border); margin: 40px 0; }
+
+    /* Open modal buttons in showcase */
+    .open-modal-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: rgba(255,255,255,0.10); color: var(--white); border: 1.5px solid rgba(255,255,255,0.20); border-radius: 9999px; font-family: var(--font-display); font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: background 0.2s; }
+    .open-modal-btn:hover { background: rgba(255,255,255,0.18); }
+    .open-modal-btn [data-lucide] { width: 16px; height: 16px; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <img src="../assets/images/logo.png" alt="BarangayConnect" style="width:30px;height:30px;object-fit:contain;" />
+      BarangayConnect
+    </div>
+    <div class="sidebar-tag">Frames & Modals</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Cards</div>
+      <a class="sidebar-link" href="#pet-cards"><i data-lucide="paw-print"></i> Pet Cards</a>
+      <a class="sidebar-link" href="#post-rows"><i data-lucide="newspaper"></i> Post Rows</a>
+      <a class="sidebar-link" href="#post-featured"><i data-lucide="star"></i> Featured Post</a>
+      <a class="sidebar-link" href="#doc-cards"><i data-lucide="file-text"></i> Doc Request Cards</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Modals</div>
+      <a class="sidebar-link" href="#modal-pet"><i data-lucide="paw-print"></i> Pet Report Modal</a>
+      <a class="sidebar-link" href="#modal-bullying"><i data-lucide="shield-alert"></i> Anti-Bullying Modal</a>
+      <a class="sidebar-link" href="#modal-doc-select"><i data-lucide="file-text"></i> Doc Select Modal</a>
+      <a class="sidebar-link" href="#modal-doc-form"><i data-lucide="clipboard-list"></i> Doc Form Modal</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Widgets</div>
+      <a class="sidebar-link" href="#calendar"><i data-lucide="calendar"></i> Calendar</a>
+      <a class="sidebar-link" href="#event-items"><i data-lucide="clock"></i> Event Items</a>
+      <a class="sidebar-link" href="#contact-rows"><i data-lucide="phone"></i> Contact Rows</a>
+      <a class="sidebar-link" href="#slot-cards"><i data-lucide="users"></i> Slot Cards</a>
+      <a class="sidebar-link" href="#marquee"><i data-lucide="type"></i> Marquee Banner</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Overlays & Panels</div>
+      <a class="sidebar-link" href="#confirm-modal"><i data-lucide="alert-triangle"></i> Confirm Modal</a>
+      <a class="sidebar-link" href="#profile-drawer"><i data-lucide="user"></i> Profile Drawer</a>
+      <a class="sidebar-link" href="#notif-panel"><i data-lucide="bell"></i> Notifications</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Content Cards</div>
+      <a class="sidebar-link" href="#program-cards"><i data-lucide="trophy"></i> Program Cards</a>
+      <a class="sidebar-link" href="#event-img-cards"><i data-lucide="image"></i> Event Image Cards</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Libraries</div>
+      <a class="sidebar-link" href="main-library.html"><i data-lucide="palette"></i> Design Language</a>
+      <a class="sidebar-link" href="components-library.html"><i data-lucide="layers"></i> Components</a>
+      <a class="sidebar-link is-active" href="frames-library.html"><i data-lucide="monitor"></i> Frames &amp; Modals</a>
+      <a class="sidebar-link" href="button-library.html"><i data-lucide="mouse-pointer-click"></i> Buttons</a>
+    </div>
+  </nav>
+</aside>
+
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<main class="main">
+
+  <div class="page-hero">
+    <h1>Frames &amp; Modals</h1>
+    <p>Layout-level containers, overlay modals, and composite UI cards. Always import <code>frames.css</code> after <code>components.css</code>. Modal examples below are fully interactive — click the buttons to open them.</p>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       PET CARDS
+  ══════════════════════════════════════════ -->
+  <section class="section" id="pet-cards">
+    <div class="section-header">
+      <h2 class="section-title">Pet Cards</h2>
+      <span class="section-id">.pet-card + .pet-status</span>
+    </div>
+    <p class="section-desc">Full-bleed image cards for the Community Pet Board. Pair a <code>.pet-status</code> badge inside <code>.pet-card__img-wrap</code>. Use <code>.btn--located</code> when a location has been reported.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>All status variants</strong> — Missing / For Adoption / Found</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:16px; align-items:start;">
+
+        <!-- Missing -->
+        <div class="pet-card">
+          <div class="pet-card__img-wrap">
+            <img class="pet-card__img" src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&q=80" alt="Brownie" />
+            <span class="pet-status pet-status--missing">Missing</span>
+          </div>
+          <div class="pet-card__body">
+            <h3 class="pet-card__name" >Brownie</h3>
+            <p class="pet-card__meta">Dog · Male · 2 years</p>
+            <p class="pet-card__desc">Brown Aspin, last seen near Rizal Street. Has a red collar. Very friendly.</p>
+            <button class="btn btn--green btn--full btn--sm"><i data-lucide="phone"></i> Contact Owner</button>
+          </div>
+        </div>
+
+        <!-- For Adoption -->
+        <div class="pet-card">
+          <div class="pet-card__img-wrap">
+            <img class="pet-card__img" src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&q=80" alt="Mango" />
+            <span class="pet-status pet-status--adoption">For Adoption</span>
+          </div>
+          <div class="pet-card__body">
+            <h3 class="pet-card__name">Mango</h3>
+            <p class="pet-card__meta">Cat · Female · 6 months</p>
+            <p class="pet-card__desc">Orange tabby kitten, playful and healthy. All vaccinations up to date.</p>
+            <button class="btn btn--green btn--full btn--sm"><i data-lucide="phone"></i> Contact Owner</button>
+          </div>
+        </div>
+
+        <!-- Found — Location Reported -->
+        <div class="pet-card">
+          <div class="pet-card__img-wrap">
+            <img class="pet-card__img" src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=400&q=80" alt="Whitey" />
+            <span class="pet-status pet-status--found">Found</span>
+          </div>
+          <div class="pet-card__body">
+            <h3 class="pet-card__name">Whitey</h3>
+            <p class="pet-card__meta">Dog · Unknown · Adult</p>
+            <p class="pet-card__desc">White Shih Tzu found in the park. Wearing a blue bow. Owner please contact us.</p>
+            <button class="btn btn--located btn--full btn--sm" disabled><i data-lucide="map-pin"></i> Location Reported</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- Missing --&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"pet-card"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"pet-card__img-wrap"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;img</span> <span class="t-attr">class</span>=<span class="t-val">"pet-card__img"</span> <span class="t-attr">src</span>=<span class="t-val">"..."</span> <span class="t-attr">alt</span>=<span class="t-val">"Brownie"</span> <span class="t-tag">/&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"pet-status pet-status--missing"</span><span class="t-tag">&gt;</span>Missing<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"pet-card__body"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;h3</span> <span class="t-attr">class</span>=<span class="t-val">"pet-card__name"</span><span class="t-tag">&gt;</span>Brownie<span class="t-tag">&lt;/h3&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"pet-card__meta"</span><span class="t-tag">&gt;</span>Dog · Male · 2 years<span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"pet-card__desc"</span><span class="t-tag">&gt;</span>Brown Aspin, last seen...<span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--green btn--full btn--sm"</span><span class="t-tag">&gt;</span>Contact Owner<span class="t-tag">&lt;/button&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Status variants: pet-status--missing / --adoption / --found --&gt;</span>
+<span class="t-comment">&lt;!-- Location reported: btn btn--located btn--full btn--sm + disabled --&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       POST ROWS
+  ══════════════════════════════════════════ -->
+  <section class="section" id="post-rows">
+    <div class="section-header">
+      <h2 class="section-title">Bulletin Post Rows</h2>
+      <span class="section-id">.post-row</span>
+    </div>
+    <p class="section-desc">Compact rows for the news/bulletin feed. Add <code>.post-row--accented</code> with a color modifier for the left-stripe variant. Pair with <code>.tag</code> and <code>.reaction-bar</code> from <code>components.css</code>.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Standard</strong> — basic feed row</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray comp-preview--col" style="padding:16px 28px;">
+        <div class="card" style="padding: var(--space-lg);">
+
+          <div class="post-row">
+            <div class="post-row__tags">
+              <span class="tag tag--green"><i data-lucide="heart-pulse"></i> Health</span>
+              <span class="post-row__time">2 hours ago</span>
+            </div>
+            <h3 class="post-row__title">Free Medical Mission this Saturday at the Barangay Hall</h3>
+            <p class="post-row__excerpt">Free check-ups, dental services, and medicine distribution for all residents. Bring your barangay ID and cedula for faster processing.</p>
+            <div class="post-row__footer">
+              <div class="post-row__avatar" style="background:var(--green-dark);display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;font-family:var(--font-display);">BH</div>
+              <span class="post-row__author">Brgy. Health Center</span>
+              <div class="reaction-bar" style="margin-left:auto">
+                <button class="reaction-count reaction-count--like is-liked"><i data-lucide="heart"></i><span>38</span></button>
+                <button class="reaction-count reaction-count--comment"><i data-lucide="message-circle"></i><span>14</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="post-row post-row--accented post-row--orange">
+            <div class="post-row__tags">
+              <span class="tag tag--amber"><i data-lucide="zap"></i> Infrastructure</span>
+              <span class="post-row__time">5 hours ago</span>
+            </div>
+            <h3 class="post-row__title">Road repair schedule along Rizal St.</h3>
+            <p class="post-row__excerpt">Construction work begins Monday. Alternate routes have been designated.</p>
+            <div class="post-row__footer">
+              <div class="post-row__avatar" style="background:var(--orange-hover);display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;font-family:var(--font-display);">DW</div>
+              <span class="post-row__author">DPWH Liaison</span>
+              <div class="reaction-bar" style="margin-left:auto">
+                <button class="reaction-count reaction-count--comment"><i data-lucide="message-circle"></i><span>7</span></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-row"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-row__tags"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"tag tag--green"</span><span class="t-tag">&gt;</span>Health<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"post-row__time"</span><span class="t-tag">&gt;</span>2 hours ago<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;h3</span> <span class="t-attr">class</span>=<span class="t-val">"post-row__title"</span><span class="t-tag">&gt;</span>Free Medical Mission...<span class="t-tag">&lt;/h3&gt;</span>
+  <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"post-row__excerpt"</span><span class="t-tag">&gt;</span>...<span class="t-tag">&lt;/p&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-row__footer"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;img</span> <span class="t-attr">class</span>=<span class="t-val">"post-row__avatar"</span> <span class="t-attr">src</span>=<span class="t-val">"..."</span> <span class="t-attr">alt</span>=<span class="t-val">"..."</span> <span class="t-tag">/&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"post-row__author"</span><span class="t-tag">&gt;</span>Brgy. Health Center<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-comment">&lt;!-- reaction-bar goes here (margin-left:auto) --&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Accented: add post-row--accented + post-row--orange/green/red/blue --&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       FEATURED POST
+  ══════════════════════════════════════════ -->
+  <section class="section" id="post-featured">
+    <div class="section-header">
+      <h2 class="section-title">Featured Post Card</h2>
+      <span class="section-id">.post-featured</span>
+    </div>
+    <p class="section-desc">Dark green hero card for pinned or featured announcements. Uses <code>.badge-featured</code> from <code>components.css</code> for the top pill.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Featured announcement</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray" style="max-width:540px; margin:0 auto;">
+        <div class="post-featured" style="width:100%;">
+          <span class="badge-featured">
+            <span class="badge-featured__label">Featured</span>
+            <span class="badge-featured__sep">·</span>
+            <span class="badge-featured__category">Health</span>
+          </span>
+          <h2 class="post-featured__title">Free Medical Mission this Saturday at the Barangay Hall</h2>
+          <p class="post-featured__body">Free check-ups, dental services, and medicine distribution for all residents. Bring your barangay ID.</p>
+          <div class="post-featured__footer">
+            <div class="post-featured__avatar" style="background:rgba(255,255,255,0.20);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;font-family:var(--font-display);">BH</div>
+            <div class="post-featured__author">
+              <span class="post-featured__author-name">Barangay Health Center</span>
+              <span class="post-featured__author-time">2 hours ago</span>
+            </div>
+            <span class="post-featured__replies"><i data-lucide="message-circle"></i> 14 replies</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-featured"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge-featured"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge-featured__label"</span><span class="t-tag">&gt;</span>Featured<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge-featured__sep"</span><span class="t-tag">&gt;</span>·<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge-featured__category"</span><span class="t-tag">&gt;</span>Health<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;h2</span> <span class="t-attr">class</span>=<span class="t-val">"post-featured__title"</span><span class="t-tag">&gt;</span>Free Medical Mission...<span class="t-tag">&lt;/h2&gt;</span>
+  <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"post-featured__body"</span><span class="t-tag">&gt;</span>Free check-ups...<span class="t-tag">&lt;/p&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-featured__footer"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;img</span> <span class="t-attr">class</span>=<span class="t-val">"post-featured__avatar"</span> <span class="t-attr">src</span>=<span class="t-val">"..."</span> <span class="t-tag">/&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-featured__author"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"post-featured__author-name"</span><span class="t-tag">&gt;</span>Barangay Health Center<span class="t-tag">&lt;/span&gt;</span>
+      <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"post-featured__author-time"</span><span class="t-tag">&gt;</span>2 hours ago<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"post-featured__replies"</span><span class="t-tag">&gt;</span>14 replies<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       DOC CARDS
+  ══════════════════════════════════════════ -->
+  <section class="section" id="doc-cards">
+    <div class="section-header">
+      <h2 class="section-title">Document Request Cards</h2>
+      <span class="section-id">.doc-card</span>
+    </div>
+    <p class="section-desc">Cards displayed in the document request grid. Click "Request" to open the document modal flow. Use <code>.badge--inprogress</code> for processing time and <code>.doc-card__fee</code> for the cost.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Document type grid</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:14px; align-items:start;">
+
+        <div class="doc-card">
+          <div class="doc-card__icon"><i data-lucide="file-text"></i></div>
+          <h3 class="doc-card__name">Barangay Clearance</h3>
+          <p class="doc-card__desc">General purpose clearance for employment and other transactions.</p>
+          <div class="doc-card__badges">
+            <span class="badge badge--inprogress">1–2 days</span>
+            <span class="doc-card__fee">₱50.00</span>
+          </div>
+          <button class="btn btn--green btn--full btn--sm" onclick="openModal('docSelectModal')">Request</button>
+        </div>
+
+        <div class="doc-card">
+          <div class="doc-card__icon"><i data-lucide="home"></i></div>
+          <h3 class="doc-card__name">Certificate of Residency</h3>
+          <p class="doc-card__desc">Proof of residency for school, government, and legal requirements.</p>
+          <div class="doc-card__badges">
+            <span class="badge badge--inprogress">1 day</span>
+            <span class="doc-card__fee">₱50.00</span>
+          </div>
+          <button class="btn btn--green btn--full btn--sm" onclick="openModal('docSelectModal')">Request</button>
+        </div>
+
+        <div class="doc-card">
+          <div class="doc-card__icon"><i data-lucide="heart-handshake"></i></div>
+          <h3 class="doc-card__name">Indigency Letter</h3>
+          <p class="doc-card__desc">Financial assistance letter for hospitals, programs, and scholarships.</p>
+          <div class="doc-card__badges">
+            <span class="badge badge--published">Same day</span>
+            <span class="doc-card__free">Free</span>
+          </div>
+          <button class="btn btn--green btn--full btn--sm" onclick="openModal('docSelectModal')">Request</button>
+        </div>
+
+        <div class="doc-card">
+          <div class="doc-card__icon"><i data-lucide="award"></i></div>
+          <h3 class="doc-card__name">Good Moral Certificate</h3>
+          <p class="doc-card__desc">Character certificate for job applications, schools, and institutions.</p>
+          <div class="doc-card__badges">
+            <span class="badge badge--inprogress">1–2 days</span>
+            <span class="doc-card__fee">₱50.00</span>
+          </div>
+          <button class="btn btn--green btn--full btn--sm" onclick="openModal('docFormModal')">Request</button>
+        </div>
+
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"doc-card"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"doc-card__icon"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"file-text"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;h3</span> <span class="t-attr">class</span>=<span class="t-val">"doc-card__name"</span><span class="t-tag">&gt;</span>Barangay Clearance<span class="t-tag">&lt;/h3&gt;</span>
+  <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"doc-card__desc"</span><span class="t-tag">&gt;</span>General purpose clearance...<span class="t-tag">&lt;/p&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"doc-card__badges"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--inprogress"</span><span class="t-tag">&gt;</span>1–2 days<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"doc-card__fee"</span><span class="t-tag">&gt;</span>₱50.00<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--green btn--full btn--sm"</span><span class="t-tag">&gt;</span>Request<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Free: use doc-card__free span instead of doc-card__fee --&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       PET REPORT MODAL
+  ══════════════════════════════════════════ -->
+  <section class="section" id="modal-pet">
+    <div class="section-header">
+      <h2 class="section-title">Pet Report Modal</h2>
+      <span class="section-id">.modal-overlay + .modal</span>
+    </div>
+    <p class="section-desc">Opened when resident clicks "Post a Pet Report". Green header variant. The report-type toggle switches between Missing and For Adoption visually.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Post a Pet Report</strong> — green header modal</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--dark" style="justify-content:center;">
+        <button class="open-modal-btn" onclick="openModal('petModal')">
+          <i data-lucide="paw-print"></i> Open Pet Report Modal
+        </button>
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- Trigger button --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">onclick</span>=<span class="t-val">"openModal('petModal')"</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--orange"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"paw-print"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Post Pet Report
+<span class="t-tag">&lt;/button&gt;</span>
+
+<span class="t-comment">&lt;!-- Modal (place before &lt;/body&gt;) --&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal-overlay"</span> <span class="t-attr">id</span>=<span class="t-val">"petModal"</span> <span class="t-attr">onclick</span>=<span class="t-val">"closeOnBackdrop(event)"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal__header modal__header--green"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal__header-icon"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"paw-print"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal__header-content"</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"modal__header-label"</span><span class="t-tag">&gt;</span>Community Pet Board (PetReport)<span class="t-tag">&lt;/p&gt;</span>
+        <span class="t-tag">&lt;h2</span> <span class="t-attr">class</span>=<span class="t-val">"modal__header-title"</span><span class="t-tag">&gt;</span>Post a Pet Report<span class="t-tag">&lt;/h2&gt;</span>
+        <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"modal__header-sub"</span><span class="t-tag">&gt;</span>Report a missing pet or one up for adoption<span class="t-tag">&lt;/p&gt;</span>
+      <span class="t-tag">&lt;/div&gt;</span>
+      <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--close btn--sm modal__close"</span> <span class="t-attr">onclick</span>=<span class="t-val">"closeModal('petModal')"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"x"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/button&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal__body"</span><span class="t-tag">&gt;</span>
+      <span class="t-comment">&lt;!-- Report Type Toggle --&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"report-type-toggle"</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn report-type-toggle__btn report-type-toggle__btn--missing is-active"</span><span class="t-tag">&gt;</span>Missing<span class="t-tag">&lt;/button&gt;</span>
+        <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn report-type-toggle__btn report-type-toggle__btn--adoption"</span><span class="t-tag">&gt;</span>For Adoption<span class="t-tag">&lt;/button&gt;</span>
+      <span class="t-tag">&lt;/div&gt;</span>
+      <span class="t-comment">&lt;!-- form fields here... --&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal__footer"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--outline"</span> <span class="t-attr">onclick</span>=<span class="t-val">"closeModal('petModal')"</span><span class="t-tag">&gt;</span>Cancel<span class="t-tag">&lt;/button&gt;</span>
+      <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--orange btn--full"</span><span class="t-tag">&gt;</span>Post Pet Report<span class="t-tag">&lt;/button&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+
+<span class="t-comment">/* JS helpers */</span>
+function openModal(id)  { document.getElementById(id).classList.add('is-open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('is-open'); }
+function closeOnBackdrop(e) { if (e.target === e.currentTarget) closeModal(e.currentTarget.id); }</pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       ANTI-BULLYING MODAL
+  ══════════════════════════════════════════ -->
+  <section class="section" id="modal-bullying">
+    <div class="section-header">
+      <h2 class="section-title">Anti-Bullying Report Modal</h2>
+      <span class="section-id">.modal__header--red + .bullying-grid</span>
+    </div>
+    <p class="section-desc">Red header for sensitive/emergency modals. Uses the <code>.bullying-grid</code> selector, <code>.anon-toggle-row</code>, and a <code>.notice-banner--red</code> legal disclaimer.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Report Anti-Bullying</strong> — red header modal</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--dark" style="justify-content:center;">
+        <button class="open-modal-btn" onclick="openModal('bullyingModal')">
+          <i data-lucide="shield-alert"></i> Open Anti-Bullying Modal
+        </button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal-overlay"</span> <span class="t-attr">id</span>=<span class="t-val">"bullyingModal"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal__header modal__header--red"</span><span class="t-tag">&gt;</span>
+      <span class="t-comment">&lt;!-- same structure as green --&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal__body"</span><span class="t-tag">&gt;</span>
+      <span class="t-comment">&lt;!-- Anonymous toggle --&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"anon-toggle-row"</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;i</span> <span class="t-attr">class</span>=<span class="t-val">"anon-toggle-row__icon"</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"lock"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+        <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"anon-toggle-row__body"</span><span class="t-tag">&gt;</span>
+          <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"anon-toggle-row__title"</span><span class="t-tag">&gt;</span>Submitting Anonymously<span class="t-tag">&lt;/p&gt;</span>
+          <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"anon-toggle-row__sub"</span><span class="t-tag">&gt;</span>Your identity will not be shared.<span class="t-tag">&lt;/p&gt;</span>
+        <span class="t-tag">&lt;/div&gt;</span>
+        <span class="t-tag">&lt;label</span> <span class="t-attr">class</span>=<span class="t-val">"toggle-wrap"</span><span class="t-tag">&gt;</span>
+          <span class="t-tag">&lt;input</span> <span class="t-attr">type</span>=<span class="t-val">"checkbox"</span> <span class="t-attr">class</span>=<span class="t-val">"toggle-input"</span> <span class="t-attr">checked</span> <span class="t-tag">/&gt;</span>
+          <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"toggle-track"</span><span class="t-tag">&gt;&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"toggle-thumb"</span><span class="t-tag">&gt;&lt;/span&gt;&lt;/span&gt;</span>
+        <span class="t-tag">&lt;/label&gt;</span>
+      <span class="t-tag">&lt;/div&gt;</span>
+      <span class="t-comment">&lt;!-- Bullying type grid --&gt;</span>
+      <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"modal-section-label"</span><span class="t-tag">&gt;</span>What type of bullying occurred? *<span class="t-tag">&lt;/p&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"bullying-grid"</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"bullying-option is-selected"</span><span class="t-tag">&gt;</span>
+          <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"bullying-option__title"</span><span class="t-tag">&gt;</span>Physical Bullying<span class="t-tag">&lt;/span&gt;</span>
+          <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"bullying-option__sub"</span><span class="t-tag">&gt;</span>Hitting, pushing, or physical harm<span class="t-tag">&lt;/span&gt;</span>
+        <span class="t-tag">&lt;/button&gt;</span>
+        <span class="t-comment">&lt;!-- more options... --&gt;</span>
+      <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       DOC SELECT MODAL
+  ══════════════════════════════════════════ -->
+  <section class="section" id="modal-doc-select">
+    <div class="section-header">
+      <h2 class="section-title">Document Select Modal</h2>
+      <span class="section-id">.doc-type-row</span>
+    </div>
+    <p class="section-desc">Step 1 of the document request flow. Lists available document types as clickable rows. Clicking a row advances to the form modal.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Select a Document Type</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--dark" style="justify-content:center;">
+        <button class="open-modal-btn" onclick="openModal('docSelectModal')">
+          <i data-lucide="file-text"></i> Open Document Select Modal
+        </button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"doc-type-list"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"doc-type-row"</span> <span class="t-attr">onclick</span>=<span class="t-val">"openModal('docFormModal')"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"doc-type-row__icon"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"file-text"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"doc-type-row__body"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"doc-type-row__name"</span><span class="t-tag">&gt;</span>Barangay Clearance<span class="t-tag">&lt;/span&gt;</span>
+      <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"doc-type-row__meta"</span><span class="t-tag">&gt;</span>1–2 business days · ₱50.00<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"doc-type-row__chevron"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"chevron-right"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+
+
+  <!-- ══════════════════════════════════════════
+       DOC FORM MODAL
+  ══════════════════════════════════════════ -->
+  <section class="section" id="modal-doc-form">
+    <div class="section-header">
+      <h2 class="section-title">Document Form Modal</h2>
+      <span class="section-id">.modal__info-strip</span>
+    </div>
+    <p class="section-desc">Step 2 of the document request flow. The green header modal gains a <code>.modal__info-strip</code> bar below it — shows processing time, fee, and pickup note. Form fields collect the full request.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Good Moral Certificate</strong> — info strip + form fields</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--dark" style="justify-content:center;">
+        <button class="open-modal-btn" onclick="openModal('docFormModal')">
+          <i data-lucide="clipboard-list"></i> Open Document Form Modal
+        </button>
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- .modal__info-strip sits between the header and body --&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal__info-strip"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--inprogress"</span><span class="t-tag">&gt;</span>1–2 business days<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">style</span>=<span class="t-val">"font-family:var(--font-display);font-size:0.8rem;font-weight:700;color:var(--green-dark);"</span><span class="t-tag">&gt;</span>₱50.00<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">style</span>=<span class="t-val">"font-size:0.78rem;color:var(--gray-400);margin-left:auto;"</span><span class="t-tag">&gt;</span>Valid government ID required upon pickup<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal__body"</span><span class="t-tag">&gt;</span>
+  <span class="t-comment">&lt;!-- .form-group .form-input fields go here --&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       CALENDAR
+  ══════════════════════════════════════════ -->
+  <section class="section" id="calendar">
+    <div class="section-header">
+      <h2 class="section-title">Calendar Widget</h2>
+      <span class="section-id">.cal</span>
+    </div>
+    <p class="section-desc">Month view calendar with event dot indicators. Pair with <code>.event-item</code> below it. Use JS to render days and handle click/navigation events.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>June 2025</strong> — today highlighted, event dots shown</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray comp-preview--col" style="gap:20px; max-width: 400px;">
+
+        <div class="cal">
+          <div class="cal__header">
+            <span class="cal__month">June 2025</span>
+            <div class="cal__nav">
+              <button class="cal__nav-btn"><i data-lucide="chevron-left"></i></button>
+              <button class="cal__nav-btn"><i data-lucide="chevron-right"></i></button>
+            </div>
+          </div>
+          <div class="cal__weekdays">
+            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+          <div class="cal__grid">
+            <button class="cal__day cal__day--empty"></button>
+            <button class="cal__day cal__day--empty"></button>
+            <button class="cal__day cal__day--empty"></button>
+            <button class="cal__day cal__day--empty"></button>
+            <button class="cal__day cal__day--empty"></button>
+            <button class="cal__day cal__day--empty"></button>
+            <button class="cal__day">1</button>
+            <button class="cal__day">2</button>
+            <button class="cal__day">3</button>
+            <button class="cal__day">4</button>
+            <button class="cal__day">5</button>
+            <button class="cal__day">6</button>
+            <button class="cal__day">7</button>
+            <button class="cal__day cal__day--has-event">8</button>
+            <button class="cal__day">9</button>
+            <button class="cal__day">10</button>
+            <button class="cal__day">11</button>
+            <button class="cal__day cal__day--today cal__day--has-event">12</button>
+            <button class="cal__day">13</button>
+            <button class="cal__day">14</button>
+            <button class="cal__day cal__day--has-event">15</button>
+            <button class="cal__day">16</button>
+            <button class="cal__day">17</button>
+            <button class="cal__day cal__day--has-event">18</button>
+            <button class="cal__day">19</button>
+            <button class="cal__day">20</button>
+            <button class="cal__day">21</button>
+            <button class="cal__day">22</button>
+            <button class="cal__day">23</button>
+            <button class="cal__day">24</button>
+            <button class="cal__day">25</button>
+            <button class="cal__day cal__day--has-event">26</button>
+            <button class="cal__day">27</button>
+            <button class="cal__day">28</button>
+            <button class="cal__day">29</button>
+            <button class="cal__day">30</button>
+          </div>
+        </div>
+
+        <div id="event-items" class="section-anchor" style="scroll-margin-top:80px;height:0;overflow:hidden;"></div>
+        <!-- Event items below calendar -->
+        <div>
+          <p class="cal__events-header">Events on June 12</p>
+          <div class="event-item">
+            <div class="event-item__accent"></div>
+            <div class="event-item__body">
+              <h3 class="event-item__title">Free Medical Mission</h3>
+              <p class="event-item__meta"><i data-lucide="clock"></i> 7:00 AM – 5:00 PM</p>
+              <p class="event-item__meta"><i data-lucide="map-pin"></i> Barangay Hall</p>
+            </div>
+            <button class="btn btn--orange btn--sm">RSVP Now</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"cal"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"cal__header"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"cal__month"</span><span class="t-tag">&gt;</span>June 2025<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"cal__nav"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"cal__nav-btn"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"chevron-left"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/button&gt;</span>
+      <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"cal__nav-btn"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"chevron-right"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/button&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"cal__weekdays"</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;span&gt;</span>Sun<span class="t-tag">&lt;/span&gt;</span><span class="t-comment">...</span><span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"cal__grid"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"cal__day cal__day--empty"</span><span class="t-tag">&gt;&lt;/button&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"cal__day"</span><span class="t-tag">&gt;</span>1<span class="t-tag">&lt;/button&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"cal__day cal__day--has-event"</span><span class="t-tag">&gt;</span>8<span class="t-tag">&lt;/button&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"cal__day cal__day--today"</span><span class="t-tag">&gt;</span>12<span class="t-tag">&lt;/button&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+
+<span class="t-comment">&lt;!-- Event below calendar --&gt;</span>
+<span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"cal__events-header"</span><span class="t-tag">&gt;</span>Events on June 12<span class="t-tag">&lt;/p&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"event-item"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"event-item__accent"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"event-item__body"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;h3</span> <span class="t-attr">class</span>=<span class="t-val">"event-item__title"</span><span class="t-tag">&gt;</span>Free Medical Mission<span class="t-tag">&lt;/h3&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"event-item__meta"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"clock"</span><span class="t-tag">&gt;&lt;/i&gt;</span> 7:00 AM – 5:00 PM<span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"event-item__meta"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"map-pin"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Barangay Hall<span class="t-tag">&lt;/p&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--orange btn--sm"</span><span class="t-tag">&gt;</span>RSVP Now<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Event accent variants: event-item--orange / --red / --blue --&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       CONTACT ROWS
+  ══════════════════════════════════════════ -->
+  <section class="section" id="contact-rows">
+    <div class="section-header">
+      <h2 class="section-title">Contact Rows</h2>
+      <span class="section-id">.contact-row</span>
+    </div>
+    <p class="section-desc">Used for Emergency Contacts (with category label + <code>.btn--call</code>) and Local Services Directory (with rating + <code>.btn--call-circle</code>).</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Emergency contacts</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray comp-preview--col" style="gap:10px; max-width:480px;">
+        <div class="contact-row">
+          <div class="contact-row__icon contact-row__icon--orange"><i data-lucide="shield"></i></div>
+          <div class="contact-row__body">
+            <span class="contact-row__name">Brgy. Tanod Command Post</span>
+            <span class="contact-row__sub">Peace &amp; Order</span>
+            <a href="tel:028123456" class="contact-row__phone">(02) 8123-4567</a>
+          </div>
+          <button class="btn btn--call btn--sm"><i data-lucide="phone"></i> Call</button>
+        </div>
+
+        <div class="contact-row">
+          <div class="contact-row__icon contact-row__icon--red"><i data-lucide="flame"></i></div>
+          <div class="contact-row__body">
+            <span class="contact-row__name">Bureau of Fire Protection</span>
+            <span class="contact-row__sub">Fire &amp; Rescue</span>
+            <a href="tel:117" class="contact-row__phone">117 (BFP Hotline)</a>
+          </div>
+          <button class="btn btn--call btn--sm"><i data-lucide="phone"></i> Call</button>
+        </div>
+
+        <div class="contact-row">
+          <div class="contact-row__icon contact-row__icon--blue"><i data-lucide="hospital"></i></div>
+          <div class="contact-row__body">
+            <span class="contact-row__name">Indang Community Hospital</span>
+            <span class="contact-row__sub">Medical Emergency</span>
+            <a href="tel:046-4148" class="contact-row__phone">(046) 414-8000</a>
+          </div>
+          <button class="btn btn--call btn--sm"><i data-lucide="phone"></i> Call</button>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row__icon contact-row__icon--orange"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"shield"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row__body"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row__name"</span><span class="t-tag">&gt;</span>Brgy. Tanod Command Post<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row__sub"</span><span class="t-tag">&gt;</span>Peace &amp; Order<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"tel:028123456"</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row__phone"</span><span class="t-tag">&gt;</span>(02) 8123-4567<span class="t-tag">&lt;/a&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--call btn--sm"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"phone"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Call<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Icon colors: --orange / --red / --blue / --green / --gray --&gt;</span></pre></div>
+    </div>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Local services directory</strong> — with rating</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray comp-preview--col" style="gap:10px; max-width:480px;">
+        <div class="contact-row">
+          <div class="contact-row__icon contact-row__icon--green"><i data-lucide="droplets"></i></div>
+          <div class="contact-row__body">
+            <span class="contact-row__name">Mang Tony's Plumbing</span>
+            <a href="tel:09171234567" class="contact-row__phone">0917-123-4567</a>
+            <span class="contact-row__rating">★ 4.8</span>
+          </div>
+          <button class="btn btn--call-circle" aria-label="Call"><i data-lucide="phone-call"></i></button>
+        </div>
+
+        <div class="contact-row">
+          <div class="contact-row__icon contact-row__icon--orange"><i data-lucide="zap"></i></div>
+          <div class="contact-row__body">
+            <span class="contact-row__name">Kuya Ben Electrical Services</span>
+            <a href="tel:09181234567" class="contact-row__phone">0918-123-4567</a>
+            <span class="contact-row__rating">★ 4.6</span>
+          </div>
+          <button class="btn btn--call-circle" aria-label="Call"><i data-lucide="phone-call"></i></button>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- Service row — use btn--call-circle instead of btn--call --&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row__icon contact-row__icon--green"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"droplets"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row__body"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row__name"</span><span class="t-tag">&gt;</span>Mang Tony's Plumbing<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"tel:09171234567"</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row__phone"</span><span class="t-tag">&gt;</span>0917-123-4567<span class="t-tag">&lt;/a&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"contact-row__rating"</span><span class="t-tag">&gt;</span>★ 4.8<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--call-circle"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"phone-call"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/button&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       SLOT CARDS
+  ══════════════════════════════════════════ -->
+  <section class="section" id="slot-cards">
+    <div class="section-header">
+      <h2 class="section-title">Slot &amp; Date Cards</h2>
+      <span class="section-id">.slot-card + .date-slot-card</span>
+    </div>
+    <p class="section-desc">Walk-in availability cards and date picker rows used in the appointment booking flow and document request section.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Walk-in slots</strong> — service availability</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray comp-preview--col" style="gap:10px; max-width:440px;">
+        <div class="slot-card">
+          <div class="slot-card__icon"><i data-lucide="file-text"></i></div>
+          <div class="slot-card__body">
+            <span class="slot-card__name">Barangay Clearance</span>
+            <span class="slot-card__sub">Walk-in assistance for clearance documents</span>
+            <span class="slot-card__avail">● 8 slots available today</span>
+          </div>
+        </div>
+
+        <div class="slot-card">
+          <div class="slot-card__icon"><i data-lucide="home"></i></div>
+          <div class="slot-card__body">
+            <span class="slot-card__name">Certificate of Residency</span>
+            <span class="slot-card__sub">Walk-in verification at the Barangay Hall</span>
+            <span class="slot-card__avail">● 3 slots available today</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"slot-card"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"slot-card__icon"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"file-text"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"slot-card__body"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"slot-card__name"</span><span class="t-tag">&gt;</span>Barangay Clearance<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"slot-card__sub"</span><span class="t-tag">&gt;</span>Walk-in assistance for clearance documents<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"slot-card__avail"</span><span class="t-tag">&gt;</span>● 8 slots available today<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+    </div>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Date slots</strong> — appointment date picker</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray comp-preview--col" style="gap:8px; max-width:360px;">
+        <button class="date-slot-card is-selected">
+          <i data-lucide="calendar" class="date-slot-card__icon"></i>
+          <div class="date-slot-card__body">
+            <span class="date-slot-card__date">June 13, Friday</span>
+            <span class="date-slot-card__slots">● 12 slots available</span>
+          </div>
+        </button>
+        <button class="date-slot-card">
+          <i data-lucide="calendar" class="date-slot-card__icon"></i>
+          <div class="date-slot-card__body">
+            <span class="date-slot-card__date">June 14, Saturday</span>
+            <span class="date-slot-card__slots">● 6 slots available</span>
+          </div>
+        </button>
+        <button class="date-slot-card">
+          <i data-lucide="calendar" class="date-slot-card__icon"></i>
+          <div class="date-slot-card__body">
+            <span class="date-slot-card__date">June 16, Monday</span>
+            <span class="date-slot-card__slots">● 15 slots available</span>
+          </div>
+        </button>
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- Add .is-selected to the chosen date --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"date-slot-card is-selected"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"calendar"</span> <span class="t-attr">class</span>=<span class="t-val">"date-slot-card__icon"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"date-slot-card__body"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"date-slot-card__date"</span><span class="t-tag">&gt;</span>June 13, Friday<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"date-slot-card__slots"</span><span class="t-tag">&gt;</span>● 12 slots available<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+
+  <!-- ══════════════════════════════════════════
+       MARQUEE BANNER
+  ══════════════════════════════════════════ -->
+  <section class="section" id="marquee">
+    <div class="section-header">
+      <h2 class="section-title">Marquee Text Banner</h2>
+      <span class="section-id">.marquee-banner</span>
+    </div>
+    <p class="section-desc">Infinite scrolling outlined text — great for decorative section breaks or displaying the barangay motto. Pauses on hover. Text is admin-editable via JS. Duplicate the <code>.marquee-text</code> span twice inside <code>.marquee-track</code> for a seamless loop.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Light</strong> — white background, stroke text</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview" style="padding: 0; display: block;">
+        <div class="marquee-banner">
+          <div class="marquee-track">
+            <span class="marquee-text">MAGKAISA · UMUNLAD · BANCOD ·&nbsp;</span>
+            <span class="marquee-text" aria-hidden="true">MAGKAISA · UMUNLAD · BANCOD ·&nbsp;</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"marquee-banner"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"marquee-track"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"marquee-text"</span><span class="t-tag">&gt;</span>MAGKAISA · UMUNLAD · BANCOD ·&nbsp;<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"marquee-text"</span> <span class="t-attr">aria-hidden</span>=<span class="t-val">"true"</span><span class="t-tag">&gt;</span>MAGKAISA · UMUNLAD · BANCOD ·&nbsp;<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Admin editable: set .marquee-text innerText via JS --&gt;</span>
+<span class="t-comment">&lt;!-- Speed: override --marquee-duration on .marquee-banner --&gt;</span></pre></div>
+    </div>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Dark</strong> — on green hero backgrounds</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--dark" style="padding: 0; display: block;">
+        <div class="marquee-banner marquee-banner--dark">
+          <div class="marquee-track">
+            <span class="marquee-text">MAGKAISA · UMUNLAD · BANCOD ·&nbsp;</span>
+            <span class="marquee-text" aria-hidden="true">MAGKAISA · UMUNLAD · BANCOD ·&nbsp;</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"marquee-banner marquee-banner--dark"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"marquee-track"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"marquee-text"</span><span class="t-tag">&gt;</span>MAGKAISA · UMUNLAD · BANCOD ·&nbsp;<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"marquee-text"</span> <span class="t-attr">aria-hidden</span>=<span class="t-val">"true"</span><span class="t-tag">&gt;</span>MAGKAISA · UMUNLAD · BANCOD ·&nbsp;<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       CONFIRM MODAL
+  ══════════════════════════════════════════ -->
+  <section class="section" id="confirm-modal">
+    <div class="section-header">
+      <h2 class="section-title">Confirm Modal</h2>
+      <span class="section-id">.modal--confirm</span>
+    </div>
+    <p class="section-desc">Small, neutral confirmation modal for destructive actions like sign-out or delete. No colored header — pairs with the standard <code>.modal-overlay</code>. Use <code>.modal--confirm-warning</code> for orange (less destructive) variants.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Sign Out</strong> — red destructive confirm</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--dark" style="justify-content:center;">
+        <button class="open-modal-btn" onclick="openModal('signoutModal')">
+          <i data-lucide="log-out"></i> Open Sign Out Modal
+        </button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal-overlay"</span> <span class="t-attr">id</span>=<span class="t-val">"signoutModal"</span> <span class="t-attr">onclick</span>=<span class="t-val">"closeOnBackdrop(event)"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal modal--confirm"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal-confirm__icon"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"triangle-alert"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;h2</span> <span class="t-attr">class</span>=<span class="t-val">"modal-confirm__title"</span><span class="t-tag">&gt;</span>Sign out?<span class="t-tag">&lt;/h2&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"modal-confirm__body"</span><span class="t-tag">&gt;</span>
+      You'll be signed out of your BarangayConnect account on this device.
+    <span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal-confirm__footer"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--outline"</span> <span class="t-attr">onclick</span>=<span class="t-val">"closeModal('signoutModal')"</span><span class="t-tag">&gt;</span>Cancel<span class="t-tag">&lt;/button&gt;</span>
+      <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--red btn--full"</span><span class="t-tag">&gt;</span>Sign Out<span class="t-tag">&lt;/button&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       PROFILE DRAWER
+  ══════════════════════════════════════════ -->
+  <section class="section" id="profile-drawer">
+    <div class="section-header">
+      <h2 class="section-title">Profile Drawer</h2>
+      <span class="section-id">.profile-drawer</span>
+    </div>
+    <p class="section-desc">Slides in from the right. Green header card shows the user's avatar, name, role, and ID badge. Menu items below handle navigation, role switching (demo), settings, and sign out. Toggle <code>.is-open</code> to show/hide.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Profile side drawer</strong> — resident view</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--dark" style="justify-content:center;">
+        <button class="open-modal-btn" onclick="openProfileDrawer()">
+          <i data-lucide="user-circle"></i> Open Profile Drawer
+        </button>
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- Trigger --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">onclick</span>=<span class="t-val">"document.getElementById('profileDrawer').classList.add('is-open')"</span><span class="t-tag">&gt;</span>
+  Profile
+<span class="t-tag">&lt;/button&gt;</span>
+
+<span class="t-comment">&lt;!-- Backdrop --&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer-backdrop"</span> <span class="t-attr">id</span>=<span class="t-val">"drawerBackdrop"</span>
+     <span class="t-attr">onclick</span>=<span class="t-val">"closeProfileDrawer()"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+
+<span class="t-comment">&lt;!-- Drawer --&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer"</span> <span class="t-attr">id</span>=<span class="t-val">"profileDrawer"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__header"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--close btn--sm profile-drawer__close"</span>
+            <span class="t-attr">onclick</span>=<span class="t-val">"closeProfileDrawer()"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"x"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+    <span class="t-tag">&lt;/button&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__avatar"</span><span class="t-tag">&gt;</span>JD<span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__name"</span><span class="t-tag">&gt;</span>Juan Dela Cruz<span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__role"</span><span class="t-tag">&gt;</span>Resident · Barangay Bancod<span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__id"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"id-card"</span><span class="t-tag">&gt;&lt;/i&gt;</span> BRY-2024-00142
+    <span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;nav</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__menu"</span><span class="t-tag">&gt;</span>
+    <span class="t-comment">&lt;!-- [DEMO] items --&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__item profile-drawer__item--demo"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__item-icon"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"shield"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__item-body"</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__item-title"</span><span class="t-tag">&gt;</span>[DEMO] Officer Panel<span class="t-tag">&lt;/span&gt;</span>
+        <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__item-sub"</span><span class="t-tag">&gt;</span>Manage services &amp; report<span class="t-tag">&lt;/span&gt;</span>
+      <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;/button&gt;</span>
+    <span class="t-comment">&lt;!-- Sign Out --&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__item profile-drawer__item--signout"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__item-icon"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"log-out"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__item-body"</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"profile-drawer__item-title"</span><span class="t-tag">&gt;</span>Sign Out<span class="t-tag">&lt;/span&gt;</span>
+      <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;/button&gt;</span>
+  <span class="t-tag">&lt;/nav&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+
+<span class="t-comment">/* JS helpers */</span>
+function openProfileDrawer() {
+  document.getElementById('profileDrawer').classList.add('is-open');
+  document.getElementById('drawerBackdrop').classList.add('is-open');
+}
+function closeProfileDrawer() {
+  document.getElementById('profileDrawer').classList.remove('is-open');
+  document.getElementById('drawerBackdrop').classList.remove('is-open');
+}</pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       NOTIFICATION PANEL
+  ══════════════════════════════════════════ -->
+  <section class="section" id="notif-panel">
+    <div class="section-header">
+      <h2 class="section-title">Notification Panel</h2>
+      <span class="section-id">.notif-panel + .notif-item</span>
+    </div>
+    <p class="section-desc">Dropdown panel with a dark green header, scrollable list of notification items, unread orange dots, hover-revealed dismiss buttons, and an empty state variant. Toggled by a bell icon in the navbar.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>With notifications</strong> — 3 unread items</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray" style="justify-content:center; align-items:flex-start; padding: 32px 28px;">
+        <div class="notif-panel">
+          <div class="notif-panel__header">
+            <span class="notif-panel__icon"><i data-lucide="bell"></i></span>
+            <span class="notif-panel__title">Notifications</span>
+            <span class="notif-panel__badge">3 new</span>
+            <button class="notif-panel__close"><i data-lucide="x"></i></button>
+          </div>
+          <button class="notif-panel__clear">Clear all notifications</button>
+          <div class="notif-panel__list">
+
+            <div class="notif-item notif-item--unread">
+              <div class="notif-item__icon notif-item__icon--red"><i data-lucide="triangle-alert"></i></div>
+              <div class="notif-item__body">
+                <p class="notif-item__title">Weather Advisory</p>
+                <p class="notif-item__desc">Typhoon Signal No. 1 is in effect. Stay safe and monitor PAGASA updates.</p>
+              </div>
+              <span class="notif-item__dot"></span>
+              <button class="notif-item__dismiss"><i data-lucide="x"></i></button>
+            </div>
+
+            <div class="notif-item notif-item--unread">
+              <div class="notif-item__icon notif-item__icon--green"><i data-lucide="file-text"></i></div>
+              <div class="notif-item__body">
+                <p class="notif-item__title">Document Ready for Pickup</p>
+                <p class="notif-item__desc">Your Barangay Clearance REQ-2025-0412 is ready. Claim at the barangay hall.</p>
+              </div>
+              <span class="notif-item__dot"></span>
+              <button class="notif-item__dismiss"><i data-lucide="x"></i></button>
+            </div>
+
+            <div class="notif-item notif-item--unread">
+              <div class="notif-item__icon notif-item__icon--orange"><i data-lucide="calendar"></i></div>
+              <div class="notif-item__body">
+                <p class="notif-item__title">Event Tomorrow</p>
+                <p class="notif-item__desc">Free Medical Mission at 7:00 AM. Bring your barangay ID and cedula.</p>
+              </div>
+              <span class="notif-item__dot"></span>
+              <button class="notif-item__dismiss"><i data-lucide="x"></i></button>
+            </div>
+
+            <div class="notif-item">
+              <div class="notif-item__icon notif-item__icon--blue"><i data-lucide="zap"></i></div>
+              <div class="notif-item__body">
+                <p class="notif-item__title">Report Status Updated</p>
+                <p class="notif-item__desc">Your flood report CON-2025-0498 is now In Progress. Work begins Monday.</p>
+              </div>
+              <button class="notif-item__dismiss"><i data-lucide="x"></i></button>
+            </div>
+
+            <div class="notif-item">
+              <div class="notif-item__icon notif-item__icon--purple"><i data-lucide="bar-chart-2"></i></div>
+              <div class="notif-item__body">
+                <p class="notif-item__title">New Community Poll</p>
+                <p class="notif-item__desc">'Best day for barangay general assembly?' — Cast your vote now.</p>
+              </div>
+              <button class="notif-item__dismiss"><i data-lucide="x"></i></button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notif-panel"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notif-panel__header"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"notif-panel__icon"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"bell"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"notif-panel__title"</span><span class="t-tag">&gt;</span>Notifications<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"notif-panel__badge"</span><span class="t-tag">&gt;</span>3 new<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"notif-panel__close"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"x"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/button&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"notif-panel__clear"</span><span class="t-tag">&gt;</span>Clear all notifications<span class="t-tag">&lt;/button&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notif-panel__list"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notif-item notif-item--unread"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notif-item__icon notif-item__icon--red"</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"triangle-alert"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+      <span class="t-tag">&lt;/div&gt;</span>
+      <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notif-item__body"</span><span class="t-tag">&gt;</span>
+        <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"notif-item__title"</span><span class="t-tag">&gt;</span>Weather Advisory<span class="t-tag">&lt;/p&gt;</span>
+        <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"notif-item__desc"</span><span class="t-tag">&gt;</span>Typhoon Signal No. 1 is in effect...<span class="t-tag">&lt;/p&gt;</span>
+      <span class="t-tag">&lt;/div&gt;</span>
+      <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"notif-item__dot"</span><span class="t-tag">&gt;&lt;/span&gt;</span>
+      <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"notif-item__dismiss"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"x"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/button&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-comment">&lt;!-- icon colors: notif-item__icon--red/green/orange/blue/gray/purple --&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+    </div>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Empty state</strong> — no notifications</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray" style="justify-content:center; align-items:flex-start; padding: 32px 28px;">
+        <div class="notif-panel">
+          <div class="notif-panel__header">
+            <span class="notif-panel__icon"><i data-lucide="bell"></i></span>
+            <span class="notif-panel__title">Notifications</span>
+            <button class="notif-panel__close"><i data-lucide="x"></i></button>
+          </div>
+          <div class="notif-panel__list">
+            <div class="notif-empty">
+              <div class="notif-empty__icon"><i data-lucide="bell"></i></div>
+              <p class="notif-empty__title">All caught up!</p>
+              <p class="notif-empty__sub">No new notifications at the moment.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notif-panel__list"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notif-empty"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notif-empty__icon"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"bell"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"notif-empty__title"</span><span class="t-tag">&gt;</span>All caught up!<span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"notif-empty__sub"</span><span class="t-tag">&gt;</span>No new notifications at the moment.<span class="t-tag">&lt;/p&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       PROGRAM CARDS
+  ══════════════════════════════════════════ -->
+  <section class="section" id="program-cards">
+    <div class="section-header">
+      <h2 class="section-title">Program Cards</h2>
+      <span class="section-id">.program-card</span>
+    </div>
+    <p class="section-desc">Full-bleed image cards for Youth Zone programs, sports leagues, and community events. The icon tile floats over the image/body boundary. Pair with <code>.badge-slots</code> and a <code>.btn--primary</code> register button.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Program card variants</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:16px; align-items:start;">
+
+        <div class="program-card">
+          <div class="program-card__img-wrap">
+            <img class="program-card__img" src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80" alt="Basketball League" />
+          </div>
+          <div class="program-card__body">
+            <div class="program-card__icon program-card__icon--green">
+              <i data-lucide="trophy"></i>
+            </div>
+            <h3 class="program-card__title">Basketball Summer League</h3>
+            <p class="program-card__desc">Open to youth ages 13–25. Team registration now open. Scheduled games every Saturday.</p>
+            <p class="program-card__meta"><i data-lucide="clock"></i> Every Saturday · 8:00 AM</p>
+            <div class="program-card__footer">
+              <span class="badge-slots"><i data-lucide="users"></i> 6 slots remaining</span>
+              <button class="btn btn--primary btn--sm">Register</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="program-card">
+          <div class="program-card__img-wrap">
+            <img class="program-card__img" src="https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?w=400&q=80" alt="Livelihood" />
+          </div>
+          <div class="program-card__body">
+            <div class="program-card__icon program-card__icon--orange">
+              <i data-lucide="briefcase"></i>
+            </div>
+            <h3 class="program-card__title">Livelihood Training</h3>
+            <p class="program-card__desc">Free skills training for residents. Certificate upon completion. Open to ages 18+.</p>
+            <p class="program-card__meta"><i data-lucide="calendar"></i> June 20–24 · 9:00 AM</p>
+            <div class="program-card__footer">
+              <span class="badge-slots"><i data-lucide="users"></i> 12 slots remaining</span>
+              <button class="btn btn--orange btn--sm">Register</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="program-card">
+          <div class="program-card__img-wrap">
+            <img class="program-card__img" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=80" alt="Youth Council" />
+          </div>
+          <div class="program-card__body">
+            <div class="program-card__icon program-card__icon--purple">
+              <i data-lucide="users"></i>
+            </div>
+            <h3 class="program-card__title">Youth Leaders Summit</h3>
+            <p class="program-card__desc">Empower the next generation. Leadership workshops and community planning sessions.</p>
+            <p class="program-card__meta"><i data-lucide="map-pin"></i> Barangay Hall, Room 2</p>
+            <div class="program-card__footer">
+              <span class="badge-slots"><i data-lucide="users"></i> 3 slots remaining</span>
+              <button class="btn btn--primary btn--sm">Register</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"program-card"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"program-card__img-wrap"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;img</span> <span class="t-attr">class</span>=<span class="t-val">"program-card__img"</span> <span class="t-attr">src</span>=<span class="t-val">"..."</span> <span class="t-attr">alt</span>=<span class="t-val">"..."</span> <span class="t-tag">/&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"program-card__body"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"program-card__icon program-card__icon--green"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"trophy"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;h3</span> <span class="t-attr">class</span>=<span class="t-val">"program-card__title"</span><span class="t-tag">&gt;</span>Basketball Summer League<span class="t-tag">&lt;/h3&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"program-card__desc"</span><span class="t-tag">&gt;</span>Open to youth ages 13–25...<span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"program-card__meta"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"clock"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Every Saturday · 8:00 AM<span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"program-card__footer"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge-slots"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"users"</span><span class="t-tag">&gt;&lt;/i&gt;</span> 6 slots remaining<span class="t-tag">&lt;/span&gt;</span>
+      <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--primary btn--sm"</span><span class="t-tag">&gt;</span>Register<span class="t-tag">&lt;/button&gt;</span>
+    <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Icon colors: program-card__icon--green / --orange / --red / --blue / --purple --&gt;</span></pre></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       EVENT IMAGE CARDS
+  ══════════════════════════════════════════ -->
+  <section class="section" id="event-img-cards">
+    <div class="section-header">
+      <h2 class="section-title">Event Image Cards</h2>
+      <span class="section-id">.event-img-card</span>
+    </div>
+    <p class="section-desc">Full-bleed photo card with a category tag overlaid at the bottom-left of the image. Used for announcements, health events, and community news with photos. The tag gets a subtle blur backdrop for readability.</p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Event image card variants</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:16px; align-items:start;">
+
+        <div class="event-img-card">
+          <div class="event-img-card__img-wrap">
+            <img class="event-img-card__img" src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&q=80" alt="Medical Mission" />
+            <span class="event-img-card__tag tag tag--green">
+              <i data-lucide="heart-pulse"></i> Health
+            </span>
+          </div>
+          <div class="event-img-card__body">
+            <h3 class="event-img-card__title">Free Medical Mission</h3>
+            <p class="event-img-card__meta">June 12 · 7:00 AM · Barangay Hall</p>
+          </div>
+        </div>
+
+        <div class="event-img-card">
+          <div class="event-img-card__img-wrap">
+            <img class="event-img-card__img" src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&q=80" alt="Scholarship" />
+            <span class="event-img-card__tag tag tag--blue">
+              <i data-lucide="book-open"></i> Education
+            </span>
+          </div>
+          <div class="event-img-card__body">
+            <h3 class="event-img-card__title">Scholarship Applications Open</h3>
+            <p class="event-img-card__meta">Deadline: July 1 · Barangay Secretary</p>
+          </div>
+        </div>
+
+        <div class="event-img-card">
+          <div class="event-img-card__img-wrap">
+            <img class="event-img-card__img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" alt="Infrastructure" />
+            <span class="event-img-card__tag tag tag--amber">
+              <i data-lucide="hard-hat"></i> Infrastructure
+            </span>
+          </div>
+          <div class="event-img-card__body">
+            <h3 class="event-img-card__title">Road Repair — Rizal St.</h3>
+            <p class="event-img-card__meta">Starts Monday · Expect delays</p>
+          </div>
+        </div>
+
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"event-img-card"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"event-img-card__img-wrap"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;img</span> <span class="t-attr">class</span>=<span class="t-val">"event-img-card__img"</span> <span class="t-attr">src</span>=<span class="t-val">"..."</span> <span class="t-attr">alt</span>=<span class="t-val">"..."</span> <span class="t-tag">/&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"event-img-card__tag tag tag--green"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"heart-pulse"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Health
+    <span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"event-img-card__body"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;h3</span> <span class="t-attr">class</span>=<span class="t-val">"event-img-card__title"</span><span class="t-tag">&gt;</span>Free Medical Mission<span class="t-tag">&lt;/h3&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"event-img-card__meta"</span><span class="t-tag">&gt;</span>June 12 · 7:00 AM · Barangay Hall<span class="t-tag">&lt;/p&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Tag uses existing .tag variants: tag--green / --amber / --blue / --red / --gray --&gt;</span></pre></div>
+    </div>
+  </section>
+
+</main><!-- /main -->
+
+<!-- Pet Report Modal -->
+<div class="modal-overlay" id="petModal" onclick="closeOnBackdrop(event)">
+  <div class="modal">
+    <div class="modal__header modal__header--green">
+      <div class="modal__header-icon"><i data-lucide="paw-print"></i></div>
+      <div class="modal__header-content">
+        <p class="modal__header-label">Community Pet Board (PetReport)</p>
+        <h2 class="modal__header-title">Post a Pet Report</h2>
+        <p class="modal__header-sub">Report a missing pet or one up for adoption</p>
+      </div>
+      <button class="btn btn--close btn--sm modal__close" aria-label="Close" onclick="closeModal('petModal')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal__body">
+      <!-- Report Type Toggle -->
+      <div class="report-type-toggle" id="reportTypeToggle">
+        <button class="btn report-type-toggle__btn report-type-toggle__btn--missing is-active" onclick="setReportType(this, 'missing')">Missing</button>
+        <button class="btn report-type-toggle__btn report-type-toggle__btn--adoption" onclick="setReportType(this, 'adoption')">For Adoption</button>
+      </div>
+
+      <!-- Form Fields -->
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">Pet Name *</label>
+          <input class="form-input" type="text" placeholder="e.g. Brownie" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Animal Type *</label>
+          <input class="form-input" type="text" placeholder="e.g. Dog · Male · 2 yrs" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description *</label>
+        <textarea class="form-input" rows="3" placeholder="Describe your pet — color, markings, collar details, last seen location..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Contact Number *</label>
+        <input class="form-input" type="tel" placeholder="e.g. 0917-123-4567" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Pet Photo</label>
+        <div class="upload-area" style="padding: var(--space-lg);">
+          <i data-lucide="camera"></i>
+          <span class="upload-area__label">Click to upload a photo</span>
+          <span class="upload-area__hint">JPG, PNG or WEBP · Max 5MB</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--outline" onclick="closeModal('petModal')">Cancel</button>
+      <button class="btn btn--orange btn--full"><i data-lucide="paw-print"></i> Post Pet Report</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Anti-Bullying Modal -->
+<div class="modal-overlay" id="bullyingModal" onclick="closeOnBackdrop(event)">
+  <div class="modal">
+    <div class="modal__header modal__header--red">
+      <div class="modal__header-icon"><i data-lucide="shield-alert"></i></div>
+      <div class="modal__header-content">
+        <p class="modal__header-label">Youth Zone</p>
+        <h2 class="modal__header-title">Report Anti-Bullying</h2>
+        <p class="modal__header-sub">Safe · Confidential · Taken Seriously</p>
+      </div>
+      <button class="btn btn--close btn--sm modal__close" aria-label="Close" onclick="closeModal('bullyingModal')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal__body">
+      <!-- Anonymous toggle -->
+      <div class="anon-toggle-row">
+        <i data-lucide="lock" class="anon-toggle-row__icon"></i>
+        <div class="anon-toggle-row__body">
+          <p class="anon-toggle-row__title">Submitting Anonymously</p>
+          <p class="anon-toggle-row__sub">Your identity will not be shared. Tap to add contact.</p>
+        </div>
+        <label class="toggle-wrap">
+          <input type="checkbox" class="toggle-input" checked />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+
+      <!-- Bullying type -->
+      <div>
+        <p class="modal-section-label" style="margin-bottom: var(--space-sm);">What type of bullying occurred? *</p>
+        <div class="bullying-grid" id="bullyingGrid">
+          <button class="bullying-option is-selected" onclick="selectBullying(this)">
+            <span class="bullying-option__title">Physical Bullying</span>
+            <span class="bullying-option__sub">Hitting, pushing, or physical harm</span>
+          </button>
+          <button class="bullying-option" onclick="selectBullying(this)">
+            <span class="bullying-option__title">Verbal Bullying</span>
+            <span class="bullying-option__sub">Name-calling, insults, threats</span>
+          </button>
+          <button class="bullying-option" onclick="selectBullying(this)">
+            <span class="bullying-option__title">Cyberbullying</span>
+            <span class="bullying-option__sub">Online harassment or threats</span>
+          </button>
+          <button class="bullying-option" onclick="selectBullying(this)">
+            <span class="bullying-option__title">Social / Relational</span>
+            <span class="bullying-option__sub">Exclusion, rumor-spreading</span>
+          </button>
+          <button class="bullying-option" onclick="selectBullying(this)">
+            <span class="bullying-option__title">Other</span>
+            <span class="bullying-option__sub">Any other form of bullying</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="form-group">
+        <label class="form-label">Where did it happen? *</label>
+        <select class="form-select">
+          <option value="" disabled selected></option>
+          <option>Barangay Hall</option>
+          <option>School Premises</option>
+          <option>Online / Social Media</option>
+          <option>Community Park</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label class="form-label">Describe what happened *</label>
+        <textarea class="form-input" rows="4" placeholder="Please describe the incident in as much detail as you're comfortable sharing..." id="bullyingDesc"></textarea>
+        <span class="char-count">0 characters (min 10)</span>
+      </div>
+
+      <!-- Legal notice -->
+      <div class="notice-banner notice-banner--red">
+        <div class="notice-banner__icon"><i data-lucide="alert-triangle"></i></div>
+        <div class="notice-banner__body">
+          <p class="notice-banner__title">All reports are taken seriously and handled with strict confidentiality by the Barangay Youth Officer. Filing a false report is a violation of barangay ordinance. For immediate danger, call <strong>911</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--outline" onclick="closeModal('bullyingModal')">Cancel</button>
+      <button class="btn btn--red btn--full"><i data-lucide="shield"></i> Submit Report</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Document Select Modal -->
+<div class="modal-overlay" id="docSelectModal" onclick="closeOnBackdrop(event)">
+  <div class="modal">
+    <div class="modal__header modal__header--green">
+      <div class="modal__header-icon"><i data-lucide="file-text"></i></div>
+      <div class="modal__header-content">
+        <p class="modal__header-label">New Request</p>
+        <h2 class="modal__header-title">Select a Document Type</h2>
+      </div>
+      <button class="btn btn--close btn--sm modal__close" aria-label="Close" onclick="closeModal('docSelectModal')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal__body" style="padding: var(--space-lg) var(--space-xl);">
+      <div class="doc-type-list">
+        <button class="doc-type-row" onclick="closeModal('docSelectModal'); openModal('docFormModal')">
+          <div class="doc-type-row__icon"><i data-lucide="file-text"></i></div>
+          <div class="doc-type-row__body">
+            <span class="doc-type-row__name">Barangay Clearance</span>
+            <span class="doc-type-row__meta">1–2 business days · ₱50.00</span>
+          </div>
+          <span class="doc-type-row__chevron"><i data-lucide="chevron-right"></i></span>
+        </button>
+        <button class="doc-type-row" onclick="closeModal('docSelectModal'); openModal('docFormModal')">
+          <div class="doc-type-row__icon"><i data-lucide="home"></i></div>
+          <div class="doc-type-row__body">
+            <span class="doc-type-row__name">Certificate of Residency</span>
+            <span class="doc-type-row__meta">1 business day · ₱50.00</span>
+          </div>
+          <span class="doc-type-row__chevron"><i data-lucide="chevron-right"></i></span>
+        </button>
+        <button class="doc-type-row" onclick="closeModal('docSelectModal'); openModal('docFormModal')">
+          <div class="doc-type-row__icon"><i data-lucide="heart-handshake"></i></div>
+          <div class="doc-type-row__body">
+            <span class="doc-type-row__name">Indigency Letter</span>
+            <span class="doc-type-row__meta">Same day · Free</span>
+          </div>
+          <span class="doc-type-row__chevron"><i data-lucide="chevron-right"></i></span>
+        </button>
+        <button class="doc-type-row" onclick="closeModal('docSelectModal'); openModal('docFormModal')">
+          <div class="doc-type-row__icon"><i data-lucide="award"></i></div>
+          <div class="doc-type-row__body">
+            <span class="doc-type-row__name">Good Moral Certificate</span>
+            <span class="doc-type-row__meta">1–2 business days · ₱50.00</span>
+          </div>
+          <span class="doc-type-row__chevron"><i data-lucide="chevron-right"></i></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Document Form Modal -->
+<div class="modal-overlay" id="docFormModal" onclick="closeOnBackdrop(event)">
+  <div class="modal">
+    <div class="modal__header modal__header--green">
+      <div class="modal__header-icon"><i data-lucide="award"></i></div>
+      <div class="modal__header-content">
+        <p class="modal__header-label">New Request</p>
+        <h2 class="modal__header-title">Good Moral Certificate</h2>
+      </div>
+      <button class="btn btn--close btn--sm modal__close" aria-label="Close" onclick="closeModal('docFormModal')"><i data-lucide="x"></i></button>
+    </div>
+
+    <!-- Info strip -->
+    <div class="modal__info-strip">
+      <span class="badge badge--inprogress">1–2 business days</span>
+      <span style="font-family:var(--font-display);font-size:0.8rem;font-weight:700;color:var(--green-dark);">₱50.00</span>
+      <span style="font-size:0.78rem;color:var(--gray-400);margin-left:auto;">Valid government ID required upon pickup</span>
+    </div>
+
+    <div class="modal__body">
+      <div class="form-group">
+        <label class="form-label"><i data-lucide="user" style="width:14px;height:14px;display:inline;"></i> Full Name</label>
+        <input class="form-input" type="text" placeholder="e.g. Juan dela Cruz" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Purpose / Reason for Request</label>
+        <select class="form-select">
+          <option value="" disabled selected></option>
+          <option>Employment</option>
+          <option>School Enrollment</option>
+          <option>Government Transaction</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">Number of Copies</label>
+          <input class="form-input" type="number" value="1" min="1" max="5" />
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i data-lucide="calendar" style="width:14px;height:14px;display:inline;"></i> Preferred Pickup Date</label>
+          <input class="form-input" type="date" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Contact Number</label>
+        <input class="form-input" type="tel" placeholder="e.g. 0917-123-4567" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Additional Notes <span style="font-weight:400;color:var(--gray-400)">(optional)</span></label>
+        <textarea class="form-input" rows="3" placeholder="Any special instructions or details..."></textarea>
+      </div>
+    </div>
+
+    <div class="modal__footer">
+      <button class="btn btn--outline" onclick="closeModal('docFormModal')">Cancel</button>
+      <button class="btn btn--orange btn--full"><i data-lucide="file-check"></i> Submit Request</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Sign Out Confirm Modal -->
+<div class="modal-overlay" id="signoutModal" onclick="closeOnBackdrop(event)">
+  <div class="modal modal--confirm">
+    <div class="modal-confirm__icon">
+      <i data-lucide="triangle-alert"></i>
+    </div>
+    <h2 class="modal-confirm__title">Sign out?</h2>
+    <p class="modal-confirm__body">You'll be signed out of your BarangayConnect account on this device.</p>
+    <div class="modal-confirm__footer">
+      <button class="btn btn--outline" onclick="closeModal('signoutModal')">Cancel</button>
+      <button class="btn btn--red btn--full"><i data-lucide="log-out"></i> Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Drawer Backdrop -->
+<div class="profile-drawer-backdrop" id="drawerBackdrop" onclick="closeProfileDrawer()"></div>
+
+<!-- Profile Drawer -->
+<div class="profile-drawer" id="profileDrawer">
+  <div class="profile-drawer__header">
+    <button class="btn btn--close btn--sm profile-drawer__close" aria-label="Close" onclick="closeProfileDrawer()">
+      <i data-lucide="x"></i>
+    </button>
+    <div class="profile-drawer__avatar">JD</div>
+    <p class="profile-drawer__name">Juan Dela Cruz</p>
+    <p class="profile-drawer__role">Resident · Barangay Bancod</p>
+    <span class="profile-drawer__id">
+      <i data-lucide="id-card"></i> BRY-2024-00142
+    </span>
+  </div>
+  <nav class="profile-drawer__menu">
+    <button class="profile-drawer__item profile-drawer__item--demo">
+      <div class="profile-drawer__item-icon"><i data-lucide="shield"></i></div>
+      <div class="profile-drawer__item-body">
+        <span class="profile-drawer__item-title">[DEMO] Officer Panel</span>
+        <span class="profile-drawer__item-sub">Manage services &amp; report</span>
+      </div>
+    </button>
+    <button class="profile-drawer__item profile-drawer__item--demo">
+      <div class="profile-drawer__item-icon"><i data-lucide="settings-2"></i></div>
+      <div class="profile-drawer__item-body">
+        <span class="profile-drawer__item-title">[DEMO] Admin Panel</span>
+        <span class="profile-drawer__item-sub">Manage all systems</span>
+      </div>
+    </button>
+    <button class="profile-drawer__item">
+      <div class="profile-drawer__item-icon"><i data-lucide="user-pen"></i></div>
+      <div class="profile-drawer__item-body">
+        <span class="profile-drawer__item-title">Edit Profile</span>
+        <span class="profile-drawer__item-sub">Update your personal info</span>
+      </div>
+    </button>
+    <button class="profile-drawer__item">
+      <div class="profile-drawer__item-icon"><i data-lucide="settings"></i></div>
+      <div class="profile-drawer__item-body">
+        <span class="profile-drawer__item-title">Preferences</span>
+        <span class="profile-drawer__item-sub">Notifications &amp; privacy</span>
+      </div>
+    </button>
+    <button class="profile-drawer__item">
+      <div class="profile-drawer__item-icon"><i data-lucide="message-square"></i></div>
+      <div class="profile-drawer__item-body">
+        <span class="profile-drawer__item-title">Send Feedback</span>
+        <span class="profile-drawer__item-sub">Help us improve BarangayConnect</span>
+      </div>
+    </button>
+    <button class="profile-drawer__item">
+      <div class="profile-drawer__item-icon"><i data-lucide="circle-help"></i></div>
+      <div class="profile-drawer__item-body">
+        <span class="profile-drawer__item-title">Help &amp; Support</span>
+        <span class="profile-drawer__item-sub">FAQs and contact info</span>
+      </div>
+    </button>
+    <button class="profile-drawer__item profile-drawer__item--signout" onclick="closeProfileDrawer(); openModal('signoutModal')">
+      <div class="profile-drawer__item-icon"><i data-lucide="log-out"></i></div>
+      <div class="profile-drawer__item-body">
+        <span class="profile-drawer__item-title">Sign Out</span>
+      </div>
+    </button>
+  </nav>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  /* ── Modal helpers ── */
+  function openModal(id)  { document.getElementById(id)?.classList.add('is-open'); lucide.createIcons(); }
+  function closeModal(id) { document.getElementById(id)?.classList.remove('is-open'); }
+  function closeOnBackdrop(e) { if (e.target === e.currentTarget) closeModal(e.currentTarget.id); }
+
+  /* Profile drawer */
+  function openProfileDrawer() {
+    document.getElementById('profileDrawer').classList.add('is-open');
+    document.getElementById('drawerBackdrop').classList.add('is-open');
+  }
+  function closeProfileDrawer() {
+    document.getElementById('profileDrawer').classList.remove('is-open');
+    document.getElementById('drawerBackdrop').classList.remove('is-open');
+  }
+
+  /* Close all on Escape */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.is-open').forEach(m => m.classList.remove('is-open'));
+      closeProfileDrawer();
+    }
+  });
+
+  /* Report type toggle */
+  function setReportType(btn, type) {
+    btn.closest('.report-type-toggle').querySelectorAll('.btn').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+  }
+
+  /* Bullying option selector */
+  function selectBullying(btn) {
+    btn.closest('.bullying-grid').querySelectorAll('.bullying-option').forEach(b => b.classList.remove('is-selected'));
+    btn.classList.add('is-selected');
+  }
+
+  /* Date slot selector */
+  document.querySelectorAll('.date-slot-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.closest('.comp-preview').querySelectorAll('.date-slot-card').forEach(c => c.classList.remove('is-selected'));
+      card.classList.add('is-selected');
+    });
+  });
+
+  /* Char counter */
+  const bullyingDesc = document.getElementById('bullyingDesc');
+  if (bullyingDesc) {
+    bullyingDesc.addEventListener('input', function() {
+      this.closest('.form-group').querySelector('.char-count').textContent =
+        `${this.value.length} characters (min 10)`;
+    });
+  }
+
+  /* ── Sidebar active link ── */
+  const sections = document.querySelectorAll('.section, .section-anchor');
+  const links    = document.querySelectorAll('.sidebar-link[href^="#"]');
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => { if (l.getAttribute('href').startsWith('#')) l.classList.remove('is-active'); });
+        const active = document.querySelector(`.sidebar-link[href="#${e.target.id}"]`);
+        if (active) active.classList.add('is-active');
+      }
+    });
+  }, { threshold: 0, rootMargin: "-80px 0px -40% 0px" });
+
+  sections.forEach(s => obs.observe(s));
+
+  /* ── Copy code ── */
+  function copyCode(btn) {
+    const pre = btn.closest('.comp-block').querySelector('.comp-code pre');
+    if (!pre) return;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.classList.add('copied');
+      btn.innerHTML = '<i data-lucide="check"></i> Copied!';
+      lucide.createIcons();
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = '<i data-lucide="copy"></i> Copy';
+        lucide.createIcons();
+      }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>

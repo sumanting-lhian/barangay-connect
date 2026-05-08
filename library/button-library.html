@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buttons Library</title>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/buttons.css" />
+
+  <style>
+    :root {
+      /* Showcase-only tokens — do NOT duplicate main.css variables here */
+      --showcase-bg:      #0e1117;
+      --showcase-surface: #161b22;
+      --showcase-border:  rgba(255,255,255,0.08);
+      --showcase-text:    #e6edf3;
+      --showcase-muted:   rgba(230,237,243,0.50);
+      --sidebar-w:        240px;
+      --font-mono:        'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--showcase-bg); color: var(--showcase-text); display: flex; min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+    [data-lucide] { width: 18px; height: 18px; stroke-width: 2; flex-shrink: 0; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--showcase-surface);
+      border-right: 1px solid var(--showcase-border);
+      position: fixed; top: 0; left: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      overflow-y: auto; z-index: 100;
+    }
+    .sidebar-header { padding: 20px 20px 16px; border-bottom: 1px solid var(--showcase-border); }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 800; font-size: 0.95rem; color: var(--showcase-text); }
+    .sidebar-logo-icon { width: 30px; height: 30px; background: var(--green-dark); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .sidebar-logo-icon [data-lucide] { width: 16px; height: 16px; color: white; }
+    .sidebar-tag { margin-top: 6px; font-size: 0.68rem; font-weight: 700; color: var(--showcase-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .sidebar-nav { padding: 12px; flex: 1; }
+    .sidebar-group { margin-bottom: 18px; }
+    .sidebar-group-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--showcase-muted); padding: 0 8px; margin-bottom: 4px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 0.82rem; font-weight: 500; color: var(--showcase-muted); transition: background 0.2s, color 0.2s; cursor: pointer; text-decoration: none; }
+    .sidebar-link [data-lucide] { width: 14px; height: 14px; }
+    .sidebar-link:hover { background: rgba(255,255,255,0.06); color: var(--showcase-text); }
+    .sidebar-link.is-active { background: rgba(27,75,39,0.35); color: #7dd9a0; }
+
+    /* ── Main content ── */
+    .main { margin-left: var(--sidebar-w); flex: 1; padding: 40px 48px 80px; max-width: 960px; }
+    .page-hero { margin-bottom: 48px; }
+    .page-hero h1 { font-family: var(--font-display); font-weight: 900; font-size: 2.2rem; color: var(--showcase-text); letter-spacing: -0.04em; }
+    .page-hero p { margin-top: 10px; font-size: 0.92rem; color: var(--showcase-muted); line-height: 1.7; max-width: 560px; }
+    .page-hero p code { font-family: var(--font-mono); font-size: 0.82rem; background: rgba(255,255,255,0.07); padding: 1px 6px; border-radius: 4px; color: #a5d6ff; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 64px; scroll-margin-top: 24px; }
+    .section-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--showcase-border); }
+    .section-title { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; color: var(--showcase-text); letter-spacing: -0.02em; }
+    .section-id { font-family: var(--font-mono); font-size: 0.7rem; color: rgba(125,217,160,0.7); }
+    .section-desc { font-size: 0.86rem; color: var(--showcase-muted); line-height: 1.7; margin-bottom: 20px; max-width: 600px; }
+    .section-desc code { font-family: var(--font-mono); font-size: 0.82rem; background: rgba(255,255,255,0.07); padding: 1px 6px; border-radius: 4px; color: #a5d6ff; }
+
+    /* ── Component block ── */
+    .comp-block { border: 1px solid var(--showcase-border); border-radius: 14px; overflow: hidden; margin-bottom: 20px; }
+    .comp-block-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--showcase-border); }
+    .comp-block-title { font-family: var(--font-mono); font-size: 0.78rem; color: var(--showcase-muted); }
+    .comp-block-title strong { color: var(--showcase-text); font-weight: 600; }
+
+    .copy-btn { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; color: var(--showcase-muted); border: 1px solid var(--showcase-border); background: transparent; transition: all 0.2s; font-family: var(--font-mono); cursor: pointer; }
+    .copy-btn [data-lucide] { width: 12px; height: 12px; }
+    .copy-btn:hover { background: rgba(255,255,255,0.06); color: var(--showcase-text); }
+    .copy-btn.copied { color: #7dd9a0; border-color: rgba(125,217,160,0.4); }
+
+    /* ── Preview areas ── */
+    .comp-preview { padding: 32px 28px; background: #f0e3e3; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .comp-preview--dark { background: var(--green-dark); }
+    .comp-preview--hero { background: linear-gradient(135deg, #2d5a3d 0%, #1B4B27 60%, #0f2e18 100%); }
+    .comp-preview--gray { background: #f0e3e3; }
+    .comp-preview--col { flex-direction: column; align-items: flex-start; }
+    .comp-preview--center { justify-content: center; }
+
+    /* ── Code block ── */
+    .comp-code { background: #0d1117; padding: 20px 24px; overflow-x: auto; border-top: 1px solid var(--showcase-border); }
+    .comp-code pre { font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.7; color: #e6edf3; white-space: pre; }
+    .t-tag     { color: #79c0ff; }
+    .t-attr    { color: #ff7b72; }
+    .t-val     { color: #a5d6ff; }
+    .t-comment { color: #8b949e; font-style: italic; }
+
+    /* ── Comparison columns ── */
+    .compare-row { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+    .compare-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .compare-label { font-family: var(--font-mono); font-size: 0.68rem; color: var(--showcase-muted); }
+    .compare-arrow { color: rgba(255,255,255,0.3); font-size: 1.4rem; }
+
+    /* ── Divider ── */
+    .section-hr { height: 1px; background: var(--showcase-border); margin: 48px 0; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <img src="../assets/images/logo.png" alt="BarangayConnect" style="width:30px;height:30px;object-fit:contain;" />
+      BarangayConnect
+    </div>
+    <div class="sidebar-tag">Buttons</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Core</div>
+      <a class="sidebar-link" href="#category"><i data-lucide="layout-list"></i> Tab / Category Pills</a>
+      <a class="sidebar-link" href="#widget"><i data-lucide="grid-2x2"></i> Widget Buttons</a>
+      <a class="sidebar-link" href="#solid"><i data-lucide="square"></i> Solid Buttons</a>
+      <a class="sidebar-link" href="#outline"><i data-lucide="square-dashed"></i> Outline &amp; Ghost</a>
+      <a class="sidebar-link" href="#hero"><i data-lucide="sparkles"></i> Hero Buttons</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">States</div>
+      <a class="sidebar-link" href="#located"><i data-lucide="map-pin"></i> Location Reported</a>
+      <a class="sidebar-link" href="#close"><i data-lucide="x"></i> Close / Dismiss</a>
+      <a class="sidebar-link" href="#loading"><i data-lucide="loader-circle"></i> Loading State</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Communication</div>
+      <a class="sidebar-link" href="#call"><i data-lucide="phone"></i> Call Buttons</a>
+      <a class="sidebar-link" href="#toggle"><i data-lucide="toggle-right"></i> Toggle Switch</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Navigation</div>
+      <a class="sidebar-link" href="#filter"><i data-lucide="filter"></i> Filter Pills</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Complex</div>
+      <a class="sidebar-link" href="#icon"><i data-lucide="mouse-pointer-click"></i> Icon-Only</a>
+      <a class="sidebar-link" href="#fab"><i data-lucide="plus-circle"></i> FAB</a>
+      <a class="sidebar-link" href="#selector"><i data-lucide="check-square"></i> Selector Cards</a>
+      <a class="sidebar-link" href="#dashboard"><i data-lucide="layout-dashboard"></i> Dashboard Actions</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Reference</div>
+      <a class="sidebar-link" href="#sizes"><i data-lucide="move-horizontal"></i> Size Variants</a>
+      <a class="sidebar-link" href="#patterns"><i data-lucide="copy"></i> Common Patterns</a>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Libraries</div>
+      <a class="sidebar-link" href="main-library.html"><i data-lucide="palette"></i> Design Language</a>
+      <a class="sidebar-link" href="components-library.html"><i data-lucide="layers"></i> Components</a>
+      <a class="sidebar-link" href="frames-library.html"><i data-lucide="monitor"></i> Frames &amp; Modals</a>
+      <a class="sidebar-link is-active" href="button-library.html"><i data-lucide="mouse-pointer-click"></i> Buttons</a>
+    </div>
+  </nav>
+</aside>
+
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<main class="main">
+
+  <div class="page-hero">
+    <h1>Buttons</h1>
+    <p>
+      Every interactive clickable element in BarangayConnect. Always start with the base
+      <code>.btn</code> class, then layer a variant, size, and modifier.
+      Requires <code>main.css</code> + <code>buttons.css</code>.
+    </p>
+  </div>
+
+
+  <!-- ════════════════════ TAB / CATEGORY PILLS ════════════════════ -->
+  <section class="section" id="category">
+    <div class="section-header">
+      <h2 class="section-title">Tab / Category Pills</h2>
+      <span class="section-id">.btn--category + .btn-tab-bar</span>
+    </div>
+    <p class="section-desc">
+      Primary navigation tabs for dark backgrounds — dashboard hero strips, community section tabs, service quick-action bars.
+      Wrap in <code>.btn-tab-bar</code> for correct spacing. Active state uses <code>.is-active</code> (or <code>.is-selected</code>).
+      The orange fill on active is intentional: it creates visible contrast against green hero sections.
+      Use <code>.btn--filter</code> instead when the background is white or off-white.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Services strip</strong> — Report a Concern active</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--dark">
+        <div class="btn-tab-bar">
+          <button class="btn btn--category is-active"><i data-lucide="flag"></i> Report a Concern</button>
+          <button class="btn btn--category"><i data-lucide="file-text"></i> Document Requests</button>
+          <button class="btn btn--category"><i data-lucide="calendar"></i> Book Appointment</button>
+          <button class="btn btn--category"><i data-lucide="phone"></i> Emergency &amp; Directory</button>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"btn-tab-bar"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--category is-active"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"flag"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Report a Concern
+  <span class="t-tag">&lt;/button&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--category"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"file-text"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Document Requests
+  <span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+
+<span class="t-comment">/* Toggle active tab with JS */</span>
+document.querySelectorAll('.btn--category').forEach(btn =&gt; {
+  btn.addEventListener('click', function() {
+    this.closest('.btn-tab-bar')
+      .querySelectorAll('.btn--category')
+      .forEach(b =&gt; b.classList.remove('is-active'));
+    this.classList.add('is-active');
+  });
+});</pre></div>
+    </div>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Community strip</strong> — Bulletin active</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--dark">
+        <div class="btn-tab-bar">
+          <button class="btn btn--category is-active"><i data-lucide="message-square"></i> Bulletin</button>
+          <button class="btn btn--category"><i data-lucide="bar-chart-2"></i> Polls</button>
+          <button class="btn btn--category"><i data-lucide="calendar"></i> Calendar</button>
+          <button class="btn btn--category"><i data-lucide="paw-print"></i> Pet Board</button>
+          <button class="btn btn--category"><i data-lucide="users"></i> Youth Zone</button>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- Same structure. Add is-active to whichever tab is current. --&gt;</span>
+<span class="t-comment">&lt;!-- Both .is-active and .is-selected trigger the orange state. --&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ WIDGET BUTTONS ════════════════════ -->
+  <section class="section" id="widget">
+    <div class="section-header">
+      <h2 class="section-title">Widget Buttons</h2>
+      <span class="section-id">.btn--widget</span>
+    </div>
+    <p class="section-desc">
+      Glass-style icon + label tiles for the time/alert widget overlay on the dashboard hero.
+      Always used on dark or photo backgrounds — the <code>backdrop-filter: blur</code> gives the frosted effect.
+      Stack icon above label, keep label text short.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Dashboard hero overlay</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--hero">
+        <button class="btn btn--widget"><i data-lucide="file-text"></i><span>Docs</span></button>
+        <button class="btn btn--widget"><i data-lucide="calendar"></i><span>Events</span></button>
+        <button class="btn btn--widget"><i data-lucide="triangle-alert"></i><span>Alerts</span></button>
+        <button class="btn btn--widget"><i data-lucide="phone"></i><span>Hotline</span></button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--widget"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"file-text"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+  <span class="t-tag">&lt;span&gt;</span>Docs<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ SOLID BUTTONS ════════════════════ -->
+  <section class="section" id="solid">
+    <div class="section-header">
+      <h2 class="section-title">Solid Buttons</h2>
+      <span class="section-id">.btn--green / --orange / --red</span>
+    </div>
+    <p class="section-desc">
+      Primary actions on white and light backgrounds.
+      <strong>Green</strong> = confirm / register / official action.
+      <strong>Orange</strong> = submit / RSVP / call-to-action.
+      <strong>Red</strong> = destructive / urgent / emergency.
+      All three have built-in hover, active, and disabled states.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>All solid variants</strong> — with icons and without</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview">
+        <button class="btn btn--green">Register</button>
+        <button class="btn btn--green"><i data-lucide="phone"></i> Contact Owner</button>
+        <button class="btn btn--orange">RSVP Now</button>
+        <button class="btn btn--orange"><i data-lucide="paw-print"></i> Post Pet Report</button>
+        <button class="btn btn--red">Report Now</button>
+        <button class="btn btn--green" disabled>Disabled</button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--green"</span><span class="t-tag">&gt;</span>Register<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--green"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"phone"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Contact Owner
+<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--orange"</span><span class="t-tag">&gt;</span>RSVP Now<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--red"</span><span class="t-tag">&gt;</span>Report Now<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--green"</span> <span class="t-attr">disabled</span><span class="t-tag">&gt;</span>Disabled<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ OUTLINE & GHOST ════════════════════ -->
+  <section class="section" id="outline">
+    <div class="section-header">
+      <h2 class="section-title">Outline &amp; Ghost</h2>
+      <span class="section-id">.btn--outline / --ghost / --dashed / --white</span>
+    </div>
+    <p class="section-desc">
+      Secondary and tertiary actions. Use <code>.btn--outline</code> for Back/Cancel on light backgrounds.
+      <code>.btn--ghost</code> for subtle secondary links.
+      <code>.btn--dashed</code> for invite / add-new actions.
+      <code>.btn--white</code> is a solid white pill, used on dark hero sections only.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>On light backgrounds</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview">
+        <button class="btn btn--outline"><i data-lucide="chevron-left"></i> Back</button>
+        <button class="btn btn--outline">Cancel</button>
+        <button class="btn btn--ghost btn--sm"><i data-lucide="info"></i> About</button>
+        <button class="btn btn--dashed"><i data-lucide="file-text"></i> Request New Document</button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--outline"</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"chevron-left"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Back<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--outline"</span><span class="t-tag">&gt;</span>Cancel<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--ghost btn--sm"</span><span class="t-tag">&gt;</span>About<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--dashed"</span><span class="t-tag">&gt;</span>Request New Document<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ HERO BUTTONS ════════════════════ -->
+  <section class="section" id="hero">
+    <div class="section-header">
+      <h2 class="section-title">Hero Buttons</h2>
+      <span class="section-id">.btn--outline-hero / --white</span>
+    </div>
+    <p class="section-desc">
+      For use on dark green hero sections and banner areas.
+      <code>.btn--outline-hero</code> is a white-bordered ghost — turns solid white on hover.
+      <code>.btn--white</code> is always solid white. Pair with <code>.btn--rounded</code>
+      for the softer pill shape seen on landing sections.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>On dark hero backgrounds</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--dark" style="gap: 14px;">
+        <button class="btn btn--outline-hero btn--lg btn--rounded">Get Started <i data-lucide="arrow-right"></i></button>
+        <button class="btn btn--white btn--lg">Browse Community</button>
+        <button class="btn btn--orange btn--lg btn--rounded"><i data-lucide="calendar"></i> Book Now</button>
+        <button class="btn btn--orange btn--full" style="max-width:220px"><i data-lucide="upload"></i> Submit Concern</button>
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- Ghost white outline, turns solid on hover --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--outline-hero btn--lg btn--rounded"</span><span class="t-tag">&gt;</span>
+  Get Started <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"arrow-right"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+<span class="t-tag">&lt;/button&gt;</span>
+
+<span class="t-comment">&lt;!-- Always solid white --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--white btn--lg"</span><span class="t-tag">&gt;</span>Browse Community<span class="t-tag">&lt;/button&gt;</span>
+
+<span class="t-comment">&lt;!-- Orange works great on dark sections too --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--orange btn--full"</span><span class="t-tag">&gt;</span>Submit Concern<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ LOCATED STATE ════════════════════ -->
+  <section class="section" id="located">
+    <div class="section-header">
+      <h2 class="section-title">Location Reported</h2>
+      <span class="section-id">.btn--located</span>
+    </div>
+    <p class="section-desc">
+      Replaces the "Contact Owner" button on a pet card once someone has confirmed a sighting.
+      Non-interactive — always add the <code>disabled</code> attribute.
+      The muted green-gray color communicates "resolved, no action needed."
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Before and after</strong> — location confirmed</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview">
+        <div class="compare-row">
+          <div class="compare-col">
+            <span class="compare-label" style="color: black;">Unknown location</span>
+            <button class="btn btn--green"><i data-lucide="phone"></i> Contact Owner</button>
+          </div>
+          <span class="compare-arrow" style="color:var(--gray-400)">→</span>
+          <div class="compare-col">
+            <span class="compare-label" style="color: var(--green-dark);">Location confirmed</span>
+            <button class="btn btn--located" disabled><i data-lucide="map-pin"></i> Location Reported</button>
+          </div>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- Add disabled attr — btn--located is pointer-events: none --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--located"</span> <span class="t-attr">disabled</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"map-pin"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Location Reported
+<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ CLOSE / DISMISS ════════════════════ -->
+  <section class="section" id="close">
+    <div class="section-header">
+      <h2 class="section-title">Close / Dismiss</h2>
+      <span class="section-id">.btn--close</span>
+    </div>
+    <p class="section-desc">
+      Circular X button for modals, overlays, notification panels, and dismissible chips.
+      Always add <code>aria-label="Close"</code>. Use <code>.btn--sm</code> for tighter contexts like
+      inline chips or small confirmation toasts. The red background is intentional — it makes the close
+      action immediately obvious even without reading the icon.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Default and small</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview" style="gap: 24px; align-items: center;">
+        <div class="compare-col">
+          <span class="compare-label" style="color: black;">Default (40px)</span>
+          <button class="btn btn--close" aria-label="Close"><i data-lucide="x"></i></button>
+        </div>
+        <div class="compare-col">
+          <span class="compare-label" style="color: black;">Small (28px)</span>
+          <button class="btn btn--close btn--sm" aria-label="Close"><i data-lucide="x"></i></button>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--close"</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Close"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"x"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-comment">&lt;!-- Small: add .btn--sm --&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ LOADING STATE ════════════════════ -->
+  <section class="section" id="loading">
+    <div class="section-header">
+      <h2 class="section-title">Loading State</h2>
+      <span class="section-id">.is-loading + .btn__spinner</span>
+    </div>
+    <p class="section-desc">
+      Add <code>.is-loading</code> to any <code>.btn</code> to show the spinner.
+      Include <code>&lt;span class="btn__spinner"&gt;&lt;/span&gt;</code> inside the button.
+      The button becomes non-interactive while loading. Works on all solid and outline variants.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Loading on orange and green</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview">
+        <button class="btn btn--orange is-loading"><span class="btn__spinner"></span> Submitting...</button>
+        <button class="btn btn--green is-loading"><span class="btn__spinner"></span> Saving...</button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--orange is-loading"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"btn__spinner"</span><span class="t-tag">&gt;&lt;/span&gt;</span>
+  Submitting...
+<span class="t-tag">&lt;/button&gt;</span>
+
+<span class="t-comment">/* JS: toggle loading on form submit */</span>
+btn.classList.add('is-loading');
+<span class="t-comment">// after async work finishes:</span>
+btn.classList.remove('is-loading');</pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ CALL BUTTONS ════════════════════ -->
+  <section class="section" id="call">
+    <div class="section-header">
+      <h2 class="section-title">Call Buttons</h2>
+      <span class="section-id">.btn--call / --call-circle</span>
+    </div>
+    <p class="section-desc">
+      Two styles for phone contact actions. <code>.btn--call-circle</code> is an icon-only orange circle —
+      used on pet board cards and the local services directory. <code>.btn--call</code> is a pill with a label —
+      used on emergency contact rows where the category label helps identify who you're calling.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Circle (pet / directory cards) + Pill (emergency rows)</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview" style="gap: 28px; align-items: center;">
+        <div class="compare-col">
+          <span class="compare-label" style="color: black;">Circle — card action</span>
+          <button class="btn btn--call-circle" aria-label="Call owner"><i data-lucide="phone-call"></i></button>
+        </div>
+        <div class="compare-col">
+          <span class="compare-label" style="color: black;">Pill small</span>
+          <button class="btn btn--call btn--sm"><i data-lucide="phone"></i> Call</button>
+        </div>
+        <div class="compare-col">
+          <span class="compare-label" style="color: black;">Pill default</span>
+          <button class="btn btn--call"><i data-lucide="phone"></i> Call</button>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- Circle icon — pet board card, service directory --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--call-circle"</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Call owner"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"phone-call"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+<span class="t-tag">&lt;/button&gt;</span>
+
+<span class="t-comment">&lt;!-- Pill with label — emergency contact rows --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--call btn--sm"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"phone"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Call
+<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ TOGGLE SWITCH ════════════════════ -->
+  <section class="section" id="toggle">
+    <div class="section-header">
+      <h2 class="section-title">Toggle Switch</h2>
+      <span class="section-id">.toggle-wrap + .toggle-track + .toggle-thumb</span>
+    </div>
+    <p class="section-desc">
+      Pure CSS toggle — no JS needed for the visual. The checkbox manages checked state; CSS does the rest.
+      Green track = active/on. Orange track (<code>.toggle-track--orange</code>) for "Featured" or alert toggles.
+      Always wrap with <code>.toggle-wrap</code> and include a visible <code>.toggle-label</code> for accessibility.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title" ><strong>All toggle variants</strong> — off / green / orange / disabled</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview" style="gap: 32px; flex-wrap: wrap;">
+        <div class="compare-col">
+          <span class="compare-label" style="color: black;">Off</span>
+          <label class="toggle-wrap"><input type="checkbox" class="toggle-input" /><span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">Inactive</span></label>
+        </div>
+        <div class="compare-col">
+          <span class="compare-label" style="color: black;">On — green</span>
+          <label class="toggle-wrap"><input type="checkbox" class="toggle-input" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">Active</span></label>
+        </div>
+        <div class="compare-col">
+          <span class="compare-label" style="color: black;">On — orange</span>
+          <label class="toggle-wrap"><input type="checkbox" class="toggle-input" checked /><span class="toggle-track toggle-track--orange"><span class="toggle-thumb"></span></span><span class="toggle-label">Featured</span></label>
+        </div>
+        <div class="compare-col">
+          <span class="compare-label" style="color: black;">Disabled</span>
+          <label class="toggle-wrap"><input type="checkbox" class="toggle-input" disabled /><span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">Disabled</span></label>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;label</span> <span class="t-attr">class</span>=<span class="t-val">"toggle-wrap"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;input</span> <span class="t-attr">type</span>=<span class="t-val">"checkbox"</span> <span class="t-attr">class</span>=<span class="t-val">"toggle-input"</span> <span class="t-tag">/&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"toggle-track"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"toggle-thumb"</span><span class="t-tag">&gt;&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"toggle-label"</span><span class="t-tag">&gt;</span>Active<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;/label&gt;</span>
+
+<span class="t-comment">&lt;!-- Orange track for "Featured" / alert toggles --&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"toggle-track toggle-track--orange"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"toggle-thumb"</span><span class="t-tag">&gt;&lt;/span&gt;</span>
+<span class="t-tag">&lt;/span&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ FILTER PILLS ════════════════════ -->
+  <section class="section" id="filter">
+    <div class="section-header">
+      <h2 class="section-title">Filter Pills</h2>
+      <span class="section-id">.btn--filter</span>
+    </div>
+    <p class="section-desc">
+      Content filter pills for <strong>light backgrounds</strong> — bulletin feed, admin tables, concern lists.
+      Inactive = gray, active = green. Do not use on dark hero sections;
+      use <code>.btn--category</code> there instead.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Light background filter bar</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray">
+        <button class="btn btn--filter is-active" onclick="setFilter(this)">All</button>
+        <button class="btn btn--filter" onclick="setFilter(this)">Announcements</button>
+        <button class="btn btn--filter" onclick="setFilter(this)">Reports</button>
+        <button class="btn btn--filter" onclick="setFilter(this)">Events</button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--filter is-active"</span><span class="t-tag">&gt;</span>All<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--filter"</span><span class="t-tag">&gt;</span>Announcements<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--filter"</span><span class="t-tag">&gt;</span>Reports<span class="t-tag">&lt;/button&gt;</span>
+
+<span class="t-comment">/* Toggle active filter */</span>
+document.querySelectorAll('.btn--filter').forEach(btn =&gt; {
+  btn.addEventListener('click', function() {
+    this.closest('div')
+      .querySelectorAll('.btn--filter')
+      .forEach(b =&gt; b.classList.remove('is-active'));
+    this.classList.add('is-active');
+  });
+});</pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ ICON-ONLY ════════════════════ -->
+  <section class="section" id="icon">
+    <div class="section-header">
+      <h2 class="section-title">Icon-Only Buttons</h2>
+      <span class="section-id">.btn--icon + .btn--icon-edit / --icon-delete</span>
+    </div>
+    <p class="section-desc">
+      Compact action buttons for table rows, card action menus, and admin panels.
+      Always include <code>aria-label</code> — there is no visible text.
+      Use <code>.btn--sm</code> to shrink from 40px to 32px for tighter layouts.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Edit and delete — default and small</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview" style="gap: 28px; align-items: center;">
+        <div class="compare-col">
+          <span class="compare-label" style="color: black;">Default (40px)</span>
+          <div style="display:flex; gap: 8px;">
+            <button class="btn btn--icon btn--icon-edit" aria-label="Edit"><i data-lucide="pencil"></i></button>
+            <button class="btn btn--icon btn--icon-delete" aria-label="Delete"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>
+        <div class="compare-col">
+          <span class="compare-label" style="color: black;">Small (32px)</span>
+          <div style="display:flex; gap: 8px;">
+            <button class="btn btn--icon btn--icon-edit btn--sm" aria-label="Edit"><i data-lucide="pencil"></i></button>
+            <button class="btn btn--icon btn--icon-delete btn--sm" aria-label="Delete"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--icon btn--icon-edit"</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Edit"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"pencil"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--icon btn--icon-delete"</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Delete"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"trash-2"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-comment">&lt;!-- Add .btn--sm for 32px size --&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ FAB ════════════════════ -->
+  <section class="section" id="fab">
+    <div class="section-header">
+      <h2 class="section-title">Floating Action Button</h2>
+      <span class="section-id">.btn--fab</span>
+    </div>
+    <p class="section-desc">
+      Fixed bottom-right. One per page maximum. Use for the primary creation action on a page —
+      "Create post", "New report", "Add event". The <code>position: fixed</code> is built into the class;
+      it renders statically below in the demo.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>FAB — static for demo, fixed in production</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--center" style="height: 100px;">
+        <button class="btn btn--fab" aria-label="Create new post" style="position: static;"><i data-lucide="plus"></i></button>
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- Place before &lt;/body&gt; — position: fixed is built into the class --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--fab"</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Create new post"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"plus"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ SELECTOR CARDS ════════════════════ -->
+  <section class="section" id="selector">
+    <div class="section-header">
+      <h2 class="section-title">Selector Cards</h2>
+      <span class="section-id">.btn--selector</span>
+    </div>
+    <p class="section-desc">
+      Large clickable choice cards for multi-step forms. Used on concern type selection,
+      document type, and ID type steps. Toggle <code>.is-selected</code> to highlight the choice.
+      Supports multi-select — toggle each independently.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Concern type selector</strong> — Safety Hazard selected</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--gray">
+        <button class="btn btn--selector" onclick="toggleSelector(this)"><i data-lucide="droplets"></i> Flooding</button>
+        <button class="btn btn--selector" onclick="toggleSelector(this)"><i data-lucide="trash-2"></i> Garbage</button>
+        <button class="btn btn--selector is-selected" onclick="toggleSelector(this)"><i data-lucide="shield-alert"></i> Safety Hazard</button>
+        <button class="btn btn--selector" onclick="toggleSelector(this)"><i data-lucide="help-circle"></i> Other</button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--selector"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"droplets"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Flooding
+<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-comment">&lt;!-- Add .is-selected for the active choice --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--selector is-selected"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"shield-alert"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Safety Hazard
+<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ DASHBOARD ACTIONS ════════════════════ -->
+  <section class="section" id="dashboard">
+    <div class="section-header">
+      <h2 class="section-title">Dashboard Action Buttons</h2>
+      <span class="section-id">.btn--action-orange / --action-green / --status-resolved</span>
+    </div>
+    <p class="section-desc">
+      Workflow action buttons used inside the officer and admin panels for managing document requests
+      and concern reports. Sized specifically for data tables and card action areas.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Document and report workflow actions</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview comp-preview--col" style="gap: 10px; max-width: 280px;">
+        <button class="btn btn--action-orange"><i data-lucide="clock"></i> Mark as In Progress</button>
+        <button class="btn btn--action-green"><i data-lucide="check"></i> Mark Ready for Pickup</button>
+        <button class="btn btn--action-orange"><i data-lucide="package-check"></i> Mark as Claimed</button>
+        <button class="btn btn--status-resolved"><i data-lucide="check-circle"></i> Resolved</button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--action-orange"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"clock"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Mark as In Progress
+<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--action-green"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"check"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Mark Ready for Pickup
+<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--status-resolved"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"check-circle"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Resolved
+<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ SIZE VARIANTS ════════════════════ -->
+  <section class="section" id="sizes">
+    <div class="section-header">
+      <h2 class="section-title">Size Variants</h2>
+      <span class="section-id">.btn--sm / .btn--lg / .btn--full / .btn--rounded</span>
+    </div>
+    <p class="section-desc">
+      Size modifiers work on every solid and outline variant.
+      <code>.btn--rounded</code> changes the border-radius to 12px — a slightly softer look for landing sections.
+      <code>.btn--full</code> stretches to 100% width of its container.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Size scale</strong></span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview" style="align-items: center; gap: 16px;">
+        <button class="btn btn--green btn--sm">Small</button>
+        <button class="btn btn--green">Default</button>
+        <button class="btn btn--green btn--lg">Large</button>
+        <button class="btn btn--orange btn--full" style="max-width: 160px;">Full Width</button>
+        <button class="btn btn--green btn--lg btn--rounded">Rounded</button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--green btn--sm"</span><span class="t-tag">&gt;</span>Small<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--green"</span><span class="t-tag">&gt;</span>Default<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--green btn--lg"</span><span class="t-tag">&gt;</span>Large<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--orange btn--full"</span><span class="t-tag">&gt;</span>Full Width<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--green btn--lg btn--rounded"</span><span class="t-tag">&gt;</span>Rounded<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+  <div class="section-hr"></div>
+
+
+  <!-- ════════════════════ COMMON PATTERNS ════════════════════ -->
+  <section class="section" id="patterns">
+    <div class="section-header">
+      <h2 class="section-title">Common Patterns</h2>
+      <span class="section-id">copy-ready combos</span>
+    </div>
+    <p class="section-desc">
+      The most-used button pairs in the app. Copy the exact combination for consistency.
+    </p>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Back / Continue</strong> — multi-step form navigation</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview">
+        <button class="btn btn--outline"><i data-lucide="chevron-left"></i> Back</button>
+        <button class="btn btn--orange">Continue <i data-lucide="chevron-right"></i></button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--outline"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"chevron-left"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Back
+<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--orange"</span><span class="t-tag">&gt;</span>
+  Continue <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"chevron-right"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Cancel / Submit</strong> — modal footer</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview">
+        <button class="btn btn--outline">Cancel</button>
+        <button class="btn btn--orange btn--full" style="max-width:200px"><i data-lucide="shield"></i> Submit Report</button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"modal__footer"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--outline"</span> <span class="t-attr">onclick</span>=<span class="t-val">"closeModal('myModal')"</span><span class="t-tag">&gt;</span>Cancel<span class="t-tag">&lt;/button&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--orange btn--full"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"shield"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Submit Report
+  <span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+    </div>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Pet card footer</strong> — contact / located / call</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview" style="gap: 16px; align-items: center;">
+        <button class="btn btn--green"><i data-lucide="phone"></i> Contact Owner</button>
+        <button class="btn btn--located" disabled><i data-lucide="map-pin"></i> Location Reported</button>
+        <button class="btn btn--call-circle" aria-label="Call"><i data-lucide="phone-call"></i></button>
+      </div>
+      <div class="comp-code"><pre><span class="t-comment">&lt;!-- Unknown location: --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--green btn--full btn--sm"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"phone"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Contact Owner
+<span class="t-tag">&lt;/button&gt;</span>
+
+<span class="t-comment">&lt;!-- After sighting confirmed (swap in dynamically): --&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--located btn--full btn--sm"</span> <span class="t-attr">disabled</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"map-pin"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Location Reported
+<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+
+    <div class="comp-block">
+      <div class="comp-block-header">
+        <span class="comp-block-title"><strong>Admin table row</strong> — edit / delete actions</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+      </div>
+      <div class="comp-preview">
+        <button class="btn btn--action-green btn--sm"><i data-lucide="eye"></i> Publish</button>
+        <button class="btn btn--icon btn--icon-edit btn--sm" aria-label="Edit"><i data-lucide="pencil"></i></button>
+        <button class="btn btn--icon btn--icon-delete btn--sm" aria-label="Delete"><i data-lucide="trash-2"></i></button>
+      </div>
+      <div class="comp-code"><pre><span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--action-green btn--sm"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"eye"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Publish
+<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--icon btn--icon-edit btn--sm"</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Edit"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"pencil"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--icon btn--icon-delete btn--sm"</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Delete"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"trash-2"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+<span class="t-tag">&lt;/button&gt;</span></pre></div>
+    </div>
+  </section>
+
+</main><!-- /main -->
+
+<script>
+  lucide.createIcons();
+
+  /* ── Sidebar active link on scroll ── */
+  const sections = document.querySelectorAll('.section[id]');
+  const sidebarLinks = document.querySelectorAll('.sidebar-link[href^="#"]');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        sidebarLinks.forEach(l => { if (l.getAttribute('href').startsWith('#')) l.classList.remove('is-active'); });
+        const a = document.querySelector(`.sidebar-link[href="#${e.target.id}"]`);
+        if (a) a.classList.add('is-active');
+      }
+    });
+  }, { threshold: 0, rootMargin: "-80px 0px -40% 0px" });
+  sections.forEach(s => obs.observe(s));
+
+  /* ── Copy code from nearest comp-block ── */
+  function copyCode(btn) {
+    const pre = btn.closest('.comp-block').querySelector('.comp-code pre');
+    if (!pre) return;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.classList.add('copied');
+      btn.innerHTML = '<i data-lucide="check"></i> Copied!';
+      lucide.createIcons();
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = '<i data-lucide="copy"></i> Copy';
+        lucide.createIcons();
+      }, 2000);
+    });
+  }
+
+  /* ── Demo interactions ── */
+  function setFilter(btn) {
+    btn.closest('.comp-preview').querySelectorAll('.btn--filter').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+  }
+
+  function toggleSelector(btn) {
+    btn.classList.toggle('is-selected');
+  }
+
+  document.querySelectorAll('.btn-tab-bar').forEach(bar => {
+    bar.querySelectorAll('.btn--category').forEach(btn => {
+      btn.addEventListener('click', function() {
+        bar.querySelectorAll('.btn--category').forEach(b => b.classList.remove('is-active', 'is-selected'));
+        this.classList.add('is-active');
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

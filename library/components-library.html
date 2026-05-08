@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Components Library</title>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/buttons.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+
+  <style>
+    :root {
+      /* Showcase-only tokens — do NOT duplicate main.css variables here */
+      --sidebar-w:        240px;
+      --showcase-bg:      #0e1117;
+      --showcase-surface: #161b22;
+      --showcase-border:  rgba(255, 255, 255, 0.08);
+      --showcase-text:    #e6edf3;
+      --showcase-muted:   rgba(230, 237, 243, 0.50);
+      --font-mono:        'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: var(--font-body);
+      background: var(--showcase-bg);
+      color: var(--showcase-text);
+      display: flex;
+      min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* ── Sidebar ── */
+    .showcase-sidebar {
+      width: var(--sidebar-w);
+      background: var(--showcase-surface);
+      border-right: 1px solid var(--showcase-border);
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .sidebar-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--showcase-border);
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--showcase-text);
+    }
+
+    .sidebar-logo-icon {
+      width: 30px;
+      height: 30px;
+      background: var(--green-dark);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sidebar-logo-icon [data-lucide] { width: 16px; height: 16px; color: white; }
+
+    .sidebar-tag {
+      margin-top: 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--showcase-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .sidebar-nav { padding: 12px; flex: 1; }
+    .sidebar-nav-group { margin-bottom: 20px; }
+
+    .sidebar-nav-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--showcase-muted);
+      padding: 0 8px;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--showcase-muted);
+      transition: background 0.2s, color 0.2s;
+      cursor: pointer;
+    }
+    .sidebar-nav-item [data-lucide] { width: 14px; height: 14px; }
+    .sidebar-nav-item:hover { background: rgba(255,255,255,0.06); color: var(--showcase-text); }
+    .sidebar-nav-item.is-active { background: rgba(27,75,39,0.35); color: #7dd9a0; }
+
+    /* ── Main Content ── */
+    .showcase-main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 40px 48px;
+      max-width: 960px;
+    }
+
+    .showcase-hero { margin-bottom: 48px; }
+
+    .showcase-hero h1 {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 2.4rem;
+      color: var(--showcase-text);
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .showcase-hero p {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: var(--showcase-muted);
+      line-height: 1.7;
+      max-width: 560px;
+    }
+
+    .hero-badges {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border: 1px solid var(--showcase-border);
+      color: var(--showcase-muted);
+      font-family: var(--font-mono);
+    }
+    .hero-badge [data-lucide] { width: 11px; height: 11px; }
+    .hero-badge--green {
+      border-color: rgba(27,75,39,0.6);
+      color: #7dd9a0;
+      background: rgba(27,75,39,0.2);
+    }
+
+    /* ── Section ── */
+    .showcase-section {
+      margin-bottom: 64px;
+      scroll-margin-top: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--showcase-border);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--showcase-text);
+      letter-spacing: -0.02em;
+    }
+
+    .section-id {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: rgba(125,217,160,0.7);
+      font-weight: 500;
+    }
+
+    /* ── Component Block ── */
+    .comp-block {
+      border: 1px solid var(--showcase-border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .comp-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--showcase-border);
+    }
+
+    .comp-block-title {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--showcase-muted);
+    }
+    .comp-block-title strong { color: var(--showcase-text); font-weight: 600; }
+
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--showcase-muted);
+      border: 1px solid var(--showcase-border);
+      background: transparent;
+      transition: all 0.2s;
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+    .copy-btn [data-lucide] { width: 12px; height: 12px; }
+    .copy-btn:hover { background: rgba(255,255,255,0.06); color: var(--showcase-text); }
+    .copy-btn.copied { color: #7dd9a0; border-color: rgba(125,217,160,0.4); }
+
+    /*
+      Preview backgrounds — these are showcase chrome, not component styles.
+      Use --on-white for components designed for light surfaces,
+      --on-dark for components designed for dark/green surfaces,
+      --on-gray for mid-tone contexts.
+    */
+    .comp-preview {
+      padding: 32px 28px;
+      background: white;      /* white — default light surface */
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .comp-preview--dark  { background: rgba(95, 50, 50, 0.06);}
+    .comp-preview--gray  { background: var(--off-white); }
+    .comp-preview--col   { flex-direction: column; align-items: flex-start; }
+    .comp-preview--center { justify-content: center; }
+
+    /* ── Code block ── */
+    .comp-code {
+      background: #0d1117;
+      padding: 20px 24px;
+      overflow-x: auto;
+      border-top: 1px solid var(--showcase-border);
+    }
+    .comp-code pre {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: #e6edf3;
+      white-space: pre;
+    }
+
+    /* Syntax colouring — showcase only */
+    .t-tag     { color: #79c0ff; }
+    .t-attr    { color: #ff7b72; }
+    .t-val     { color: #a5d6ff; }
+    .t-comment { color: #8b949e; font-style: italic; }
+
+    .showcase-section-desc {
+      font-size: 0.88rem;
+      color: var(--showcase-muted);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      max-width: 600px;
+    }
+    .showcase-section-desc code {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      background: rgba(255,255,255,0.07);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: #a5d6ff;
+    }
+
+    .divider-line {
+      height: 1px;
+      background: var(--showcase-border);
+      margin: 40px 0;
+    }
+
+    @media (max-width: 768px) {
+      .showcase-sidebar { display: none; }
+      .showcase-main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+  <aside class="showcase-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+      <img src="../assets/images/logo.png" alt="BarangayConnect" style="width:30px;height:30px;object-fit:contain;" />
+      BarangayConnect
+    </div>
+      <div class="sidebar-tag">Component Library</div>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <div class="sidebar-nav-group">
+        <div class="sidebar-nav-label">Status</div>
+        <a class="sidebar-nav-item" href="#badges"><i data-lucide="tag"></i> Badges</a>
+        <a class="sidebar-nav-item" href="#doc-status"><i data-lucide="file-check"></i> Doc Status Badges</a>
+        <a class="sidebar-nav-item" href="#tags"><i data-lucide="hash"></i> Tags</a>
+        <a class="sidebar-nav-item" href="#status-pills"><i data-lucide="circle-dot"></i> Status Pills</a>
+      </div>
+
+      <div class="sidebar-nav-group">
+        <div class="sidebar-nav-label">Location &amp; Alerts</div>
+        <a class="sidebar-nav-item" href="#location-pill"><i data-lucide="map-pin"></i> Location Pill</a>
+        <a class="sidebar-nav-item" href="#alert-banner"><i data-lucide="bell"></i> Alert Banner</a>
+        <a class="sidebar-nav-item" href="#notice-banner"><i data-lucide="info"></i> Notice Banner</a>
+      </div>
+
+      <div class="sidebar-nav-group">
+        <div class="sidebar-nav-label">Data &amp; Stats</div>
+        <a class="sidebar-nav-item" href="#stat-grid"><i data-lucide="bar-chart-2"></i> Stat Grid</a>
+        <a class="sidebar-nav-item" href="#stat-cards"><i data-lucide="layout-grid"></i> Stat Cards</a>
+      </div>
+
+      <div class="sidebar-nav-group">
+        <div class="sidebar-nav-label">Icons &amp; Progress</div>
+        <a class="sidebar-nav-item" href="#icon-badges"><i data-lucide="circle-check"></i> Icon Badges</a>
+        <a class="sidebar-nav-item" href="#post-icons"><i data-lucide="grid-2x2"></i> Post Icons</a>
+        <a class="sidebar-nav-item" href="#stepper"><i data-lucide="footprints"></i> Stepper</a>
+        <a class="sidebar-nav-item" href="#step-progress"><i data-lucide="git-commit-horizontal"></i> Step Progress</a>
+      </div>
+
+      <div class="sidebar-nav-group">
+        <div class="sidebar-nav-label">Community</div>
+        <a class="sidebar-nav-item" href="#reactions"><i data-lucide="heart"></i> Reactions</a>
+        <a class="sidebar-nav-item" href="#poll"><i data-lucide="vote"></i> Poll</a>
+      </div>
+
+      <div class="sidebar-nav-group">
+        <div class="sidebar-nav-label">Extras</div>
+        <a class="sidebar-nav-item" href="#auth-stats"><i data-lucide="trending-up"></i> Auth Stats</a>
+        <a class="sidebar-nav-item" href="#alert-notice"><i data-lucide="alert-triangle"></i> Inline Alert Notice</a>
+        <a class="sidebar-nav-item" href="#badge-featured"><i data-lucide="star"></i> Featured Badge</a>
+        <a class="sidebar-nav-item" href="#badge-slots"><i data-lucide="users"></i> Slots Badge</a>
+        <a class="sidebar-nav-item" href="#alert-widget"><i data-lucide="shield-alert"></i> Alert Widget</a>
+      </div>
+
+      <div class="sidebar-nav-group">
+        <div class="sidebar-nav-label">Libraries</div>
+        <a class="sidebar-nav-item" href="main-library.html"><i data-lucide="palette"></i> Design Language</a>
+        <a class="sidebar-nav-item is-active" href="components-library.html"><i data-lucide="layers"></i> Components</a>
+        <a class="sidebar-nav-item" href="frames-library.html"><i data-lucide="monitor"></i> Frames &amp; Modals</a>
+        <a class="sidebar-nav-item" href="button-library.html"><i data-lucide="mouse-pointer-click"></i> Buttons</a>
+      </div>
+
+    </nav>
+  </aside>
+
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+  <main class="showcase-main">
+
+    <div class="showcase-hero">
+      <h1>Components</h1>
+      <p>
+        Reusable UI components for BarangayConnect. All styles come from
+        <code>components.css</code> — edit that file and this page updates automatically.
+        Nothing here overrides the CSS.
+      </p>
+      <div class="hero-badges">
+        <span class="hero-badge hero-badge--green"><i data-lucide="check"></i> components.css</span>
+        <span class="hero-badge"><i data-lucide="file-code-2"></i> main.css required</span>
+        <span class="hero-badge"><i data-lucide="zap"></i> stat-counter.js for counters</span>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════ BADGES ═══════════════════════ -->
+    <section class="showcase-section" id="badges">
+      <div class="section-header">
+        <h2 class="section-title">Status Badges</h2>
+        <span class="section-id">.badge</span>
+      </div>
+      <p class="showcase-section-desc">
+        Small inline pills for status labels. Always combine the base <code>.badge</code>
+        class with a variant modifier.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Status</strong> — announcement, report, document states</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview">
+          <span class="badge badge--published">Published</span>
+          <span class="badge badge--draft">Draft</span>
+          <span class="badge badge--pending">Pending</span>
+          <span class="badge badge--inprogress">In Progress</span>
+          <span class="badge badge--resolved">Resolved</span>
+          <span class="badge badge--rejected">Rejected</span>
+          <span class="badge badge--cancelled">Cancelled</span>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--published"</span><span class="t-tag">&gt;</span>Published<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--draft"</span><span class="t-tag">&gt;</span>Draft<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--pending"</span><span class="t-tag">&gt;</span>Pending<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--inprogress"</span><span class="t-tag">&gt;</span>In Progress<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--resolved"</span><span class="t-tag">&gt;</span>Resolved<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--rejected"</span><span class="t-tag">&gt;</span>Rejected<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--cancelled"</span><span class="t-tag">&gt;</span>Cancelled<span class="t-tag">&lt;/span&gt;</span></pre></div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Priority</strong> — concern / report priority levels</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview">
+          <span class="badge badge--high">High</span>
+          <span class="badge badge--medium">Medium</span>
+          <span class="badge badge--low">Low</span>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--high"</span><span class="t-tag">&gt;</span>High<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--medium"</span><span class="t-tag">&gt;</span>Medium<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--low"</span><span class="t-tag">&gt;</span>Low<span class="t-tag">&lt;/span&gt;</span></pre></div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Roles</strong> — user role indicators</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview">
+          <span class="badge badge--role-full">Full Control</span>
+          <span class="badge badge--role-partial">Partial Control</span>
+          <span class="badge badge--role-admin">Admin</span>
+          <span class="badge badge--role-officer">Officer</span>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--role-full"</span><span class="t-tag">&gt;</span>Full Control<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--role-partial"</span><span class="t-tag">&gt;</span>Partial Control<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--role-admin"</span><span class="t-tag">&gt;</span>Admin<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--role-officer"</span><span class="t-tag">&gt;</span>Officer<span class="t-tag">&lt;/span&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ DOC STATUS ═══════════════════════ -->
+    <section class="showcase-section" id="doc-status">
+      <div class="section-header">
+        <h2 class="section-title">Document Status Badges</h2>
+        <span class="section-id">.badge--doc-ready / --doc-processing / --doc-completed</span>
+      </div>
+      <p class="showcase-section-desc">
+        Used in document request tracking flows. Pair with <code>.doc-download</code>
+        for the pickup link.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Document request states</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview" style="gap: 20px; flex-wrap: wrap; align-items: center;">
+          <span class="badge badge--doc-ready"><i data-lucide="file-check"></i> Ready for Pickup</span>
+          <span class="badge badge--doc-processing"><i data-lucide="loader-circle"></i> Processing…</span>
+          <span class="badge badge--doc-completed"><i data-lucide="archive"></i> Completed</span>
+          <a href="#" class="doc-download"><i data-lucide="download"></i> Download</a>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--doc-ready"</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"file-check"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Ready for Pickup<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--doc-processing"</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"loader-circle"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Processing…<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge badge--doc-completed"</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"archive"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Completed<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-comment">&lt;!-- Download link --&gt;</span>
+<span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"#"</span> <span class="t-attr">class</span>=<span class="t-val">"doc-download"</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"download"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Download<span class="t-tag">&lt;/a&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ TAGS ═══════════════════════ -->
+    <section class="showcase-section" id="tags">
+      <div class="section-header">
+        <h2 class="section-title">Category Tags</h2>
+        <span class="section-id">.tag</span>
+      </div>
+      <p class="showcase-section-desc">
+        Slightly larger than badges. Used for topic or category labels on announcements,
+        bulletin posts, and events.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Tag variants</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview">
+          <span class="tag tag--amber"><i data-lucide="zap"></i> Infrastructure</span>
+          <span class="tag tag--green"><i data-lucide="heart-pulse"></i> Health</span>
+          <span class="tag tag--blue"><i data-lucide="book-open"></i> Education</span>
+          <span class="tag tag--red"><i data-lucide="siren"></i> Emergency</span>
+          <span class="tag tag--gray">General</span>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"tag tag--amber"</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"zap"</span><span class="t-tag">&gt;&lt;/i&gt;</span> Infrastructure<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"tag tag--green"</span><span class="t-tag">&gt;</span>Health<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"tag tag--blue"</span><span class="t-tag">&gt;</span>Education<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"tag tag--red"</span><span class="t-tag">&gt;</span>Emergency<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"tag tag--gray"</span><span class="t-tag">&gt;</span>General<span class="t-tag">&lt;/span&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ STATUS PILLS ═══════════════════════ -->
+    <section class="showcase-section" id="status-pills">
+      <div class="section-header">
+        <h2 class="section-title">Status Pills</h2>
+        <span class="section-id">.status-pill</span>
+      </div>
+      <p class="showcase-section-desc">
+        Open/closed/full pills for slots, services, event availability. Bolder and more
+        prominent than badges.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Availability states</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview">
+          <span class="status-pill status-pill--open">Open</span>
+          <span class="status-pill status-pill--closed">Closed</span>
+          <span class="status-pill status-pill--full">Full</span>
+          <span class="status-pill status-pill--upcoming">Upcoming</span>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"status-pill status-pill--open"</span><span class="t-tag">&gt;</span>Open<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"status-pill status-pill--closed"</span><span class="t-tag">&gt;</span>Closed<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"status-pill status-pill--full"</span><span class="t-tag">&gt;</span>Full<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"status-pill status-pill--upcoming"</span><span class="t-tag">&gt;</span>Upcoming<span class="t-tag">&lt;/span&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ LOCATION PILL ═══════════════════════ -->
+    <section class="showcase-section" id="location-pill">
+      <div class="section-header">
+        <h2 class="section-title">Location Pill</h2>
+        <span class="section-id">.location-pill</span>
+      </div>
+      <p class="showcase-section-desc">
+        Dark pill with a pulsing green dot for dark/hero backgrounds.
+        Use <code>--light</code> variant on white backgrounds.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Dark</strong> — on green hero sections</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--dark">
+          <span class="location-pill">
+            <span class="location-pill__dot"></span>
+            Barangay Bancod, Indang, Cavite
+          </span>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"location-pill"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"location-pill__dot"</span><span class="t-tag">&gt;&lt;/span&gt;</span>
+  Barangay Bancod, Indang, Cavite
+<span class="t-tag">&lt;/span&gt;</span></pre></div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Light</strong> — on white/light backgrounds</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview">
+          <span class="location-pill location-pill--light">
+            <span class="location-pill__dot"></span>
+            Barangay Bancod, Indang, Cavite
+          </span>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"location-pill location-pill--light"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"location-pill__dot"</span><span class="t-tag">&gt;&lt;/span&gt;</span>
+  Barangay Bancod, Indang, Cavite
+<span class="t-tag">&lt;/span&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ ALERT BANNER ═══════════════════════ -->
+    <section class="showcase-section" id="alert-banner">
+      <div class="section-header">
+        <h2 class="section-title">Alert Banner</h2>
+        <span class="section-id">.alert-banner</span>
+      </div>
+      <p class="showcase-section-desc">
+        Full-width dismissible banners. Use <code>--orange</code> for weather/advisory,
+        <code>--red</code> for emergencies, <code>--green</code> for success,
+        <code>--blue</code> for info.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>All variants</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--col comp-preview--gray" style="gap: 12px;">
+          <div class="alert-banner alert-banner--orange" role="alert">
+            <i data-lucide="alert-triangle"></i>
+            <p><strong>Weather Advisory:</strong> Signal No. 1 in effect. Stay indoors and monitor official updates from PAGASA.</p>
+            <button class="alert-banner__close" aria-label="Dismiss" onclick="this.closest('.alert-banner').remove()"><i data-lucide="x"></i></button>
+          </div>
+          <div class="alert-banner alert-banner--red" role="alert">
+            <i data-lucide="siren"></i>
+            <p><strong>Emergency Alert:</strong> Mandatory evacuation in low-lying areas of Purok 3.</p>
+            <button class="alert-banner__close" aria-label="Dismiss" onclick="this.closest('.alert-banner').remove()"><i data-lucide="x"></i></button>
+          </div>
+          <div class="alert-banner alert-banner--green" role="alert">
+            <i data-lucide="circle-check"></i>
+            <p><strong>Update:</strong> Flood waters in Barangay Bancod have receded. Normal activities may resume.</p>
+            <button class="alert-banner__close" aria-label="Dismiss" onclick="this.closest('.alert-banner').remove()"><i data-lucide="x"></i></button>
+          </div>
+          <div class="alert-banner alert-banner--blue" role="alert">
+            <i data-lucide="info"></i>
+            <p><strong>Reminder:</strong> Barangay ID renewal starts Monday. Bring 2 valid government IDs.</p>
+            <button class="alert-banner__close" aria-label="Dismiss" onclick="this.closest('.alert-banner').remove()"><i data-lucide="x"></i></button>
+          </div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"alert-banner alert-banner--orange"</span> <span class="t-attr">role</span>=<span class="t-val">"alert"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"alert-triangle"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+  <span class="t-tag">&lt;p&gt;</span><span class="t-tag">&lt;strong&gt;</span>Weather Advisory:<span class="t-tag">&lt;/strong&gt;</span> Signal No. 1 in effect.<span class="t-tag">&lt;/p&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"alert-banner__close"</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Dismiss"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"x"</span><span class="t-tag">&gt;&lt;/i&gt;</span>
+  <span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Variants: alert-banner--orange / --red / --green / --blue --&gt;</span>
+
+<span class="t-comment">/* Dismiss JS */</span>
+document.querySelectorAll('.alert-banner__close').forEach(btn =&gt; {
+  btn.addEventListener('click', () =&gt; btn.closest('.alert-banner').remove());
+});</pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ NOTICE BANNER ═══════════════════════ -->
+    <section class="showcase-section" id="notice-banner">
+      <div class="section-header">
+        <h2 class="section-title">Notice Banner</h2>
+        <span class="section-id">.notice-banner</span>
+      </div>
+      <p class="showcase-section-desc">
+        A card-like inline notice for important callouts within page content.
+        More prominent than <code>.alert-notice</code>, less intrusive than a full alert banner.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>All variants</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--col" style="gap: 12px;">
+          <div class="notice-banner notice-banner--red">
+            <div class="notice-banner__icon"><i data-lucide="clock"></i></div>
+            <div class="notice-banner__body">
+              <p class="notice-banner__title">Experiencing bullying? You're not alone.</p>
+              <p class="notice-banner__sub">Report incidents confidentially to our Youth Protection Officer.</p>
+            </div>
+            <button class="btn btn--red btn--sm">Report Now</button>
+          </div>
+          <div class="notice-banner notice-banner--orange">
+            <div class="notice-banner__icon"><i data-lucide="triangle-alert"></i></div>
+            <div class="notice-banner__body">
+              <p class="notice-banner__title">Curfew in effect: 10PM – 5AM</p>
+              <p class="notice-banner__sub">Per Barangay Resolution No. 2024-015. Violators will be reported.</p>
+            </div>
+          </div>
+          <div class="notice-banner notice-banner--blue">
+            <div class="notice-banner__icon"><i data-lucide="info"></i></div>
+            <div class="notice-banner__body">
+              <p class="notice-banner__title">Your document request is under review.</p>
+              <p class="notice-banner__sub">Processing takes 1–3 business days. You'll receive an SMS update.</p>
+            </div>
+          </div>
+          <div class="notice-banner notice-banner--green">
+            <div class="notice-banner__icon"><i data-lucide="circle-check"></i></div>
+            <div class="notice-banner__body">
+              <p class="notice-banner__title">Your concern has been resolved.</p>
+              <p class="notice-banner__sub">Thank you for reporting. The issue was addressed on April 2, 2025.</p>
+            </div>
+          </div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notice-banner notice-banner--red"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notice-banner__icon"</span><span class="t-tag">&gt;</span><span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"clock"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"notice-banner__body"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"notice-banner__title"</span><span class="t-tag">&gt;</span>Experiencing bullying?<span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"notice-banner__sub"</span><span class="t-tag">&gt;</span>Report confidentially.<span class="t-tag">&lt;/p&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"btn btn--red btn--sm"</span><span class="t-tag">&gt;</span>Report Now<span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Variants: notice-banner--red / --orange / --blue / --green --&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ STAT GRID ═══════════════════════ -->
+    <section class="showcase-section" id="stat-grid">
+      <div class="section-header">
+        <h2 class="section-title">Stat Grid</h2>
+        <span class="section-id">.stat-grid</span>
+      </div>
+      <p class="showcase-section-desc">
+        Animated number counters. Add <code>data-target="2436"</code> to any
+        <code>.stat-grid__number</code> element and include <code>stat-counter.js</code>.
+        Numbers animate from 0 as they scroll into view.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Light</strong> — Community Overview section</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--col" style="padding: 0;">
+          <div style="width: 100%; background: white; padding: 32px 28px;">
+            <p style="font-family: var(--font-display); font-weight: 900; font-size: 1.6rem; color: var(--text-dark); text-align: center; margin-bottom: 4px;">Community Overview</p>
+            <p style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em; text-align: center; color: var(--gray-400); text-transform: uppercase; margin-bottom: 28px;">A quick look at your barangay today</p>
+            <div class="stat-grid">
+              <div class="stat-grid__item">
+                <span class="stat-grid__number" data-target="2436" data-separator=",">0</span>
+                <span class="stat-grid__label">Residents</span>
+              </div>
+              <div class="stat-grid__divider"></div>
+              <div class="stat-grid__item">
+                <span class="stat-grid__number" data-target="38">0</span>
+                <span class="stat-grid__label">Concerns Resolved</span>
+              </div>
+              <div class="stat-grid__divider"></div>
+              <div class="stat-grid__item">
+                <span class="stat-grid__number" data-target="12">0</span>
+                <span class="stat-grid__label">Events This Week</span>
+              </div>
+              <div class="stat-grid__divider"></div>
+              <div class="stat-grid__item">
+                <span class="stat-grid__number" data-target="96" data-suffix="%">0</span>
+                <span class="stat-grid__label">Satisfaction Rate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stat-grid"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stat-grid__item"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"stat-grid__number"</span> <span class="t-attr">data-target</span>=<span class="t-val">"2436"</span> <span class="t-attr">data-separator</span>=<span class="t-val">","</span><span class="t-tag">&gt;</span>0<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"stat-grid__label"</span><span class="t-tag">&gt;</span>Residents<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stat-grid__divider"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+  <span class="t-comment">&lt;!-- repeat for each stat... --&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;script</span> <span class="t-attr">src</span>=<span class="t-val">"stat-counter.js"</span><span class="t-tag">&gt;&lt;/script&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ STAT CARDS ═══════════════════════ -->
+    <section class="showcase-section" id="stat-cards">
+      <div class="section-header">
+        <h2 class="section-title">Stat Cards</h2>
+        <span class="section-id">.stat-card</span>
+      </div>
+      <p class="showcase-section-desc">
+        Dashboard metric cards with a colored top accent stripe. Used in the admin panel
+        to show key numbers at a glance.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Admin dashboard cards</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--gray" style="gap: 14px; flex-wrap: wrap;">
+          <div class="stat-card stat-card--green" style="flex: 1; min-width: 160px;">
+            <div class="stat-card__body">
+              <div class="stat-card__value">2,418</div>
+              <div class="stat-card__label">Total Residents</div>
+            </div>
+            <div class="stat-card__icon"><i data-lucide="users"></i></div>
+          </div>
+          <div class="stat-card stat-card--orange" style="flex: 1; min-width: 160px;">
+            <div class="stat-card__body">
+              <div class="stat-card__value">6</div>
+              <div class="stat-card__label">Active Officers</div>
+            </div>
+            <div class="stat-card__icon"><i data-lucide="shield"></i></div>
+          </div>
+          <div class="stat-card stat-card--red" style="flex: 1; min-width: 160px;">
+            <div class="stat-card__body">
+              <div class="stat-card__value">14</div>
+              <div class="stat-card__label">Open Reports</div>
+            </div>
+            <div class="stat-card__icon"><i data-lucide="flag"></i></div>
+          </div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stat-card stat-card--green"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stat-card__body"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stat-card__value"</span><span class="t-tag">&gt;</span>2,418<span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stat-card__label"</span><span class="t-tag">&gt;</span>Total Residents<span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stat-card__icon"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"users"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Variants: stat-card--green / --orange / --red / --blue --&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ ICON BADGES ═══════════════════════ -->
+    <section class="showcase-section" id="icon-badges">
+      <div class="section-header">
+        <h2 class="section-title">Icon Badges</h2>
+        <span class="section-id">.icon-badge</span>
+      </div>
+      <p class="showcase-section-desc">
+        Circular icon containers. Used for success states, step completion, empty states,
+        and feature highlights. Three sizes: <code>--sm</code>, default, <code>--lg</code>.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Outlined variants + sizes</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview" style="gap: 20px; flex-wrap: wrap; align-items: center;">
+          <div class="icon-badge icon-badge--green"><i data-lucide="check"></i></div>
+          <div class="icon-badge icon-badge--orange"><i data-lucide="calendar"></i></div>
+          <div class="icon-badge icon-badge--red"><i data-lucide="flag"></i></div>
+          <div class="icon-badge icon-badge--gray"><i data-lucide="clock"></i></div>
+          <div class="icon-badge icon-badge--green icon-badge--sm"><i data-lucide="check"></i></div>
+          <div class="icon-badge icon-badge--green icon-badge--lg"><i data-lucide="circle-check"></i></div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"icon-badge icon-badge--green"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"check"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"icon-badge icon-badge--orange"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"calendar"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"icon-badge icon-badge--red"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"flag"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"icon-badge icon-badge--gray"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"clock"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Sizes: icon-badge--sm (32px) / icon-badge--lg (64px) --&gt;</span>
+<span class="t-comment">&lt;!-- Solid: icon-badge--solid-green / icon-badge--solid-orange --&gt;</span></pre></div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Solid variants</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview" style="gap: 16px; align-items: center;">
+          <div class="icon-badge icon-badge--solid-green"><i data-lucide="check"></i></div>
+          <div class="icon-badge icon-badge--solid-orange"><i data-lucide="bell"></i></div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"icon-badge icon-badge--solid-green"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"check"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"icon-badge icon-badge--solid-orange"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"bell"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ POST ICONS ═══════════════════════ -->
+    <section class="showcase-section" id="post-icons">
+      <div class="section-header">
+        <h2 class="section-title">Post Icons</h2>
+        <span class="section-id">.post-icon</span>
+      </div>
+      <p class="showcase-section-desc">
+        Rounded square icon tiles used on bulletin and community posts to indicate category.
+        Available in solid and muted versions, and three sizes.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Solid</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview" style="gap: 12px; flex-wrap: wrap; align-items: center;">
+          <div class="post-icon post-icon--green"><i data-lucide="settings-2"></i></div>
+          <div class="post-icon post-icon--orange"><i data-lucide="megaphone"></i></div>
+          <div class="post-icon post-icon--red"><i data-lucide="siren"></i></div>
+          <div class="post-icon post-icon--blue"><i data-lucide="book-open"></i></div>
+          <div class="post-icon post-icon--amber"><i data-lucide="wrench"></i></div>
+          <div class="post-icon post-icon--gray"><i data-lucide="briefcase"></i></div>
+          <div class="post-icon post-icon--dark"><i data-lucide="laptop"></i></div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-icon post-icon--green"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"settings-2"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-icon post-icon--orange"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"megaphone"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-icon post-icon--blue"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"book-open"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Muted: post-icon--green-muted / --orange-muted / --red-muted / --blue-muted --&gt;</span>
+<span class="t-comment">&lt;!-- Sizes: post-icon--sm (32px) / post-icon--lg (56px) --&gt;</span></pre></div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Muted</strong> — softer backgrounds, same icon</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview" style="gap: 12px;">
+          <div class="post-icon post-icon--green-muted"><i data-lucide="settings-2"></i></div>
+          <div class="post-icon post-icon--orange-muted"><i data-lucide="megaphone"></i></div>
+          <div class="post-icon post-icon--red-muted"><i data-lucide="siren"></i></div>
+          <div class="post-icon post-icon--blue-muted"><i data-lucide="book-open"></i></div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-icon post-icon--green-muted"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"settings-2"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-icon post-icon--orange-muted"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"megaphone"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+<span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"post-icon post-icon--blue-muted"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"book-open"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ STEPPER ═══════════════════════ -->
+    <section class="showcase-section" id="stepper">
+      <div class="section-header">
+        <h2 class="section-title">Stepper</h2>
+        <span class="section-id">.stepper</span>
+      </div>
+      <p class="showcase-section-desc">
+        Multi-step form flow with numbered circles. Use <code>.is-done</code> for completed
+        steps and <code>.is-active</code> for the current step.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Registration stepper</strong> — step 2 of 3 active</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--gray">
+          <div class="stepper" style="width: 100%; max-width: 400px; margin: 0 auto;">
+            <div class="stepper__step is-done">
+              <div class="stepper__circle"><i data-lucide="check"></i></div>
+              <span class="stepper__label">Account Info</span>
+            </div>
+            <div class="stepper__step is-active">
+              <div class="stepper__circle">2</div>
+              <span class="stepper__label">Location</span>
+            </div>
+            <div class="stepper__step">
+              <div class="stepper__circle">3</div>
+              <span class="stepper__label">Government ID</span>
+            </div>
+          </div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stepper"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stepper__step is-done"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stepper__circle"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"check"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"stepper__label"</span><span class="t-tag">&gt;</span>Account Info<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stepper__step is-active"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stepper__circle"</span><span class="t-tag">&gt;</span>2<span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"stepper__label"</span><span class="t-tag">&gt;</span>Location<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stepper__step"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"stepper__circle"</span><span class="t-tag">&gt;</span>3<span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"stepper__label"</span><span class="t-tag">&gt;</span>Government ID<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ STEP PROGRESS ═══════════════════════ -->
+    <section class="showcase-section" id="step-progress">
+      <div class="section-header">
+        <h2 class="section-title">Step Progress</h2>
+        <span class="section-id">.step-progress</span>
+      </div>
+      <p class="showcase-section-desc">
+        Smaller icon-based tracker for document and appointment status. Check icons for
+        completed steps, orange dot for the active step.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Book an Appointment</strong> — step 2 active</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--dark comp-preview--col">
+          <p style="font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: white; display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <i data-lucide="calendar" style="color: var(--orange)"></i> Book an Appointment
+          </p>
+          <div class="step-progress" style="width: 100%; max-width: 360px;">
+            <div class="step-progress__item is-done">
+              <div class="step-progress__circle"><i data-lucide="check"></i></div>
+              <span class="step-progress__label">Service</span>
+            </div>
+            <div class="step-progress__item is-active">
+              <div class="step-progress__circle"></div>
+              <span class="step-progress__label">Date</span>
+            </div>
+            <div class="step-progress__item">
+              <div class="step-progress__circle"></div>
+              <span class="step-progress__label">Time</span>
+            </div>
+            <div class="step-progress__item">
+              <div class="step-progress__circle"></div>
+              <span class="step-progress__label">Details</span>
+            </div>
+          </div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"step-progress"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"step-progress__item is-done"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"step-progress__circle"</span><span class="t-tag">&gt;&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"check"</span><span class="t-tag">&gt;&lt;/i&gt;&lt;/div&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"step-progress__label"</span><span class="t-tag">&gt;</span>Service<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"step-progress__item is-active"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"step-progress__circle"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"step-progress__label"</span><span class="t-tag">&gt;</span>Date<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-comment">&lt;!-- States: is-done, is-active, (none) = upcoming --&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ REACTIONS ═══════════════════════ -->
+    <section class="showcase-section" id="reactions">
+      <div class="section-header">
+        <h2 class="section-title">Reaction Bar</h2>
+        <span class="section-id">.reaction-bar</span>
+      </div>
+      <p class="showcase-section-desc">
+        Like and comment counters for bulletin posts. Add <code>.is-liked</code>
+        to the like button to show the active state.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Default and liked state</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview" style="gap: 32px;">
+          <div class="reaction-bar">
+            <button class="reaction-count reaction-count--like">
+              <i data-lucide="heart"></i><span>38</span>
+            </button>
+            <button class="reaction-count reaction-count--comment">
+              <i data-lucide="message-circle"></i><span>14</span>
+            </button>
+            <button class="reaction-count reaction-count--share">
+              <i data-lucide="share-2"></i><span>Share</span>
+            </button>
+          </div>
+          <div class="reaction-bar">
+            <button class="reaction-count reaction-count--like is-liked" onclick="this.classList.toggle('is-liked')">
+              <i data-lucide="heart"></i><span>39</span>
+            </button>
+            <button class="reaction-count reaction-count--comment">
+              <i data-lucide="message-circle"></i><span>14</span>
+            </button>
+          </div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"reaction-bar"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"reaction-count reaction-count--like"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"heart"</span><span class="t-tag">&gt;&lt;/i&gt;</span><span class="t-tag">&lt;span&gt;</span>38<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/button&gt;</span>
+  <span class="t-tag">&lt;button</span> <span class="t-attr">class</span>=<span class="t-val">"reaction-count reaction-count--comment"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"message-circle"</span><span class="t-tag">&gt;&lt;/i&gt;</span><span class="t-tag">&lt;span&gt;</span>14<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/button&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Add .is-liked to .reaction-count--like for the active/filled state --&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ POLL ═══════════════════════ -->
+    <section class="showcase-section" id="poll">
+      <div class="section-header">
+        <h2 class="section-title">Poll / Voting</h2>
+        <span class="section-id">.poll-option</span>
+      </div>
+      <p class="showcase-section-desc">
+        Radio-based voting UI with animated progress bars.
+        Set <code>style="--pct: 65%"</code> on <code>.poll-option__bar</code>.
+        Add <code>.is-voted</code> to show results and <code>.is-selected</code>
+        for the chosen option.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Active poll</strong> — before voting</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--col">
+          <p style="font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; color: var(--text-dark); margin-bottom: 4px;">Should we extend the curfew hours?</p>
+          <div class="poll-options" style="width: 100%; max-width: 440px;">
+            <label class="poll-option">
+              <input type="radio" name="poll_demo" />
+              <div class="poll-option__bar" style="--pct: 0%"></div>
+              <span class="poll-option__label">Yes, extend to 9PM</span>
+              <span class="poll-option__pct">—</span>
+            </label>
+            <label class="poll-option">
+              <input type="radio" name="poll_demo" />
+              <div class="poll-option__bar" style="--pct: 0%"></div>
+              <span class="poll-option__label">No, keep current hours</span>
+              <span class="poll-option__pct">—</span>
+            </label>
+            <label class="poll-option">
+              <input type="radio" name="poll_demo" />
+              <div class="poll-option__bar" style="--pct: 0%"></div>
+              <span class="poll-option__label">Needs further discussion</span>
+              <span class="poll-option__pct">—</span>
+            </label>
+          </div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"poll-options"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;label</span> <span class="t-attr">class</span>=<span class="t-val">"poll-option"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;input</span> <span class="t-attr">type</span>=<span class="t-val">"radio"</span> <span class="t-attr">name</span>=<span class="t-val">"poll1"</span> <span class="t-tag">/&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"poll-option__bar"</span> <span class="t-attr">style</span>=<span class="t-val">"--pct: 0%"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"poll-option__label"</span><span class="t-tag">&gt;</span>Option A<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"poll-option__pct"</span><span class="t-tag">&gt;</span>—<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/label&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Results view</strong> — after voting (is-voted + is-selected)</span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--col">
+          <div class="poll-options" style="width: 100%; max-width: 440px;">
+            <label class="poll-option is-voted is-selected">
+              <input type="radio" name="poll_result" checked />
+              <div class="poll-option__bar" style="--pct: 65%"></div>
+              <span class="poll-option__label">Yes, extend to 9PM</span>
+              <span class="poll-option__pct">65%</span>
+            </label>
+            <label class="poll-option is-voted">
+              <input type="radio" name="poll_result" />
+              <div class="poll-option__bar" style="--pct: 22%"></div>
+              <span class="poll-option__label">No, keep current hours</span>
+              <span class="poll-option__pct">22%</span>
+            </label>
+            <label class="poll-option is-voted">
+              <input type="radio" name="poll_result" />
+              <div class="poll-option__bar" style="--pct: 13%"></div>
+              <span class="poll-option__label">Needs further discussion</span>
+              <span class="poll-option__pct">13%</span>
+            </label>
+          </div>
+        </div>
+        <div class="comp-code"><pre><span class="t-comment">&lt;!-- Add .is-voted to all options → bars + percentages visible --&gt;</span>
+<span class="t-comment">&lt;!-- Add .is-selected to the user's chosen option --&gt;</span>
+<span class="t-tag">&lt;label</span> <span class="t-attr">class</span>=<span class="t-val">"poll-option is-voted is-selected"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;input</span> <span class="t-attr">type</span>=<span class="t-val">"radio"</span> <span class="t-attr">name</span>=<span class="t-val">"poll1"</span> <span class="t-attr">checked</span> <span class="t-tag">/&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"poll-option__bar"</span> <span class="t-attr">style</span>=<span class="t-val">"--pct: 65%"</span><span class="t-tag">&gt;&lt;/div&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"poll-option__label"</span><span class="t-tag">&gt;</span>Yes, extend to 9PM<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"poll-option__pct"</span><span class="t-tag">&gt;</span>65%<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;/label&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ AUTH STATS ═══════════════════════ -->
+    <section class="showcase-section" id="auth-stats">
+      <div class="section-header">
+        <h2 class="section-title">Auth Stats</h2>
+        <span class="section-id">.auth-stats</span>
+      </div>
+      <p class="showcase-section-desc">
+        Compact stat row used on the login/register left panel (dark green background).
+        Works with <code>stat-counter.js</code> for animated numbers.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Login panel stats</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--dark">
+          <div class="auth-stats">
+            <div class="auth-stat">
+              <span class="auth-stat__number" data-target="2418" data-separator=",">2,418</span>
+              <span class="auth-stat__label">Residents</span>
+            </div>
+            <div class="auth-stat">
+              <span class="auth-stat__number">98%</span>
+              <span class="auth-stat__label">Satisfaction</span>
+            </div>
+            <div class="auth-stat">
+              <span class="auth-stat__number">24h</span>
+              <span class="auth-stat__label">Response Time</span>
+            </div>
+          </div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"auth-stats"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"auth-stat"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"auth-stat__number"</span> <span class="t-attr">data-target</span>=<span class="t-val">"2418"</span><span class="t-tag">&gt;</span>0<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"auth-stat__label"</span><span class="t-tag">&gt;</span>Residents<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span>
+<span class="t-comment">&lt;!-- Always used on dark green background --&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ INLINE ALERT NOTICE ═══════════════════════ -->
+    <section class="showcase-section" id="alert-notice">
+      <div class="section-header">
+        <h2 class="section-title">Inline Alert Notice</h2>
+        <span class="section-id">.alert-notice</span>
+      </div>
+      <p class="showcase-section-desc">
+        A small inline warning line. Use inside panels, below form fields, or next to
+        headings. Not a card — just a colored text line with icon.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Variants</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--col" style="gap: 12px;">
+          <p class="alert-notice"><i data-lucide="alert-triangle"></i> 2 officer roles awaiting approval</p>
+          <p class="alert-notice alert-notice--orange"><i data-lucide="alert-triangle"></i> Flood advisory in effect for Purok 3</p>
+          <p class="alert-notice alert-notice--green"><i data-lucide="check-circle"></i> All systems operational</p>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"alert-notice"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"alert-triangle"</span><span class="t-tag">&gt;&lt;/i&gt;</span> 2 officer roles awaiting approval
+<span class="t-tag">&lt;/p&gt;</span>
+<span class="t-comment">&lt;!-- Variants: alert-notice--orange / alert-notice--green --&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ FEATURED BADGE ═══════════════════════ -->
+    <section class="showcase-section" id="badge-featured">
+      <div class="section-header">
+        <h2 class="section-title">Featured Badge</h2>
+        <span class="section-id">.badge-featured</span>
+      </div>
+      <p class="showcase-section-desc">
+        A compound pill with a bold label, separator dot, and a category.
+        Used on featured announcements.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Featured announcement pill</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview">
+          <span class="badge-featured">
+            <span class="badge-featured__label">Featured</span>
+            <span class="badge-featured__sep">·</span>
+            <span class="badge-featured__category">Health</span>
+          </span>
+          <span class="badge-featured">
+            <span class="badge-featured__label">Pinned</span>
+            <span class="badge-featured__sep">·</span>
+            <span class="badge-featured__category">Infrastructure</span>
+          </span>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge-featured"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge-featured__label"</span><span class="t-tag">&gt;</span>Featured<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge-featured__sep"</span><span class="t-tag">&gt;</span>·<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge-featured__category"</span><span class="t-tag">&gt;</span>Health<span class="t-tag">&lt;/span&gt;</span>
+<span class="t-tag">&lt;/span&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ SLOTS BADGE ═══════════════════════ -->
+    <section class="showcase-section" id="badge-slots">
+      <div class="section-header">
+        <h2 class="section-title">Slots Badge</h2>
+        <span class="section-id">.badge-slots</span>
+      </div>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Capacity / availability</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview">
+          <span class="badge-slots"><i data-lucide="users"></i> 6 slots remaining</span>
+          <span class="badge-slots"><i data-lucide="calendar"></i> 2 sessions left</span>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"badge-slots"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;i</span> <span class="t-attr">data-lucide</span>=<span class="t-val">"users"</span><span class="t-tag">&gt;&lt;/i&gt;</span> 6 slots remaining
+<span class="t-tag">&lt;/span&gt;</span></pre></div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════ ALERT WIDGET ═══════════════════════ -->
+    <section class="showcase-section" id="alert-widget">
+      <div class="section-header">
+        <h2 class="section-title">Alert Widget</h2>
+        <span class="section-id">.alert-widget</span>
+      </div>
+      <p class="showcase-section-desc">
+        A stacked glass card widget that sits over the dashboard hero image,
+        showing local time and active alerts.
+      </p>
+
+      <div class="comp-block">
+        <div class="comp-block-header">
+          <span class="comp-block-title"><strong>Dashboard hero overlay</strong></span>
+          <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="comp-preview comp-preview--dark">
+          <div class="alert-widget">
+            <div class="alert-widget__time">
+              <span class="alert-widget__time-label">Local Time</span>
+              <span class="alert-widget__time-value">02:37 PM</span>
+              <span class="alert-widget__time-date">Friday, April 4</span>
+            </div>
+            <div class="alert-widget__alert">
+              <div class="alert-widget__alert-header">
+                <span class="alert-widget__dot"></span>Active Alerts
+              </div>
+              <p class="alert-widget__alert-title">Flood Alert</p>
+              <p class="alert-widget__alert-sub">Signal No. 1 in effect.</p>
+            </div>
+          </div>
+        </div>
+        <div class="comp-code"><pre><span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"alert-widget"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"alert-widget__time"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"alert-widget__time-label"</span><span class="t-tag">&gt;</span>Local Time<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"alert-widget__time-value"</span><span class="t-tag">&gt;</span>02:37 PM<span class="t-tag">&lt;/span&gt;</span>
+    <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"alert-widget__time-date"</span><span class="t-tag">&gt;</span>Friday, April 4<span class="t-tag">&lt;/span&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+  <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"alert-widget__alert"</span><span class="t-tag">&gt;</span>
+    <span class="t-tag">&lt;div</span> <span class="t-attr">class</span>=<span class="t-val">"alert-widget__alert-header"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;span</span> <span class="t-attr">class</span>=<span class="t-val">"alert-widget__dot"</span><span class="t-tag">&gt;&lt;/span&gt;</span>Active Alerts
+    <span class="t-tag">&lt;/div&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"alert-widget__alert-title"</span><span class="t-tag">&gt;</span>Flood Alert<span class="t-tag">&lt;/p&gt;</span>
+    <span class="t-tag">&lt;p</span> <span class="t-attr">class</span>=<span class="t-val">"alert-widget__alert-sub"</span><span class="t-tag">&gt;</span>Signal No. 1 in effect.<span class="t-tag">&lt;/p&gt;</span>
+  <span class="t-tag">&lt;/div&gt;</span>
+<span class="t-tag">&lt;/div&gt;</span></pre></div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <script>
+    lucide.createIcons();
+
+    // ── Stat Counter ──
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    function formatNum(v, sep) { return Math.floor(v).toLocaleString('en-US').replace(/,/g, sep ?? ','); }
+
+    function animateCounter(el) {
+      if (el.dataset.animated) return;
+      el.dataset.animated = 'true';
+      const target = parseFloat(el.dataset.target) || 0;
+      const suffix = el.dataset.suffix ?? '';
+      const sep    = el.dataset.separator ?? ',';
+      let start = null;
+      (function step(ts) {
+        if (!start) start = ts;
+        const p = Math.min((ts - start) / 1500, 1);
+        el.textContent = formatNum(target * easeOutCubic(p), sep) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+        else el.textContent = formatNum(target, sep) + suffix;
+      })(performance.now());
+    }
+
+    const counterObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { animateCounter(e.target); counterObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('[data-target]').forEach(el => counterObs.observe(el));
+
+    // ── Copy to clipboard ──
+    function copyCode(btn) {
+      const pre = btn.closest('.comp-block').querySelector('.comp-code pre');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.classList.add('copied');
+        btn.innerHTML = '<i data-lucide="check"></i> Copied!';
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = '<i data-lucide="copy"></i> Copy';
+          lucide.createIcons();
+        }, 2000);
+      });
+    }
+
+    // ── Active sidebar link on scroll ──
+    const sections = document.querySelectorAll('.showcase-section');
+    const navItems  = document.querySelectorAll('.sidebar-nav-item');
+
+    const scrollObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          navItems.forEach(n => { if (n.getAttribute('href')?.startsWith('#')) n.classList.remove('is-active'); });
+          const active = document.querySelector(`.sidebar-nav-item[href="#${e.target.id}"]`);
+          if (active) active.classList.add('is-active');
+        }
+      });
+    }, { threshold: 0, rootMargin: '-80px 0px -40% 0px' });
+
+    sections.forEach(s => scrollObs.observe(s));
+  </script>
+
+</body>
+</html>
