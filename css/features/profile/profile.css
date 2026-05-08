@@ -1,0 +1,452 @@
+/* ================================================
+   profile.css — BarangayConnect
+   Page-specific styles for the Profile page only.
+   Import last, after the four shared libraries.
+
+   WHAT IS IN HERE:
+     · Profile hero section (dark green, wave bottom, circle blob)
+     · Stat cards row layout shell
+     · Two-column main content grid
+     · Section wrapper, title, hint, and see-all link
+     · Report item cards (.report-item)
+     · ID card loading skeleton
+     · Document list rows (.profile-doc-row)
+     · Responsive breakpoints for this page
+
+   WHAT IS NOT IN HERE:
+     · .stat-card, .step-progress, .badge  → components.css
+     · .post-row, .profile-drawer, .modal  → frames.css
+     · .btn, .tag                          → buttons.css / components.css
+     · ID card flip scene                  → id-card.js inline <style>
+
+   REQUIRED IMPORTS (in this order):
+     main.css → buttons.css → components.css → frames.css → profile.css
+
+   QUICK REFERENCE:
+     Profile hero         → .profile-hero
+     Stat cards shell     → .profile-stats / .profile-stats__inner
+     Two-column grid      → .profile-main__inner
+     Section wrapper      → .profile-section
+     Report cards         → .report-item
+     ID card skeleton     → .id-card-skeleton
+     Document rows        → .profile-doc-row
+   ================================================ */
+
+
+/* ================================================
+   PROFILE HERO
+   ================================================ */
+
+/*
+   Solid dark green section — no photo, unlike home hero.
+   Transparent navbar sits on top; top padding compensates
+   for --navbar-h (64px) plus additional breathing room.
+
+   ::before  → decorative translucent circle blob (top-right)
+   ::after   → white wave curving into the content area below
+*/
+
+.profile-hero {
+  background: var(--green-dark);
+  position: relative;
+  overflow: hidden;
+  padding: calc(var(--navbar-h) + var(--space-2xl)) 0 var(--space-3xl);
+}
+
+/* Decorative circle blob — top-right corner */
+.profile-hero::before {
+  content: '';
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: var(--overlay-white-05);
+  right: -80px;
+  top: -110px;
+  pointer-events: none;
+}
+
+/* Wave curve bleeding into the white content area below */
+.profile-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: var(--off-white);
+  border-radius: 56px 56px 0 0;
+}
+
+/* ---- Inner layout ---- */
+.profile-hero__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Greeting block ---- */
+.profile-hero__greeting {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.profile-hero__date {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--overlay-white-55);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.profile-hero__headline {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  color: var(--white);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.03em;
+}
+
+/* Resident name — orange accent */
+.profile-hero__name {
+  color: var(--orange);
+  font-family: var(--font-body);
+}
+
+/* Location / role sub-line */
+.profile-hero__sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-base-sm);
+  color: var(--overlay-white-55);
+  font-weight: var(--fw-medium);
+}
+
+.profile-hero__sub [data-lucide] {
+  width: 14px;
+  height: 14px;
+  color: var(--orange);
+  flex-shrink: 0;
+}
+
+
+/* ================================================
+   STAT CARDS ROW
+   ================================================ */
+
+/*
+   Grid shell for three .stat-card elements from components.css.
+   Only the grid layout and subtitle text are page-specific.
+*/
+
+.profile-stats { padding: var(--space-xl) 0; }
+
+.profile-stats__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+/* Secondary line below the stat number, e.g. "1 under review · 1 in progress" */
+.profile-stat-sub {
+  font-size: var(--text-xs);
+  color: var(--gray-400);
+  margin-top: 2px;
+  font-family: var(--font-body);
+  font-weight: var(--fw-normal);
+}
+
+
+/* ================================================
+   MAIN CONTENT — Two-Column Grid
+   ================================================ */
+
+/*
+   Left  (1fr)    → reports + announcements
+   Right (400px)  → ID card + documents
+   Stacks to single column on tablets (≤ 1024px).
+*/
+
+.profile-main { padding: 0 0 var(--space-3xl); }
+
+.profile-main__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+.profile-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+
+/* ================================================
+   SECTION WRAPPER
+   ================================================ */
+
+/* Shared container for each content block in both columns */
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ---- Section title ---- */
+.profile-section__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-xl);
+  color: var(--text-dark);
+  letter-spacing: -0.02em;
+}
+
+.profile-section__title [data-lucide] {
+  color: var(--orange);
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Hint line below the title, e.g. "Tap the card to reveal the QR side" */
+.profile-section__hint {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+  margin-top: -8px;
+}
+
+/* "See all" link below content */
+.profile-section__see-all {
+  align-self: flex-start;
+  margin-top: var(--space-sm);
+}
+
+
+/* ================================================
+   REPORT ITEM CARDS
+   ================================================ */
+
+/*
+   Extends .card (main.css). Adds internal layout for the
+   header row, location line, and step tracker from components.css.
+*/
+
+.report-item {
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: box-shadow var(--transition);
+}
+
+.report-item:hover { box-shadow: var(--shadow-md); }
+
+/* Header: category tag (left) and report ID (right) */
+.report-item__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.report-item__id {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+  font-weight: var(--fw-medium);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ---- Location line ---- */
+.report-item__location {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  font-weight: var(--fw-medium);
+}
+
+.report-item__location [data-lucide] {
+  width: 13px;
+  height: 13px;
+  color: var(--green-dark);
+  flex-shrink: 0;
+}
+
+.report-item__progress { margin-top: var(--space-sm); }
+
+/* Empty state — shown by JS when no active reports exist */
+.profile-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-2xl);
+  text-align: center;
+  color: var(--gray-400);
+  font-size: var(--text-sm);
+}
+
+
+/* ================================================
+   ID CARD LOADING SKELETON
+   ================================================ */
+
+/*
+   Shown in #idCardMount while Firestore data fetches.
+   JS clears it and calls renderIDCard() once the user doc loads.
+   Aspect ratio matches CR80 card standard (85.6 × 54mm ≈ 1.586).
+*/
+
+.id-card-skeleton {
+  width: 100%;
+  aspect-ratio: 1.586;
+  border-radius: var(--radius-xl);
+  background: var(--gray-100);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Animated shimmer sweep */
+.id-card-skeleton__shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent            0%,
+    rgba(255,255,255,0.55) 50%,
+    transparent           100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-sweep 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-sweep {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+
+/* ================================================
+   DOCUMENT LIST ROWS
+   ================================================ */
+
+/*
+   Flex row: icon (.post-icon) | name + meta | status badge / link.
+   .post-icon, .badge, .doc-download come from the shared libraries;
+   only the row container layout is page-specific.
+*/
+
+.profile-docs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ---- Row container ---- */
+.profile-doc-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-100);
+  background: var(--white);
+  transition: box-shadow var(--transition);
+}
+
+.profile-doc-row:hover { box-shadow: var(--shadow-sm); }
+
+/* ---- Body — name + meta ---- */
+.profile-doc-row__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile-doc-row__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base-sm);
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-doc-row__meta {
+  font-size: var(--text-xs);
+  color: var(--gray-400);
+}
+
+/* ---- Status / action slot (right-aligned) ---- */
+.profile-doc-row__status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* CTA link below the document list */
+.profile-docs-cta { margin-top: var(--space-sm); }
+
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+
+/* ---- Tablet (≤ 1024px) — single column ---- */
+@media (max-width: 1024px) {
+  .profile-main__inner { grid-template-columns: 1fr; }
+
+  /* ID card + docs move above reports + announcements */
+  .profile-col--right { order: -1; }
+  .profile-col--left  { order: 0; }
+}
+
+/* ---- Tablet small (≤ 768px) — reduce padding, 2-col stats ---- */
+@media (max-width: 768px) {
+  .profile-stats__inner { grid-template-columns: 1fr 1fr; }
+
+  .profile-main__inner,
+  .profile-stats__inner,
+  .profile-hero__inner  { padding: 0 var(--space-md); }
+}
+
+/* ---- Mobile (≤ 640px) — single-col stats, stacked hero ---- */
+@media (max-width: 640px) {
+  .profile-stats__inner { grid-template-columns: 1fr; }
+
+  .profile-hero__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-lg);
+  }
+
+  .alert-widget { width: 100%; }
+}

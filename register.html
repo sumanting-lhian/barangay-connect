@@ -1,9 +1,41 @@
+<!--
+  register.html — BarangayConnect
+  Multi-step resident registration form.
+  Collects account info, barangay location, and
+  government ID for admin approval.
+
+  WHAT IS IN HERE:
+    · Top navbar with logo and sign-in link
+    · Step indicator (3 steps)
+    · Step 1 — Account Info (name, email, phone, DOB, password)
+    · Step 2 — Barangay Location (cascading dropdowns, address fields)
+    · Step 3 — Government ID upload and TOS agreement
+    · Success screen shown after submission
+
+  WHAT IS NOT IN HERE:
+    · Step transition logic, validation, and API calls (register.js)
+    · Form input styles (main.css, components.css)
+    · Auth-page layout styles (auth.css)
+
+  REQUIRED IMPORTS:
+    · css/shared/main.css, css/shared/components.css, css/features/auth/auth.css
+    · https://fonts.googleapis.com — Nunito, Inter
+    · https://unpkg.com/lucide — icon set
+    · js/features/auth/register.js (module)
+
+  QUICK REFERENCE:
+    · #step1, #step2, #step3      — form panels (shown one at a time)
+    · #stepIndicator              — step dot + connector strip
+    · #successScreen              — post-submit confirmation view
+    · #step1Btn, #step2Btn        — "Continue" submit buttons
+    · #step3Btn                   — final "Submit Registration" button
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BarangayConnect – Create Account</title>
+  <title>Register</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,45 +43,130 @@
 
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
-  <link rel="stylesheet" href="css/main.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/auth.css" />
+  <link rel="stylesheet" href="css/shared/main.css" />
+  <link rel="stylesheet" href="css/shared/components.css" />
+  <link rel="stylesheet" href="/css/features/auth/register.css" />
 </head>
 <body class="register-page">
 
-  <!-- ===================== -->
-  <!--      TOP NAVBAR       -->
-  <!-- ===================== -->
-  <nav class="register-nav">
-    <a href="index.html" class="register-nav__logo">
-      <div class="register-nav__logo-icon">
-        <img src="assets/images/logo.png" alt="BarangayConnect Logo" class="auth-logo__img" />
-      </div>
-      BarangayConnect
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LEFT PANEL — hero, features, live signups
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="reg-left">
+
+    <a href="/" class="reg-logo">
+      <img src="/assets/images/logo.svg" alt="BarangayConnect" class="reg-logo__img" />
+      <span class="reg-logo__text">BarangayConnect</span>
     </a>
-    <p class="register-nav__signin">
-      Already have an account? <a href="index.html">Sign in</a>
-    </p>
-  </nav>
 
+    <div class="reg-hero">
 
-  <!-- ===================== -->
-  <!--      MAIN BODY        -->
-  <!-- ===================== -->
-  <main class="register-body">
-
-    <!-- ---- STEP 1, 2, 3 FORMS (shown one at a time via JS) ---- -->
-
-    <!-- STEP HEADER (title + badge) -->
-    <div class="register-header">
-      <h1 class="register-header__title">Create your account</h1>
-      <div class="register-header__badge">
-        <i data-lucide="shield-check"></i>
-        <span>Register</span>
+      <div class="reg-badge">
+        <i data-lucide="map-pin"></i>
+        <span>Join Your Community</span>
       </div>
-    </div>
 
-    <!-- STEP INDICATOR -->
+      <h1 class="reg-hero__heading">
+        Your barangay,<br>
+        <span class="reg-hero__accent">in your hands.</span>
+      </h1>
+      <p class="reg-hero__sub">
+        Request documents, report concerns, get real-time alerts, and stay connected with your community.
+      </p>
+
+      <div class="reg-features">
+        <div class="reg-feature">
+          <div class="reg-feature__icon"><i data-lucide="flag"></i></div>
+          <div>
+            <p class="reg-feature__title">Report a Concern</p>
+            <p class="reg-feature__sub">Submit complaints with photos and track their resolution in real-time.</p>
+          </div>
+        </div>
+        <div class="reg-feature">
+          <div class="reg-feature__icon"><i data-lucide="bell"></i></div>
+          <div>
+            <p class="reg-feature__title">Real-Time Alerts</p>
+            <p class="reg-feature__sub">Emergency and weather alerts from your barangay the moment they're issued.</p>
+          </div>
+        </div>
+        <div class="reg-feature">
+          <div class="reg-feature__icon"><i data-lucide="users"></i></div>
+          <div>
+            <p class="reg-feature__title">Community Hub</p>
+            <p class="reg-feature__sub">Join discussions, vote on decisions, and stay involved in local matters.</p>
+          </div>
+        </div>
+        <div class="reg-feature">
+          <div class="reg-feature__icon"><i data-lucide="shield"></i></div>
+          <div>
+            <p class="reg-feature__title">Verified &amp; Secure</p>
+            <p class="reg-feature__sub">Identity-verified accounts with encrypted data you can trust.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reg-signups">
+        <div class="reg-signups__header">
+          <span class="reg-signups__dot"></span>
+          LIVE SIGNUPS
+        </div>
+        <div class="reg-signup-item">
+          <div class="reg-signup-item__avatar" style="background:#2d5a3d;">K</div>
+          <div>
+            <p class="reg-signup-item__name">Kristine M.</p>
+            <p class="reg-signup-item__sub">just joined · Brgy. Payatas</p>
+          </div>
+          <span class="reg-signup-item__check"><i data-lucide="check"></i></span>
+        </div>
+        <div class="reg-signup-item">
+          <div class="reg-signup-item__avatar" style="background:#1e6b6b;">C</div>
+          <div>
+            <p class="reg-signup-item__name">Carlo R.</p>
+            <p class="reg-signup-item__sub">just joined · Brgy. Ugong</p>
+          </div>
+          <span class="reg-signup-item__check"><i data-lucide="check"></i></span>
+        </div>
+        <div class="reg-signup-item">
+          <div class="reg-signup-item__avatar" style="background:#6b3a2d;">L</div>
+          <div>
+            <p class="reg-signup-item__name">Liza A.</p>
+            <p class="reg-signup-item__sub">just joined · Brgy. Ususan</p>
+          </div>
+          <span class="reg-signup-item__check"><i data-lucide="check"></i></span>
+        </div>
+        <div class="reg-signups__footer">
+          <div class="reg-signups__avatars">
+            <div class="reg-signups__ava">K</div>
+            <div class="reg-signups__ava">C</div>
+            <div class="reg-signups__ava">L</div>
+          </div>
+          125,000+ residents already connected
+        </div>
+      </div>
+
+    </div><!-- /reg-hero -->
+
+  </div><!-- /reg-left -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       RIGHT PANEL — step indicator + form cards + success screen
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="reg-right">
+    <div class="reg-right__inner">
+
+      <p class="reg-signin">Already have an account? <a href="/login.html">Sign in</a></p>
+
+      <h1 class="reg-title">Create your account</h1>
+
+
+    <!-- ─────────────────────────────────────────────
+         STEP INDICATOR
+         Dot + label per step, connected by ruled lines.
+         JS toggles .active / .pending / .completed on
+         each .step-item and fills .step-connector lines.
+    ───────────────────────────────────────────────── -->
     <div class="step-indicator" id="stepIndicator">
 
       <div class="step-item active" id="stepDot1">
@@ -74,9 +191,13 @@
     </div><!-- /step-indicator -->
 
 
-    <!-- ======================== -->
-    <!--  STEP 1 — ACCOUNT INFO  -->
-    <!-- ======================== -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         STEP 1 — ACCOUNT INFO
+         ───────────────────────────────────────────────────────────────
+         Collects: first name, last name, email, phone,
+         date of birth, and password.
+         Validated and submitted by step1Form → JS advances to step 2.
+    ══════════════════════════════════════════════════════════════════ -->
     <div class="register-card page-transition" id="step1">
 
       <h2 class="register-card__section-title">Personal Information</h2>
@@ -146,7 +267,7 @@
           </div>
         </div>
 
-        <!-- Password -->
+        <!-- Password — toggle visibility button overlaid on input -->
         <div class="form-group">
           <label class="form-label" for="regPassword">Password</label>
           <div class="form-input-wrap form-input-wrap--icon">
@@ -181,51 +302,45 @@
     </div><!-- /step1 -->
 
 
-    <!-- ======================== -->
-    <!--  STEP 2 — LOCATION      -->
-    <!-- ======================== -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         STEP 2 — LOCATION
+         ───────────────────────────────────────────────────────────────
+         Cascading province → municipality → barangay dropdowns,
+         loaded from the PSGC API. Also collects years of residency
+         and detailed home address fields.
+         Dropdowns unlock sequentially as parent selections are made.
+    ══════════════════════════════════════════════════════════════════ -->
     <div class="register-card page-transition" id="step2" hidden>
 
       <h2 class="register-card__section-title">Barangay Location</h2>
 
       <form class="register-form" id="step2Form" novalidate>
 
-        <!-- Barangay -->
+        <!-- Province — pre-populated on load, others unlock after -->
         <div class="form-group">
-          <label class="form-label" for="barangay">Barangay</label>
-          <select class="form-select" id="barangay">
-            <option value="" disabled selected>Select your barangay</option>
-            <!-- 
-              TODO: Add your actual barangay list here.
-              These are just examples — replace with the real list.
-            -->
-            <option value="Bancod">Bancod</option>
-            <option value="Indang">Indang Proper</option>
-            <option value="Daine">Daine</option>
-            <option value="Guyam Malaki">Guyam Malaki</option>
-            <option value="Guyam Munti">Guyam Munti</option>
-            <option value="Harasan">Harasan</option>
-            <option value="Kayquit I">Kayquit I</option>
-            <option value="Kayquit II">Kayquit II</option>
-            <option value="Kayquit III">Kayquit III</option>
-            <option value="Limbon">Limbon</option>
+          <label class="form-label" for="province">Province</label>
+          <select class="form-select" id="province" disabled>
+            <option value="" disabled selected>Loading provinces...</option>
           </select>
-          <span class="form-error" id="barangayError"></span>
+          <span class="form-error" id="provinceError"></span>
         </div>
 
-        <!-- Purok / Zone -->
+        <!-- Municipality / City — unlocks after province selection -->
         <div class="form-group">
-          <label class="form-label" for="purok">Purok / Zone</label>
-          <select class="form-select" id="purok">
-            <option value="" disabled selected>Select your purok</option>
-            <option value="Purok 1">Purok 1</option>
-            <option value="Purok 2">Purok 2</option>
-            <option value="Purok 3">Purok 3</option>
-            <option value="Purok 4">Purok 4</option>
-            <option value="Purok 5">Purok 5</option>
-            <option value="Purok 6">Purok 6</option>
+          <label class="form-label" for="municipality">Municipality / City</label>
+          <select class="form-select" id="municipality" disabled>
+            <option value="" disabled selected>Select your municipality / city</option>
           </select>
-          <span class="form-error" id="purokError"></span>
+          <span class="form-error" id="municipalityError"></span>
+        </div>
+
+        <!-- Barangay — unlocks after municipality selection -->
+        <div class="form-group">
+          <label class="form-label" for="barangay">Barangay</label>
+          <select class="form-select" id="barangay" disabled>
+            <option value="" disabled selected>Select your barangay</option>
+          </select>
+          <span class="form-error" id="barangayError"></span>
         </div>
 
         <!-- Years of Residency -->
@@ -241,6 +356,38 @@
           />
           <span class="form-error" id="yearsError"></span>
         </div>
+
+        <!-- Home Address fields -->
+        <p style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#aaa;letter-spacing:0.08em;margin-bottom:0.5rem;">Home Address</p>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="addrPhase">Phase</label>
+            <input class="form-input" type="text" id="addrPhase" placeholder="e.g. Phase 5" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="addrBlock">Block</label>
+            <input class="form-input" type="text" id="addrBlock" placeholder="e.g. 54" />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="addrLot">Lot <span style="color:#aaa;font-weight:400">(optional)</span></label>
+            <input class="form-input" type="text" id="addrLot" placeholder="e.g. 10" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="addrPurok">Purok / Sitio <span style="color:#aaa;font-weight:400">(optional)</span></label>
+            <input class="form-input" type="text" id="addrPurok" placeholder="e.g. Purok 2" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="addrStreet">Street <span style="color:#aaa;font-weight:400">(optional)</span></label>
+          <input class="form-input" type="text" id="addrStreet" placeholder="e.g. Rizal St." />
+        </div>
+
+        <span class="form-error" id="addressError"></span>
 
         <!-- Actions -->
         <div class="register-actions">
@@ -258,16 +405,20 @@
     </div><!-- /step2 -->
 
 
-    <!-- ======================== -->
-    <!--  STEP 3 — GOVERNMENT ID -->
-    <!-- ======================== -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         STEP 3 — GOVERNMENT ID
+         ───────────────────────────────────────────────────────────────
+         Collects ID type, ID number, and front + back photo uploads.
+         Images are deleted from servers after admin approval/rejection.
+         User must accept TOS before submitting.
+    ══════════════════════════════════════════════════════════════════ -->
     <div class="register-card page-transition" id="step3" hidden>
 
       <h2 class="register-card__section-title">Government ID Verification</h2>
 
       <form class="register-form" id="step3Form" novalidate>
 
-        <!-- ID Type -->
+        <!-- ID Type dropdown -->
         <div class="form-group">
           <label class="form-label" for="idType">ID Type</label>
           <select class="form-select" id="idType">
@@ -303,15 +454,10 @@
           * Images are deleted after admin approval
           <label class="form-label">Upload ID Photo (Front)</label>
           <div class="upload-area" id="uploadFrontArea">
-            <input
-              type="file"
-              id="idPhotoFront"
-              accept="image/jpeg, image/png, image/webp"
-            />
+            <input type="file" id="idPhotoFront" accept="image/jpeg, image/png, image/webp" />
             <i data-lucide="upload"></i>
             <span class="upload-area__label">Click to upload front of ID</span>
             <span class="upload-area__hint">JPG, PNG or WEBP · Max 5MB</span>
-            <!-- Preview shown after file selected -->
             <img class="upload-preview" id="previewFront" alt="Front ID preview" />
           </div>
           <span class="form-error" id="idFrontError"></span>
@@ -321,11 +467,7 @@
         <div class="form-group">
           <label class="form-label">Upload ID Photo (Back)</label>
           <div class="upload-area" id="uploadBackArea">
-            <input
-              type="file"
-              id="idPhotoBack"
-              accept="image/jpeg, image/png, image/webp"
-            />
+            <input type="file" id="idPhotoBack" accept="image/jpeg, image/png, image/webp" />
             <i data-lucide="upload"></i>
             <span class="upload-area__label">Click to upload back of ID</span>
             <span class="upload-area__hint">JPG, PNG or WEBP · Max 5MB</span>
@@ -336,6 +478,20 @@
 
         <!-- General submit error -->
         <p class="form-error form-error--center" id="submitError"></p>
+
+        <!-- Terms of Service agreement -->
+        <div class="tos-block">
+          <label class="tos-label">
+            <input type="checkbox" id="tosAgree" required />
+            <span>
+              I understand that my uploaded ID photos will be used solely to verify
+              my identity and will be <strong>permanently deleted</strong> from our
+              servers once my application is approved or rejected.
+              <a href="privacy.html" target="_blank"><strong>Read our Privacy Policy</strong></a>.
+            </span>
+          </label>
+          <p class="field-error" id="tosError"></p>
+        </div>
 
         <!-- Actions -->
         <div class="register-actions">
@@ -356,9 +512,12 @@
     </div><!-- /step3 -->
 
 
-    <!-- ======================== -->
-    <!--  SUCCESS SCREEN          -->
-    <!-- ======================== -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         SUCCESS SCREEN
+         ───────────────────────────────────────────────────────────────
+         Shown by JS after a successful form submission.
+         Informs the user that their account is pending admin review.
+    ══════════════════════════════════════════════════════════════════ -->
     <div class="register-success" id="successScreen" hidden>
       <div class="register-success__icon">
         <i data-lucide="circle-check"></i>
@@ -369,16 +528,25 @@
         You'll be able to log in once your account is approved.
         This usually takes 1–2 business days.
       </p>
-      <a href="index.html" class="btn btn--primary">
+      <a href="/login.html" class="btn btn--primary">
         <i data-lucide="log-in"></i>
         Back to Sign In
       </a>
     </div><!-- /successScreen -->
 
-  </main><!-- /register-body -->
+
+  </div><!-- /reg-right__inner -->
+  </div><!-- /reg-right -->
 
 
+  <!-- ═══════════════════════════════════════════════════════════════
+       SCRIPTS
+       ───────────────────────────────────────────────────────────────
+       1. lucide.createIcons() — renders all data-lucide icons
+       2. register.js (module) — step transitions, validation, submission
+  ══════════════════════════════════════════════════════════════════ -->
   <script>lucide.createIcons();</script>
-  <script type="module" src="js/register.js"></script>
+  <script type="module" src="js/features/auth/register.js"></script>
+
 </body>
 </html>

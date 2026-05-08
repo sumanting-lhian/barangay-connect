@@ -1,0 +1,747 @@
+/* ================================================
+   services.css — BarangayConnect
+   Page-specific styles for the Services page only.
+   Import last, after the four shared libraries.
+
+   WHAT IS IN HERE:
+     · Services hero section (dark green, wave bottom, circle blob)
+     · Tab panel show / hide behavior
+     · Panel content wrappers and section spacing
+     · Report a Concern: step layout, category grid, drop zone, review table
+     · Document Requests: doc card grid, request status list
+     · Book Appointment: promo banner, slot / date grids, modal internals
+     · Emergency & Directory: emergency grid, directory grid
+     · Appointment copies counter, time slot grid, summary strip
+     · Responsive breakpoints for this page
+
+   WHAT IS NOT IN HERE:
+     · .btn, .badge, .tag              → buttons.css / components.css
+     · .doc-card, .slot-card, .cal     → frames.css
+     · .contact-row, .doc-type-list    → frames.css
+     · .step-progress, .stepper        → components.css
+     · .notice-banner                  → components.css
+     · .navbar, .site-footer           → main.css
+
+   REQUIRED IMPORTS (in this order):
+     main.css → buttons.css → components.css → frames.css → services.css
+
+   QUICK REFERENCE:
+     Services hero        → .services-hero
+     Tab panels           → .tab-panel / .tab-panel.is-active
+     Report steps         → .report-step / .concern-grid / .photo-dropzone
+     Document requests    → .doc-cards-grid / .request-status-card
+     Appointment promo    → .appt-promo
+     Appointment modal    → .appt-modal-steps / .appt-step / .appt-time-grid
+     Doc copies counter   → .doc-copies-counter
+     Emergency / Dir      → .emergency-grid / .directory-grid
+   ================================================ */
+
+
+/* ================================================
+   SERVICES HERO
+   ================================================ */
+
+/*
+   Same layout pattern as .community-hero:
+     · Solid --green-dark background, shorter than home hero
+     · Decorative translucent circle blob top-right via ::before
+     · Bottom curves into white content area via border-radius wave
+*/
+
+.services-hero {
+  background: var(--green-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative circle blob — top-right corner */
+.services-hero::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: var(--overlay-white-07);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ---- Inner layout ---- */
+.services-hero__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.services-hero__eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-s);
+  color: var(--overlay-white-55);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+}
+
+.services-hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: var(--fw-black);
+  color: var(--white);
+  letter-spacing: -0.02em;
+  margin-bottom: 2rem;
+}
+
+/* Tab strip inside the hero */
+.services-tabs {
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+
+/* ================================================
+   TAB PANEL SYSTEM
+   ================================================ */
+
+/*
+   Same show / hide pattern as community.css.
+   JS adds .is-active to the target panel; all others stay hidden.
+*/
+
+.tab-panel          { display: none; }
+.tab-panel.is-active { display: block; }
+
+.services-panel-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+}
+
+
+/* ================================================
+   SHARED SECTION TYPOGRAPHY
+   ================================================ */
+
+/* Section headings and sub-text used across all panels */
+
+.services-section-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--fw-black);
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+  margin-top: 3rem;
+}
+
+.services-section-sub {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  line-height: var(--lh-normal);
+  margin-bottom: 1.5rem;
+}
+
+
+/* ================================================
+   REPORT A CONCERN PANEL
+   ================================================ */
+
+/*
+   .stepper (components.css) handles the numbered step circles.
+   Only the step content shells, grids, and drop zone are defined here.
+*/
+
+/* ---- Step shells — shown/hidden by JS ---- */
+.report-step          { display: none; }
+.report-step.is-active { display: block; }
+
+.report-step__title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--fw-black);
+  margin-bottom: 0.75rem;
+  margin-top: 2rem;
+}
+
+.report-step__sub {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.report-step__textarea {
+  min-height: 160px;
+  resize: vertical;
+  width: 100%;
+}
+
+/* Centered action row (step 1) */
+.report-step__actions1 {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Left-aligned action row (all other steps) */
+.report-step__actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+/* ---- Category selection grid ---- */
+.concern-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* ---- Photo drop zone ---- */
+.photo-dropzone {
+  background: var(--white);
+  border: 1.5px dashed var(--gray-200);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.photo-dropzone:hover { border-color: var(--gray-400); }
+
+.photo-dropzone__title {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--fw-bold);
+  margin-bottom: 0.5rem;
+}
+
+.photo-dropzone__sub {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* ---- Submission review table ---- */
+.review-table {
+  max-width: 660px;
+  margin: 2rem 0;
+}
+
+.review-table__row {
+  display: flex;
+  gap: 2rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.review-table__row:last-child { border-bottom: none; }
+
+.review-table__label {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.review-table__value {
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  line-height: var(--lh-relaxed);
+  flex: 1;
+}
+
+
+/* ================================================
+   DOCUMENT REQUESTS PANEL
+   ================================================ */
+
+/* ---- Document card grid ---- */
+.doc-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  align-items: stretch;
+}
+
+/* ---- Request status list ---- */
+.request-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.request-status-card {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.request-status-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex-wrap: nowrap;
+}
+
+.request-status-card__name {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--fw-bold);
+  margin-bottom: 0.25rem;
+}
+
+.request-status-card__meta {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+
+/* ================================================
+   BOOK APPOINTMENT PANEL
+   ================================================ */
+
+/* ---- Promo banner ---- */
+.appt-promo {
+  background: var(--green-dark);
+  border-radius: var(--radius-xl);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  padding: 2.5rem;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* Decorative circle blob — top-right of the promo card */
+.appt-promo::after {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.appt-promo__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.appt-promo__icon-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.appt-promo__icon {
+  width: 36px;
+  height: 36px;
+  background: var(--orange);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+}
+
+.appt-promo__eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.appt-promo__title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--fw-black);
+  color: var(--white);
+  line-height: 1.2;
+}
+
+.appt-promo__desc {
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.72);
+  line-height: var(--lh-relaxed);
+  max-width: 540px;
+}
+
+.appt-promo__meta-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.appt-promo__meta-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+  border-radius: var(--radius-full);
+  padding: 0.5rem 1rem;
+  font-size: var(--text-sm);
+}
+
+.appt-promo__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Slot and date grids ---- */
+.slot-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.date-slot-cards-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+
+/* ================================================
+   BOOK APPOINTMENT — Modal Internals
+   ================================================ */
+
+/* Styles for elements inside #bookApptModal not covered by library classes */
+
+/* ---- Step indicator strip ---- */
+.appt-modal-steps {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.appt-modal-steps__item {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--overlay-white-55);
+  flex: 1;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid transparent;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.appt-modal-steps__item.is-active {
+  color: var(--orange);
+  font-weight: var(--fw-bold);
+  border-bottom-color: 2px solid var(--orange);
+}
+
+.appt-modal-steps__item.is-done {
+  color: rgba(255, 255, 255, 0.7);
+  border-bottom-color: var(--green);
+}
+
+/* ---- Modal step shells — shown/hidden by JS ---- */
+.appt-step           { display: none; }
+.appt-step.is-active  { display: block; }
+
+.appt-step__title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--fw-black);
+  margin-bottom: 0.5rem;
+}
+
+.appt-step__sub {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+/* ---- Service selection grid ---- */
+.appt-service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+/* Selector button layout overrides for the service grid */
+.appt-service-grid .btn--selector {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.5rem 1.25rem;
+  min-height: 140px;
+  text-align: left;
+}
+
+.appt-service-grid .btn--selector div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.appt-service-grid .btn--selector strong {
+  display: block;
+  font-family: var(--font-body);
+  margin-bottom: 0.25rem;
+}
+
+.appt-service-grid .btn--selector small {
+  display: block;
+  font-family: var(--font-body);
+  opacity: 0.7;
+  font-weight: lighter;
+  line-height: 1.4;
+}
+
+/* Date hint below the calendar */
+.appt-date-hint {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--green-dark);
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* ---- Time slot grid ---- */
+.appt-time-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.time-slot-btn {
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  position: relative;
+}
+
+.time-slot-btn:hover { border-color: var(--gray-400); }
+
+.time-slot-btn.is-selected {
+  border-color: var(--green-dark);
+  background: var(--alpha-green-04);
+  box-shadow: 0 0 0 3px var(--alpha-green-08);
+}
+
+/* Check icon revealed when slot is selected */
+.time-slot-btn.is-selected .time-slot-btn__check { display: block; }
+
+/* Disabled / unavailable slot */
+.time-slot-btn--empty {
+  background: var(--gray-50);
+  border-color: transparent;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.time-slot-btn__check {
+  margin-left: auto;
+  color: var(--green-dark);
+  display: none;
+}
+
+/* ---- Booking summary strip ---- */
+.appt-summary-strip {
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--orange);
+  padding: 1.5rem 2rem;
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.appt-summary-strip__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.appt-summary-strip__col:not(:last-child) {
+  border-right: 1px solid var(--gray-100);
+  padding-right: 2rem;
+}
+
+.appt-summary-strip__label {
+  font-size: 0.65rem;
+  font-weight: var(--fw-bold);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.appt-summary-strip__value {
+  font-size: var(--text-base);
+  font-weight: var(--fw-semibold);
+  color: var(--text-dark);
+}
+
+
+/* ================================================
+   DOCUMENT REQUEST — Modal Internals
+   ================================================ */
+
+/* ---- Copies counter control ---- */
+.doc-copies-counter {
+  display: flex;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.doc-copies-counter__btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  font-size: var(--text-lg);
+  font-weight: var(--fw-bold);
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.doc-copies-counter__btn:hover { background: var(--gray-50); }
+
+.doc-copies-counter__value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+}
+
+/* ---- Local form overrides ---- */
+.form-label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-dark);
+}
+
+.form-group { margin-bottom: 1rem; }
+
+
+/* ================================================
+   EMERGENCY & DIRECTORY PANEL
+   ================================================ */
+
+.emergency-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.directory-filters {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.directory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+
+/* ---- Large tablet (≤ 1024px) ---- */
+@media (max-width: 1024px) {
+  .doc-cards-grid  { grid-template-columns: repeat(2, 1fr); }
+  .directory-grid  { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---- Tablet (≤ 900px) ---- */
+@media (max-width: 900px) {
+  .concern-grid    { grid-template-columns: repeat(2, 1fr); }
+  .slot-cards-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .appt-promo      { flex-direction: column; }
+  .appt-promo__cta { width: 100%; }
+}
+
+/* ---- Mobile (≤ 640px) — all grids collapse to single column ---- */
+@media (max-width: 640px) {
+  .doc-cards-grid,
+  .concern-grid,
+  .slot-cards-grid,
+  .directory-grid,
+  .date-slot-cards-row,
+  .emergency-grid         { grid-template-columns: 1fr; }
+
+  .services-tabs          { flex-wrap: wrap; }
+  .services-panel-inner   { padding: 2rem 1rem 3rem; }
+  .services-hero__inner   { padding: 1.5rem 1rem; }
+  .appt-promo             { padding: 1.5rem; }
+
+  .appt-service-grid,
+  .appt-time-grid         { grid-template-columns: 1fr; }
+
+  /* Stack summary strip vertically on mobile */
+  .appt-summary-strip {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+
+  .appt-summary-strip__col {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--gray-100);
+    padding-bottom: 1rem;
+  }
+
+  .appt-summary-strip__col:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}

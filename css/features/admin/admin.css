@@ -1,0 +1,1687 @@
+/* ================================================
+   admin.css — BarangayConnect
+   Admin Panel page-specific styles.
+   Import AFTER main.css, buttons.css, components.css, frames.css.
+
+   WHAT IS IN HERE:
+     · Admin hero section (red gradient, like community-hero but red)
+     · Admin tab bar (reuses .btn--category from buttons.css)
+     · Admin content area and panel layout
+     · Panel headings and section headers
+     · Announcement / bulletin row cards
+     · Stat cards for overview
+     · User table rows
+     · Pending applicant cards (registration approval)
+     · Shared admin badge patterns
+     · Alert list rows
+     · Curfew row cards
+     · Settings form panels
+     · Search input wrapper
+     · Role filter pill row
+     · Toast container positioning
+
+   REQUIRED IMPORTS (in this order):
+     main.css → buttons.css → components.css → frames.css → admin.css
+
+   QUICK REFERENCE:
+     Hero            → .admin-hero > .admin-hero__inner
+     Tabs            → .admin-tabs (use .btn--category from buttons.css inside)
+     Content         → .admin-content > .admin-panel (.active)
+     Panel header    → .admin-panel-header
+     Panel heading   → .panel-heading
+     Announcement    → .announcement-row
+     Row card        → .admin-row-card
+     Action buttons  → .admin-action-btn (+ --green / --red / --blue / --amber)
+     Stat cards      → .admin-stat-card (+ --green / --orange / --red / --blue)
+     Users table     → .users-table > .user-row
+     Applicant card  → .applicant-card
+     Search wrap     → .roles-search-wrap
+     Role filters    → .role-filters > .role-filter-btn
+     Badges (shared) → .admin-badge .admin-badge--{variant}
+     Alert row       → .alert-row-card
+     Settings panel  → .settings-section
+================================================ */
+
+
+/* ================================================
+   1. ADMIN HERO
+   Red gradient header that houses the page title
+   and the tab navigation strip. Mirrors the
+   .community-hero pattern but uses red brand colors.
+================================================ */
+
+.admin-hero {
+  background: linear-gradient(135deg, var(--red-dark) 0%, #4A0808 55%, #3A0606 100%);
+  position: relative;
+  overflow: hidden;
+  padding-top: calc(var(--navbar-h) + var(--space-2xl));
+  padding-bottom: calc(var(--space-2xl) + 56px);
+  border-radius: 0 0 48px 48px;
+}
+
+/* Decorative blob — top right */
+.admin-hero::before {
+  content: '';
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  right: -120px;
+  top: -160px;
+  pointer-events: none;
+}
+
+/* Decorative blob — bottom right */
+.admin-hero::after {
+  content: '';
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.03);
+  right: 220px;
+  bottom: -70px;
+  pointer-events: none;
+}
+
+.admin-hero__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* "FULL CONTROL" / role eyebrow badge */
+.admin-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-black);
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.admin-hero__badge [data-lucide],
+.admin-hero__badge svg {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+}
+
+.admin-hero__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: clamp(2.4rem, 5.5vw, 3.6rem);
+  color: var(--white);
+  line-height: var(--lh-none);
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.admin-hero__sub {
+  font-family: var(--font-display);
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-medium);
+  color: rgba(255,255,255,0.45);
+  margin-top: -8px;
+}
+
+/* Tab strip — wraps .btn--category buttons */
+.admin-tabs {
+  margin-top: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+
+/* ================================================
+   2. ADMIN CONTENT AREA
+================================================ */
+
+.admin-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-xl);
+  min-height: 60vh;
+}
+
+/* Individual tab panels — hidden by default */
+.admin-panel {
+  display: none;
+}
+
+.admin-panel.active {
+  display: block;
+}
+
+
+/* ================================================
+   3. PANEL HEADINGS
+================================================ */
+
+.panel-heading {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-3xl);
+  color: var(--text-dark);
+  letter-spacing: -0.025em;
+  line-height: var(--lh-tight);
+  margin-bottom: var(--space-xs);
+}
+
+.panel-sub {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+  font-weight: var(--fw-medium);
+  margin-bottom: var(--space-lg);
+}
+
+/* Panel section header row (heading + action button) */
+.admin-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.admin-panel-header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Sub-tab row separator */
+.admin-subtab-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-md);
+  border-bottom: 2px solid var(--gray-100);
+  flex-wrap: wrap;
+  align-items: center;
+  line-height: 1;
+}
+
+/* Sub-tab pill buttons (light theme, inside white content) */
+.admin-subtab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-500);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.admin-subtab-btn [data-lucide],
+.admin-subtab-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.admin-subtab-btn:hover {
+  border-color: var(--gray-400);
+  color: var(--text-dark);
+}
+
+.admin-subtab-btn.active,
+.admin-subtab-btn.is-active {
+  background: var(--green-dark);
+  color: var(--white);
+  border-color: var(--green-dark);
+}
+
+/* Sub-tab rows that use the segmented pill style (no outline) */
+.overview-sub-btn,
+.requests-sub-btn,
+.mgmt-sub-btn,
+.alerts-sub-btn,
+.community-sub-btn {
+  border: none;
+  background: transparent;
+  padding: 10px 22px;
+  font-size: var(--text-base-sm);
+}
+
+.overview-sub-btn:hover,
+.requests-sub-btn:hover,
+.mgmt-sub-btn:hover,
+.alerts-sub-btn:hover,
+.community-sub-btn:hover {
+  background: var(--alpha-ink-06);
+  border: none;
+}
+
+.overview-sub-btn.active,
+.requests-sub-btn.active,
+.mgmt-sub-btn.active,
+.alerts-sub-btn.active,
+.community-sub-btn.active,
+.community-sub-btn.is-active {
+  background: var(--green-dark);
+  color: var(--white);
+  font-weight: var(--fw-bold);
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.community-sub-btn {
+  border: none !important;
+  background: var(--alpha-ink-07);
+  color: rgba(44,40,40,0.60);
+  padding: 10px 22px;
+  font-size: var(--text-base-sm);
+}
+
+.community-sub-btn:hover {
+  background: var(--alpha-green-10);
+  color: var(--green-dark);
+  border: none !important;
+}
+
+.community-sub-btn.active,
+.community-sub-btn.is-active {
+  background: var(--green-dark);
+  color: var(--white);
+  border: none !important;
+  box-shadow: none;
+}
+
+
+/* ================================================
+   4. ANNOUNCEMENT / BULLETIN ROW CARDS
+   The main list item style for bulletins,
+   announcements, and community posts in the admin.
+================================================ */
+
+.announcement-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-100);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.announcement-row:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.announcement-row__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.announcement-row__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.announcement-row__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  line-height: var(--lh-tight);
+}
+
+.announcement-row__meta {
+  font-size: var(--text-xs);
+  color: var(--gray-400);
+  font-weight: var(--fw-medium);
+}
+
+.announcement-row__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+
+/* ================================================
+   5. SHARED ADMIN ROW CARD
+   Generic white card with left border accent.
+   Used for alerts, curfew schedules, etc.
+================================================ */
+
+.admin-row-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-100);
+  border-left: 3px solid var(--gray-200);
+  transition: box-shadow var(--transition);
+}
+
+.admin-row-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Left border color variants */
+.admin-row-card--green  { border-left-color: var(--green-dark); }
+.admin-row-card--orange { border-left-color: var(--orange); }
+.admin-row-card--red    { border-left-color: var(--red); }
+.admin-row-card--blue   { border-left-color: #3b82f6; }
+.admin-row-card--amber  { border-left-color: var(--amber-500); }
+
+
+/* ================================================
+   6. SHARED ADMIN ACTION BUTTONS
+   Small pill buttons inside row cards.
+================================================ */
+
+.admin-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-500);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.admin-action-btn [data-lucide],
+.admin-action-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.admin-action-btn:hover {
+  border-color: var(--gray-400);
+  color: var(--text-dark);
+  background: var(--gray-50);
+}
+
+/* Variants */
+.admin-action-btn--green {
+  background: var(--green-dark);
+  color: var(--white);
+  border-color: var(--green-dark);
+}
+.admin-action-btn--green:hover {
+  background: var(--green-hover);
+  border-color: var(--green-hover);
+}
+
+.admin-action-btn--red {
+  background: var(--white);
+  color: var(--red);
+  border-color: var(--red-200);
+}
+.admin-action-btn--red:hover {
+  background: var(--red-50);
+  border-color: var(--red);
+}
+
+.admin-action-btn--blue {
+  background: var(--blue-50);
+  color: var(--blue-800);
+  border-color: var(--blue-200);
+}
+
+.admin-action-btn--amber {
+  background: var(--amber-100);
+  color: var(--amber-900);
+  border-color: var(--amber-200);
+}
+
+.admin-action-btn--orange {
+  background: var(--orange);
+  color: var(--black);
+  border-color: var(--orange);
+}
+.admin-action-btn--orange:hover {
+  background: var(--orange-hover);
+  border-color: var(--orange-hover);
+}
+
+
+/* ================================================
+   7. SHARED ADMIN BADGES
+   Inline status / priority pills for admin tables
+   and list rows.
+================================================ */
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.admin-badge [data-lucide],
+.admin-badge svg {
+  width: 10px;
+  height: 10px;
+}
+
+.admin-badge--pinned   { background: #fff8ed; color: var(--orange-active); border-color: var(--amber-200); }
+.admin-badge--urgent   { background: #fff0f0; color: #dc2626; border-color: #fecaca; }
+.admin-badge--high     { background: #fff8ed; color: var(--orange-active); border-color: var(--amber-200); }
+.admin-badge--active   { background: var(--success-100); color: var(--success-800); border-color: var(--green-200); }
+.admin-badge--inactive { background: #f3f4f6; color: #9ca3af; border-color: #e5e7eb; }
+.admin-badge--draft    { background: var(--yellow-50); color: var(--amber-800); border-color: var(--amber-100); }
+.admin-badge--live     { background: var(--success-100); color: var(--success-800); border-color: var(--green-200); }
+.admin-badge--editing  { background: #1a3a1a; color: #fff;    border-color: #1a3a1a; }
+.admin-badge--closed   { background: #f3f4f6; color: #6b7280; border-color: #e5e7eb; }
+.admin-badge--pending  { background: #fef3c7; color: var(--orange-active); border-color: var(--amber-100); }
+.admin-badge--you      { background: var(--green-50); color: var(--green-dark); border-color: var(--green-200); }
+.admin-badge--super    { background: var(--yellow-50); color: var(--amber-800); border-color: var(--amber-100); }
+
+
+/* ================================================
+   8. EMPTY STATE
+   Centered placeholder card for empty lists.
+================================================ */
+
+.admin-empty {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 3rem;
+  text-align: center;
+  color: var(--gray-400);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-100);
+  font-size: var(--text-base-sm);
+}
+
+.admin-empty [data-lucide],
+.admin-empty svg {
+  width: 36px;
+  height: 36px;
+  color: var(--gray-200);
+  display: block;
+  margin: 0 auto var(--space-md);
+}
+
+.admin-empty__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-lg);
+  color: var(--gray-500);
+  margin-bottom: 4px;
+}
+
+.admin-empty p {
+  margin: 0;
+  line-height: var(--lh-normal);
+}
+
+
+/* ================================================
+   9. FORM FIELD (inline admin forms)
+================================================ */
+
+.admin-field-label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-bottom: 5px;
+  letter-spacing: 0.06em;
+  font-family: var(--font-display);
+}
+
+.admin-input {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base-sm);
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color var(--transition);
+  box-sizing: border-box;
+  background: var(--white);
+  color: var(--text-dark);
+}
+
+.admin-input:focus {
+  border-color: var(--green-dark);
+  box-shadow: 0 0 0 3px var(--alpha-green-08);
+}
+
+.admin-input::placeholder {
+  color: var(--gray-400);
+}
+
+
+/* ================================================
+   10. SEARCH INPUT WRAPPER
+   Used in role management and pending list.
+================================================ */
+
+.roles-search-wrap {
+  position: relative;
+  margin-bottom: var(--space-lg);
+  max-width: 440px;
+}
+
+.roles-search-wrap [data-lucide],
+.roles-search-wrap svg {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  color: var(--gray-400);
+  pointer-events: none;
+}
+
+.roles-search-wrap input {
+  width: 100%;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base-sm);
+  font-family: var(--font-body);
+  outline: none;
+  background: var(--white);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  box-sizing: border-box;
+  color: var(--text-dark);
+}
+
+.roles-search-wrap input:focus {
+  border-color: var(--green-dark);
+  box-shadow: 0 0 0 3px var(--alpha-green-08);
+}
+
+.roles-search-wrap input::placeholder {
+  color: var(--gray-400);
+}
+
+
+/* ================================================
+   11. ROLE FILTER PILLS
+   Horizontal pill row above users table.
+================================================ */
+
+.role-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.role-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  color: var(--gray-500);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.role-filter-btn [data-lucide],
+.role-filter-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.role-filter-btn:hover {
+  border-color: var(--gray-400);
+  color: var(--text-dark);
+  background: var(--gray-50);
+}
+
+.role-filter-btn.active {
+  background: var(--white);
+  color: var(--text-dark);
+  font-weight: var(--fw-bold);
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+
+
+/* ================================================
+   12. USERS TABLE
+   Row-based layout for user/role management list.
+================================================ */
+
+.users-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.user-row {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-100);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
+}
+
+.user-row:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.user-row__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-bold);
+  color: var(--gray-500);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.user-row__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-row__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-row__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base-sm);
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-row__meta {
+  font-size: var(--text-xs);
+  color: var(--gray-400);
+  margin-top: 2px;
+}
+
+.user-row__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+
+/* ================================================
+   13. ADMIN OVERVIEW STAT CARDS
+   Larger metric cards for the overview panel.
+   Shares the .stat-card base from components.css;
+   these extend it with admin-specific sizing.
+================================================ */
+
+.admin-stat-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-top: 4px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-stat-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-stat-card__value {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-4xl);
+  color: var(--text-dark);
+  line-height: var(--lh-none);
+  letter-spacing: -0.03em;
+}
+
+.admin-stat-card__label {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--gray-400);
+}
+
+.admin-stat-card__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-stat-card__icon [data-lucide],
+.admin-stat-card__icon svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2;
+}
+
+.admin-stat-card--green  { border-top-color: var(--green-dark); }
+.admin-stat-card--green  .admin-stat-card__icon { background: var(--alpha-green-10); color: var(--green-dark); }
+.admin-stat-card--orange { border-top-color: var(--orange); }
+.admin-stat-card--orange .admin-stat-card__icon { background: var(--alpha-orange-14); color: var(--orange-hover); }
+.admin-stat-card--red    { border-top-color: var(--red); }
+.admin-stat-card--red    .admin-stat-card__icon { background: var(--alpha-red-10); color: var(--red); }
+.admin-stat-card--blue   { border-top-color: #3b82f6; }
+.admin-stat-card--blue   .admin-stat-card__icon { background: var(--alpha-blue-10); color: var(--blue-600); }
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+
+
+/* ================================================
+   14. PENDING APPLICANT CARDS
+================================================ */
+
+.applicant-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-100);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow var(--transition);
+}
+
+.applicant-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.applicant-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--gray-100);
+  background: var(--gray-50);
+}
+
+.applicant-card__name {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+}
+
+.applicant-card__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm) var(--space-xl);
+  padding: var(--space-lg);
+}
+
+.applicant-card__ids {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  padding: 0 var(--space-lg) var(--space-md);
+}
+
+.applicant-card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--gray-100);
+  background: var(--gray-50);
+  justify-content: flex-end;
+}
+
+.applicant-card__feedback {
+  font-size: var(--text-sm);
+  padding: 0 var(--space-lg) var(--space-sm);
+  min-height: 20px;
+}
+
+/* Detail item inside applicant card grid */
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-item__label {
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-400);
+  font-family: var(--font-display);
+}
+
+.detail-item__value {
+  font-size: var(--text-base-sm);
+  color: var(--text-dark);
+  font-weight: var(--fw-medium);
+  word-break: break-word;
+}
+
+/* ID photo inside applicant card */
+.id-photo-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.id-photo-wrap__label {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-400);
+  font-family: var(--font-display);
+}
+
+.id-photo {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-100);
+  cursor: zoom-in;
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.id-photo:hover {
+  opacity: 0.9;
+  transform: scale(1.01);
+}
+
+.id-photo--missing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 130px;
+  background: var(--gray-50);
+  border: 1.5px dashed var(--gray-200);
+  border-radius: var(--radius-sm);
+  color: var(--gray-400);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* Approve / Reject buttons inside applicant card */
+.btn--success {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  background: var(--green-dark);
+  color: var(--white);
+  border: none;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.btn--success:hover { background: var(--green-hover); }
+
+.btn--danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  background: var(--white);
+  color: var(--red);
+  border: 1.5px solid var(--red-200);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn--danger:hover { background: var(--red-50); border-color: var(--red); }
+
+
+/* ================================================
+   15. ALERT ROW CARDS
+   Used in the Site Alerts panel.
+================================================ */
+
+.alert-row-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-100);
+  border-left: 3px solid var(--orange);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
+}
+
+.alert-row-card:hover { box-shadow: var(--shadow-md); }
+.alert-row-card--red    { border-left-color: var(--red); }
+.alert-row-card--green  { border-left-color: var(--green-dark); }
+.alert-row-card--blue   { border-left-color: #3b82f6; }
+
+.alert-row-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.alert-row-card__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  margin-bottom: 3px;
+}
+
+.alert-row-card__meta {
+  font-size: var(--text-xs);
+  color: var(--gray-400);
+}
+
+.alert-row-card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+
+/* ================================================
+   16. SETTINGS PANEL
+================================================ */
+
+.settings-section {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-100);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: var(--space-lg);
+}
+
+.settings-section__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--gray-100);
+  background: var(--gray-50);
+}
+
+.settings-section__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--alpha-green-10);
+  color: var(--green-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings-section__icon [data-lucide],
+.settings-section__icon svg { width: 17px; height: 17px; }
+
+.settings-section__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  flex: 1;
+}
+
+.settings-section__body {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Toggle row inside settings */
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.settings-row:last-child { border-bottom: none; }
+
+.settings-row__body {
+  flex: 1;
+}
+
+.settings-row__label {
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-base-sm);
+  color: var(--text-dark);
+}
+
+.settings-row__sub {
+  font-size: var(--text-xs);
+  color: var(--gray-400);
+  margin-top: 2px;
+}
+
+
+/* ================================================
+   17. ADMIN LIGHTBOX (ID photo viewer)
+================================================ */
+
+#idLightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(8,8,8,0.94);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  gap: var(--space-lg);
+}
+
+#idLightbox.is-open { display: flex; }
+
+.lb-card {
+  position: relative;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  max-width: 560px;
+  width: 100%;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+
+.lb-label {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  margin-bottom: var(--space-sm);
+}
+
+.lb-card img {
+  width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  display: block;
+  transition: opacity 0.2s ease;
+}
+
+.lb-card img.is-loading { opacity: 0.4; }
+
+.lb-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  border: none;
+  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.lb-close:hover { background: var(--gray-200); }
+
+.lb-close [data-lucide],
+.lb-close svg { width: 15px; height: 15px; }
+
+.lb-nav {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.lb-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border-radius: var(--radius-full);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.lb-nav-btn:hover { background: rgba(255,255,255,0.18); }
+.lb-nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+.lb-nav-btn [data-lucide],
+.lb-nav-btn svg { width: 14px; height: 14px; }
+
+.lb-hint {
+  font-size: var(--text-xs);
+  color: rgba(255,255,255,0.3);
+  text-align: center;
+}
+
+.lb-hint kbd {
+  background: rgba(255,255,255,0.12);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: monospace;
+  font-size: 0.75em;
+}
+
+
+/* ================================================
+   18. ADMIN TOP NAV (legacy — keep for compatibility)
+   If switchTab() still references .admin-tab styles,
+   these ensure no visual breakage.
+================================================ */
+
+.admin-topnav { display: none; } /* hidden — replaced by admin-hero tabs */
+
+
+/* ================================================
+   19. TOAST CONTAINER
+================================================ */
+
+#toastContainer,
+.toast-container {
+  position: fixed;
+  bottom: var(--space-lg);
+  right: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  z-index: 2000;
+  pointer-events: none;
+}
+
+#toastContainer .toast,
+.toast-container .toast {
+  pointer-events: all;
+}
+
+
+/* ================================================
+   20. ADMIN TOOLTIP
+================================================ */
+
+#adminTooltip {
+  position: fixed;
+  z-index: 800;
+  background: var(--text-dark);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+}
+
+#adminTooltip.is-visible { opacity: 1; }
+
+
+/* ================================================
+   21. ROLES HEADER
+================================================ */
+
+.roles-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+
+/* ================================================
+   22. RESPONSIVE
+================================================ */
+
+@media (max-width: 1024px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-hero {
+    padding-top: calc(var(--navbar-h) + var(--space-xl));
+    padding-bottom: calc(var(--space-xl) + 40px);
+  }
+
+  .admin-hero__inner {
+    padding: 0 var(--space-md);
+  }
+
+  .admin-content {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .applicant-card__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .applicant-card__ids {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Allow horizontal scroll on hero tab bar */
+  .admin-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: var(--space-xs);
+    scrollbar-width: none;
+  }
+
+  .admin-tabs::-webkit-scrollbar { display: none; }
+}
+
+@media (max-width: 520px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================================================
+   23. USERS & ROLES — classes generated by roles-admin.js
+   All of the following were missing from admin.css.
+================================================ */
+
+/* --- user-row: switch to CSS Grid so grid-column:1/-1 works --- */
+#usersTable .user-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1.4fr) minmax(140px, 1fr) auto 130px auto;
+  align-items: center;
+  column-gap: var(--space-md);
+  row-gap: 0;
+  align-items: center;
+  padding: 0;
+}
+
+/* Vertical padding only on the first 5 cells (not the full-width post-limit row) */
+#usersTable .user-row > *:not(:last-child) {
+  padding-top: var(--space-md);
+  padding-bottom: var(--space-md);
+}
+#usersTable .user-row > *:first-child  { padding-left: var(--space-lg); }
+#usersTable .user-row > *:nth-child(5) { padding-right: var(--space-lg); }
+
+/* --- User info block (avatar + name + meta) --- */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  color: var(--white);
+  flex-shrink: 0;
+}
+
+.user-avatar--resident { background: var(--green-dark); }
+.user-avatar--officer  { background: var(--orange-active); }
+.user-avatar--admin    { background: var(--red-dark); }
+
+.user-name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base-sm);
+  color: var(--text-dark);
+  min-width: 0;
+}
+
+.user-since {
+  font-size: var(--text-xs);
+  color: var(--gray-400);
+  margin-top: 2px;
+}
+
+/* --- Role badge pill --- */
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+  border: 1.5px solid transparent;
+}
+
+.role-badge [data-lucide],
+.role-badge svg { width: 12px; height: 12px; }
+
+.role-badge--resident { background: var(--success-100); color: var(--success-800); border-color: var(--green-200); }
+.role-badge--officer  { background: var(--amber-50); color: var(--orange-active); border-color: var(--amber-200); }
+.role-badge--admin    { background: var(--red-100); color: var(--red-900); border-color: var(--red-200); }
+
+/* --- Online status dot --- */
+.status-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+}
+
+.status-dot::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot--online  { color: var(--success-800); }
+.status-dot--online::before  { background: var(--green-500); box-shadow: 0 0 0 2px var(--success-100); }
+.status-dot--recent  { color: var(--orange-active); }
+.status-dot--recent::before  { background: var(--amber-500); }
+.status-dot--offline { color: var(--gray-400); }
+.status-dot--offline::before { background: var(--gray-200); }
+
+/* --- Role action buttons (the 3 icon buttons per user row) --- */
+.role-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.role-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.role-action-btn [data-lucide],
+.role-action-btn svg { width: 14px; height: 14px; }
+
+.role-action-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Current role — always highlighted, even when disabled */
+.current-role--resident { background: var(--success-100); color: var(--success-800); border-color: var(--green-200); }
+.current-role--officer  { background: var(--amber-50); color: var(--orange-active); border-color: var(--amber-200); }
+.current-role--admin    { background: var(--red-100); color: var(--red-900); border-color: var(--red-200); }
+
+/* Hover — only for non-disabled buttons */
+.role-action-btn--resident:not(:disabled):hover { background: var(--success-100); color: var(--success-800); border-color: var(--green-200); }
+.role-action-btn--officer:not(:disabled):hover  { background: var(--amber-50); color: var(--orange-active); border-color: var(--amber-200); }
+.role-action-btn--admin:not(:disabled):hover    { background: var(--red-100); color: var(--red-900); border-color: var(--red-200); }
+
+/* --- "You" chip --- */
+.you-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--green-50);
+  color: var(--green-dark);
+  border: 1px solid var(--green-200);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+.you-chip [data-lucide],
+.you-chip svg { width: 10px; height: 10px; }
+
+/* --- Protected (super admin) badge --- */
+.super-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--yellow-50);
+  color: var(--amber-800);
+  border: 1px solid var(--amber-100);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+.super-badge [data-lucide],
+.super-badge svg { width: 10px; height: 10px; }
+
+/* --- Empty state for users table --- */
+.users-empty {
+  padding: 2.5rem;
+  text-align: center;
+  color: var(--gray-400);
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-100);
+  font-size: var(--text-base-sm);
+}
+
+.user-row--resident { border-left: 3px solid var(--green-dark); }
+.user-row--officer  { border-left: 3px solid var(--orange-active); }
+.user-row--admin    { border-left: 3px solid var(--red-900); }
+
+
+/* ================================================
+   24. ROLE MODAL FIXES
+   Modal uses `.visible` (not `.is-open`). Without
+   this the modal never shows, and the confirm-wrap
+   bleeds into every open panel.
+================================================ */
+
+/* Show/hide the backdrop with .visible */
+#roleModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+}
+#roleModal.visible { display: flex; }
+
+/* Confirm-wrap hidden by default — shown only when assigning admin */
+.modal__confirm-wrap {
+  display: none;
+  margin-top: var(--space-md);
+}
+.modal__confirm-wrap.visible { display: block; }
+
+/* Role-tinted icon circle in modal header */
+.modal__icon--resident { background: var(--success-100); color: var(--success-800); }
+.modal__icon--officer  { background: var(--amber-50); color: var(--orange-active); }
+.modal__icon--admin    { background: var(--red-100); color: var(--red-900); }
+
+/* Error state on the "CONFIRM ADMIN" text input */
+.modal__confirm-input.error {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px var(--alpha-red-10);
+}
+
+/* Confirm button states */
+.modal__btn--confirm:disabled     { opacity: 0.45; cursor: not-allowed; }
+.modal__btn--confirm.admin-confirm { background: var(--red-900); border-color: var(--red-900); color: var(--white); }
+
+
+/* ================================================
+   25. TOOLTIP FIX
+   JS adds/removes `.visible` but CSS only had
+   `.is-visible` — tooltip never appeared.
+================================================ */
+#adminTooltip.visible { opacity: 1; }
+
+
+/* ================================================
+   26. RESPONSIVE — users table
+================================================ */
+@media (max-width: 900px) {
+  #usersTable .user-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  #usersTable .user-row > *:nth-child(5) {
+    padding-right: 0;
+  }
+  .role-badge  { grid-column: 1 / 2; }
+  .status-dot  { grid-column: 2 / 3; }
+  .role-actions { grid-column: 1 / -1; padding-bottom: var(--space-sm); }
+}
+
+@media (max-width: 600px) {
+  #usersTable .user-row {
+    grid-template-columns: 1fr;
+  }
+  .role-badge,
+  .status-dot,
+  .role-actions { grid-column: 1 / -1; }
+}
+
+.bulletin-view-btn {
+  border: none !important;
+  background: transparent;
+  color: var(--gray-500);
+  padding: 6px 14px;
+  font-size: var(--text-xs);
+}
+
+.bulletin-section-btn {
+  padding: 7px 14px;
+  font-size: var(--text-sm);
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.bulletin-view-btn:hover {
+  background: var(--alpha-ink-06);
+  color: var(--text-dark);
+  border: none !important;
+}
+.bulletin-view-btn.is-active {
+  background: var(--white);
+  color: var(--text-dark);
+  font-weight: var(--fw-bold);
+  border: none !important;
+  box-shadow: var(--shadow-sm);
+}
+

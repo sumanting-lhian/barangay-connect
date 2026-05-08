@@ -1,0 +1,473 @@
+/* ================================================
+   login.css — BarangayConnect
+
+   TODO
+   ─────────
+   Fill in every TODO.
+
+   RULES
+   ─────
+   · No hardcoded colors — use variables from main.css
+   · No hardcoded spacing — use the spacing scale variables
+   · Don't rename any selector
+
+   VARIABLE CHEATSHEET  (all defined in main.css)
+   ────────────────────────────────────────────────
+   Colors:
+     --green-dark        the main dark green, left panel background
+     --green-mid         mid-tone green
+     --green-light       lighter green, good for hover states
+     --orange            the accent — highlights, CTAs
+     --off-white         warm off-white, right panel background
+     --white             pure white
+     --text-dark         near-black, used for headings
+     --gray-50 thru --gray-500
+     --overlay-white-04 thru --overlay-white-70
+
+   Spacing:
+     --space-xs  --space-sm  --space-md  --space-lg  --space-xl  --space-2xl
+
+   Type:
+     --font-display      heading font (Nunito)
+     --font-body         body font
+     --text-2xs thru --text-3xl
+     --fw-medium  --fw-semibold  --fw-bold  --fw-extrabold  --fw-black
+     --lh-none  --lh-tight  --lh-snug  --lh-relaxed  --lh-loose
+
+   Misc:
+     --radius-sm  --radius-md  --radius-lg  --radius-full
+     --shadow-sm  --shadow-md  --shadow-lg
+     --transition  --transition-slow
+
+================================================ */
+
+
+/* ================================================
+   1. PAGE LAYOUT
+================================================ */
+
+.login-page {
+  /*
+    The page is split into two panels sitting side by side.
+    Both should be as tall as the screen.
+    TODO
+  */
+}
+
+
+/* ================================================
+   2. LEFT PANEL
+================================================ */
+
+.auth-left {
+  /*
+    Dark green panel on the left. Takes up a little less than
+    half the screen width — the right panel fills the rest.
+
+    Children stack top to bottom:
+    logo → badge → hero text → stats card → carousel
+
+    Has two big decorative blobs (::before and ::after) that are
+    absolutely positioned and bleed off the edges on purpose —
+    so this needs to be their positioning parent, and needs to
+    handle overflow so the blobs don't spill into the right panel.
+
+    TODO
+  */
+}
+
+/* ── Blob — top-right corner ─────────────────── */
+/*
+  A big soft circle peeking in from the top-right corner.
+  Roughly half of it should be cut off by the panel edge.
+  Should never block clicks on anything.
+
+  The size, shape, and color are already set.
+  TODO: position it so it bleeds off the top-right corner.
+*/
+.auth-left::before {
+  content: '';
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: var(--overlay-white-05);
+  pointer-events: none;
+}
+
+/* ── Blob — bottom-left corner ───────────────── */
+/*
+  Same idea, slightly bigger, bottom-left corner.
+
+  TODO: position it so it bleeds off the bottom-left corner.
+*/
+.auth-left::after {
+  content: '';
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  background: var(--overlay-white-04);
+  pointer-events: none;
+}
+
+/* Keeps content on top of the blobs — don't touch */
+.auth-left > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Logo ─────────────────────────────────────── */
+/*
+  Icon + wordmark in a row. Sits at the very top of the left panel.
+  Needs bottom margin to breathe from what's below it.
+  TODO
+*/
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  z-index: 2;
+}
+
+.auth-logo__img {
+  /* TODO: size */
+}
+
+.auth-logo__text {
+  /* TODO: font, weight, size, color, letter-spacing */
+}
+
+/* ── Badge pill ───────────────────────────────── */
+/*
+  Small frosted pill above the heading — "Get Connected" with a map pin icon.
+  Semi-transparent white background with a subtle border, fully rounded.
+  Only as wide as its content. Needs bottom margin before the heading.
+  TODO
+*/
+.auth-left__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+}
+
+/* ── Hero section ─────────────────────────────── */
+/*
+  Wraps the badge, heading, and subtext.
+  Should stretch to fill the space between the logo and the
+  stats card — so the stats card gets pushed toward the bottom.
+  Children stack vertically inside it.
+  TODO
+*/
+.auth-left__hero {
+}
+
+.auth-left__heading {
+  /* TODO: font, weight, size (clamp works well here), color, line-height, letter-spacing, bottom margin */
+}
+
+.auth-left__heading .highlight {
+  /* The word "barangay." renders in orange. TODO */
+}
+
+.auth-left__subtext {
+  /* TODO: max-width, font-size, color, line-height */
+}
+
+
+/* ================================================
+   3. STATS CARD
+================================================ */
+
+/*
+  Four stat items in a frosted row. Sits between the hero
+  text and the testimonial carousel. Needs top and bottom
+  margin to breathe between both sections.
+  TODO: margin-top and margin-bottom
+*/
+.auth-stats-card {
+  display: flex;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--overlay-white-12);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.auth-stat-item {
+  /*
+    Each stat takes up an equal share of the card.
+    Icon on top, number below, label at the bottom — stacked and centered.
+    A thin vertical line on the right divides it from the next stat.
+    TODO
+  */
+}
+
+.auth-stat-item:last-child {
+  border-right: none;
+}
+
+.auth-stat-item__icon {
+  /* TODO: color (orange), bottom margin */
+}
+
+.auth-stat-item__icon [data-lucide] {
+  /* TODO: size */
+}
+
+.auth-stat-item__number {
+  /* TODO: font, weight, size, color, line-height, letter-spacing */
+}
+
+.auth-stat-item__label {
+  /* TODO: font-size, weight, color, text-align, white-space */
+}
+
+
+/* ================================================
+   4. TESTIMONIAL CAROUSEL
+   ────────────────────────
+   The JS in index.html slides the track left/right using
+   translateX. Rules marked DO NOT CHANGE are tied to how
+   that works — leave them exactly as they are.
+   Fill in only the TODOs.
+================================================ */
+
+.auth-carousel {
+  /*
+    Slides that are off to the side should be invisible.
+    Needs rounded corners.
+    TODO
+  */
+}
+
+/* DO NOT CHANGE — JS moves this element with translateX */
+.auth-carousel__track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* DO NOT CHANGE — JS calculates translateX based on each slide being exactly the carousel width */
+.auth-carousel__slide {
+  min-width: 100%;
+  padding: var(--space-lg);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--overlay-white-12);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.auth-carousel__stars {
+  /* TODO: row layout with a small gap between stars */
+}
+
+.auth-carousel__stars span {
+  /* TODO: color (orange), size */
+}
+
+.auth-carousel__quote {
+  /* TODO: font-size, color, line-height, italic */
+}
+
+.auth-carousel__author {
+  /* TODO: row layout, avatar + text side by side */
+}
+
+.auth-carousel__avatar {
+  /* TODO: size, circle, border, background, font, color, don't let it shrink */
+}
+
+.auth-carousel__author-info {
+  /* TODO: stack name and role vertically, small gap */
+}
+
+.auth-carousel__author-name {
+  /* TODO: font, weight, size, color */
+}
+
+.auth-carousel__author-role {
+  /* TODO: size, color */
+}
+
+.auth-carousel__dots {
+  /* TODO: center the dots in a row, gap between them, top margin */
+}
+
+.auth-carousel__dot {
+  /* TODO: default size, circle shape, background, no border, pointer cursor, no padding, transition */
+}
+
+/* DO NOT CHANGE — JS toggles this class to mark the current slide */
+.auth-carousel__dot.is-active {
+  width: 18px;
+  border-radius: var(--radius-full);
+  background: var(--orange);
+}
+
+
+/* ================================================
+   5. RIGHT PANEL
+================================================ */
+
+.auth-right {
+  /*
+    The form side. Fills whatever width is left after the left panel.
+    Off-white background. If the form gets long, this panel scrolls
+    on its own — not the whole page.
+    TODO
+  */
+}
+
+.auth-right__inner {
+  /*
+    Caps the content width so it stays readable.
+    Centered horizontally inside the panel.
+    Comfortable padding on all sides.
+    Children stack vertically.
+    TODO
+  */
+}
+
+/*
+  "Don't have an account?" — small muted text with an orange link.
+  Should be pushed to the right end of the inner column.
+  Needs bottom margin before the heading below it.
+  TODO
+*/
+.auth-register-link {
+}
+
+.auth-register-link a {
+  /* TODO: color (orange), weight, no underline */
+}
+
+.auth-register-link a:hover {
+  text-decoration: underline;
+}
+
+/*
+  "Welcome back" — big heading that lives outside the white card,
+  above it. Left-aligned. Needs bottom margin before the card.
+  TODO
+*/
+.auth-form__title {
+}
+
+/*
+  The white card that wraps the entire form.
+  White background, subtle border, rounded corners, soft shadow.
+  Children stack vertically with consistent spacing between them.
+  TODO
+*/
+.auth-form-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-form__subtitle {
+  /* TODO: font-size, color, line-height, bottom margin */
+}
+
+
+/* ================================================
+   6. FORM OVERRIDES
+   ──────────────────
+   Base input/label/error styles live in main.css.
+   Only login-specific things go here.
+================================================ */
+
+.auth-form {
+  /* TODO: stack fields vertically with consistent gap */
+}
+
+/* "Forgot password?" — sits just below the password field, right-aligned */
+.form-forgot {
+  /* TODO */
+}
+
+.form-forgot .form-link {
+  /* TODO: font-size */
+}
+
+/*
+  The "or" text between the Log In and Create Account buttons.
+  Text is centered. A thin horizontal line runs on each side of it.
+  Those lines are the ::before and ::after below.
+*/
+.auth-divider {
+  /* TODO: row layout, color, font-size */
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  /* TODO: make it a thin horizontal line using the gray scale */
+}
+
+/*
+  Security notice at the bottom of the card.
+  Shield icon on the left, small muted text on the right.
+  Sits on a very light gray background inside a subtle rounded border.
+  TODO
+*/
+.auth-security-notice {
+}
+
+.auth-security-notice [data-lucide] {
+  /* TODO: size, color (dark green), prevent it from shrinking */
+}
+
+
+/* ================================================
+   7. RESPONSIVE
+   ──────────────
+   ≤ 900px — panels stack vertically, stats + carousel hide
+   ≤ 520px — tighten form card padding
+================================================ */
+
+@media (max-width: 900px) {
+  .login-page {
+    /* TODO: stack panels vertically */
+  }
+
+  .auth-left {
+    /* Now full width. Height fits content. Tighten padding. TODO */
+  }
+
+  .auth-stats-card,
+  .auth-carousel {
+    display: none;
+  }
+
+  .auth-left__hero {
+    flex: none;
+  }
+
+  .auth-left__heading {
+    /* TODO: smaller size, less bottom margin */
+  }
+
+  .auth-right__inner {
+    /* TODO: reduce padding */
+  }
+
+  .auth-register-link {
+    /* TODO: reduce bottom margin */
+  }
+}
+
+@media (max-width: 520px) {
+  .auth-form-wrapper {
+    /* TODO: reduce padding */
+  }
+}

@@ -1,0 +1,1612 @@
+/* ================================================
+   components.css — BarangayConnect
+   Non-interactive display components.
+   Import AFTER buttons.css. CSS custom properties
+   live in main.css — do NOT redeclare :root here.
+
+   WHAT IS IN HERE:
+     · Base badge with status, priority, role,
+       and document variants
+     · Category tags
+     · Featured compound badge
+     · Location pill (dark + light)
+     · Slots / info badge
+     · Inline alert notice
+     · Alert widget card (glass tile)
+     · Alert banner (full-width dismissible)
+     · Step progress tracker (icon-based)
+     · Numbered stepper
+     · Community stat grid (animated counters)
+     · Admin stat cards (accent stripe)
+     · Auth stats row (dark bg)
+     · Icon badge (circular icon container)
+     · Status pill (open / closed / full / upcoming)
+     · Post category icons
+     · Reaction bar + counts
+     · Poll option (radio + animated bar)
+     · Notice banner (callout card)
+     · Digital ID card widget (glass shell)
+
+   WHAT IS NOT IN HERE:
+     · Clickable buttons, toggles, FAB  → buttons.css
+     · Modal overlays, drawers, panels  → frames.css
+     · Navbar role pill                 → main.css (.navbar__role)
+     · CSS variables / reset            → main.css
+     · ID card flip + modal overlay     → id-card.css
+
+   REQUIRED IMPORTS:
+     <link rel="stylesheet" href="css/shared/main.css" />
+     <link rel="stylesheet" href="css/shared/buttons.css" />
+     <link rel="stylesheet" href="css/shared/components.css" />
+
+   QUICK REFERENCE:
+     Status badges    → .badge .badge--published / --draft / --pending
+                              .badge--inprogress / --resolved
+                              .badge--rejected / --cancelled
+     Priority badges  → .badge .badge--high / --medium / --low
+     Doc-status       → .badge--doc-ready / --doc-processing / --doc-completed
+     Role badges      → .badge--role-full / --role-partial
+                              .badge--role-admin / --role-officer
+     Category tags    → .tag .tag--amber / --green / --blue / --red / --gray
+     Featured badge   → .badge-featured
+     Location pill    → .location-pill / .location-pill--light
+     Slots badge      → .badge-slots
+     Inline alert     → .alert-notice / .alert-notice--orange / --green
+     Alert widget     → .alert-widget
+     Alert banner     → .alert-banner .alert-banner--orange / --red / --green / --blue
+     Step progress    → .step-progress > .step-progress__item
+     Stepper          → .stepper > .stepper__step
+     Stat grid        → .stat-grid > .stat-grid__item
+     Stat cards       → .stat-card .stat-card--green / --orange / --red / --blue
+     Auth stats       → .auth-stats > .auth-stat
+     Icon badge       → .icon-badge .icon-badge--green / --orange / --red / --gray
+     Status pill      → .status-pill .status-pill--open / --closed / --full / --upcoming
+     Post icons       → .post-icon .post-icon--{color} / .post-icon--{color}-muted
+     Reaction bar     → .reaction-bar + .reaction-count
+     Poll option      → .poll-option (radio-based with animated bar)
+     Notice banner    → .notice-banner .notice-banner--red / --orange / --blue / --green
+     ID card widget   → .id-card-widget
+
+   ROLE BADGE NOTE:
+     .badge--role-*   (THIS FILE) — inline badges for tables,
+                                    admin lists, user management.
+     .navbar__role--* (main.css)  — outlined pill in the top nav.
+     They serve different contexts — do not mix.
+================================================ */
+
+
+/* ================================================
+   1. BASE BADGE
+   Small inline pill for status, priority, role,
+   and document labels. Always pair .badge with
+   a variant modifier. Icons auto-size inside.
+
+   Usage:
+     <span class="badge badge--published">Published</span>
+     <span class="badge badge--high">
+       <i data-lucide="flag"></i> High
+     </span>
+================================================ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-none);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  border: 1.5px solid transparent;
+}
+
+.badge [data-lucide],
+.badge svg {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+  stroke-width: 2.5;
+}
+
+
+/* ================================================
+   2. STATUS BADGES
+   Transparent background + color-matched border.
+   Works on any surface without needing theme
+   overrides — no opaque fill to conflict.
+================================================ */
+
+.badge--published  { background: transparent; color: var(--green-900);  border-color: var(--green-300);  }
+.badge--draft      { background: transparent; color: var(--gray-500);   border-color: var(--gray-200);   }
+.badge--pending    { background: transparent; color: var(--amber-900);  border-color: var(--amber-200);  }
+.badge--inprogress { background: transparent; color: var(--blue-800);   border-color: var(--blue-200);   }
+.badge--resolved   { background: transparent; color: var(--green-900);  border-color: var(--green-300);  }
+.badge--rejected   { background: transparent; color: var(--red-900);    border-color: var(--red-200);    }
+.badge--cancelled  { background: transparent; color: var(--gray-400);   border-color: var(--gray-200);   }
+
+
+/* ================================================
+   3. DOCUMENT STATUS BADGES
+================================================ */
+
+.badge--doc-ready {
+  background: transparent;
+  color: var(--green-900);
+  border-color: var(--green-300);
+}
+
+/* Processing — no border or padding, used inline with text */
+.badge--doc-processing {
+  background: transparent;
+  color: var(--orange-hover);
+  border-color: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.badge--doc-completed {
+  background: transparent;
+  color: var(--gray-400);
+  border-color: var(--gray-200);
+}
+
+/* Inline download link/button for completed documents */
+.doc-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  color: var(--green-dark);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.doc-download [data-lucide],
+.doc-download svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.2;
+}
+
+.doc-download:hover {
+  color: var(--green-hover);
+  text-decoration: underline;
+}
+
+
+/* ================================================
+   4. PRIORITY BADGES
+   Alpha-tint background of the badge's own hue —
+   naturally follows in dark mode without overrides.
+================================================ */
+
+.badge--high   { background: var(--alpha-red-10);     color: var(--red-900);     border-color: var(--red-200);   }
+.badge--medium { background: var(--alpha-amber-12);   color: var(--amber-950);   border-color: var(--amber-200); }
+.badge--low    { background: var(--alpha-success-10); color: var(--success-800); border-color: var(--green-200); }
+
+
+/* ================================================
+   5. ROLE BADGES
+   For content context: tables, user lists, panels.
+
+   Full / Partial — solid backgrounds (intentional
+   identity colors, do not change).
+   Admin / Officer — transparent + outline, matching
+   the status badge pattern.
+================================================ */
+
+.badge--role-full {
+  background: var(--red-dark);
+  color: var(--white);
+  border-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: var(--text-2xs);
+  padding: 5px 14px;
+}
+
+.badge--role-partial {
+  background: var(--orange-hover);
+  color: var(--white);
+  border-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: var(--text-2xs);
+  padding: 5px 14px;
+}
+
+.badge--role-admin {
+  background: transparent;
+  color: var(--red-dark);
+  border-color: var(--red-dark);
+}
+
+.badge--role-officer {
+  background: transparent;
+  color: var(--orange-hover);
+  border-color: var(--orange-hover);
+}
+
+
+/* ================================================
+   6. CATEGORY TAGS
+   Same alpha-tint treatment as priority badges.
+   All color values traced to :root tokens.
+================================================ */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.tag [data-lucide],
+.tag svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+
+.tag--amber { background: var(--alpha-amber-12); color: var(--amber-900); }
+.tag--green { background: var(--alpha-green-10); color: var(--green-900); }
+.tag--blue  { background: var(--alpha-blue-12);  color: var(--blue-800);  }
+.tag--red   { background: var(--alpha-red-10);   color: var(--red-900);   }
+.tag--gray  { background: var(--gray-100);       color: var(--gray-700);  }
+
+
+/* ================================================
+   7. FEATURED COMPOUND BADGE
+   Pill with a label, separator, and category string.
+================================================ */
+
+.badge-featured {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: var(--green-dark);
+  color: var(--white);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.badge-featured__label {
+  font-weight: var(--fw-black);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.badge-featured__sep      { opacity: 0.40; font-weight: var(--fw-normal); }
+.badge-featured__category { font-weight: var(--fw-semibold); }
+
+
+/* ================================================
+   8. LOCATION PILL
+   Two variants: dark (default, on hero sections)
+   and light (on white/light backgrounds).
+
+   Usage:
+     <span class="location-pill">
+       <span class="location-pill__dot"></span>
+       Barangay Bancod, Indang, Cavite
+     </span>
+     <span class="location-pill location-pill--light">...</span>
+================================================ */
+
+.location-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: var(--green-dark);
+  color: var(--white);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+}
+
+.location-pill--light {
+  background: var(--white);
+  color: var(--text-dark);
+  border: 1.5px solid var(--gray-200);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Animated live-indicator dot */
+.location-pill__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(74,222,128,0.22);
+  animation: location-pulse 2.2s ease-in-out infinite;
+}
+
+/* Light variant — static dot, no animation */
+.location-pill--light .location-pill__dot {
+  background: var(--text-dark);
+  box-shadow: none;
+  animation: none;
+}
+
+@keyframes location-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(74,222,128,0.22); }
+  50%       { box-shadow: 0 0 0 6px rgba(74,222,128,0.08); }
+}
+
+
+/* ================================================
+   9. SLOTS / INFO BADGE
+================================================ */
+
+.badge-slots {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: var(--yellow-50);
+  color: var(--amber-800);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+}
+
+.badge-slots [data-lucide],
+.badge-slots svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+
+/* ================================================
+   10. INLINE ALERT NOTICE
+================================================ */
+
+.alert-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--red);
+  font-family: var(--font-display);
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.alert-notice [data-lucide],
+.alert-notice svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  stroke-width: 2.2;
+}
+
+.alert-notice--orange {
+  color: var(--orange-hover);
+}
+
+.alert-notice--orange [data-lucide],
+.alert-notice--orange svg {
+  color: var(--orange-hover);
+}
+
+.alert-notice--green {
+  color: var(--green-dark);
+}
+
+.alert-notice--green [data-lucide],
+.alert-notice--green svg {
+  color: var(--green-dark);
+}
+
+
+/* ================================================
+   11. ALERT WIDGET CARD
+   Glass card used for hero overlay displays
+   (current time + active alert summary).
+================================================ */
+
+.alert-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 220px;
+}
+
+/* Time card — glass surface */
+.alert-widget__time {
+  background: var(--alpha-glass-green);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--overlay-white-10);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  color: var(--white);
+}
+
+.alert-widget__time-label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--overlay-white-55);
+  margin-bottom: 4px;
+}
+
+.alert-widget__time-value {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.03em;
+}
+
+.alert-widget__time-date {
+  display: block;
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.50);
+  margin-top: 3px;
+}
+
+/* Alert card — orange */
+.alert-widget__alert {
+  background: var(--orange);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  color: var(--black);
+}
+
+.alert-widget__alert-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  color: rgba(44,40,40,0.65);
+  margin-bottom: 5px;
+}
+
+.alert-widget__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--black);
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+.alert-widget__alert-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-tight);
+  color: var(--black);
+}
+
+.alert-widget__alert-sub {
+  font-size: var(--text-sm);
+  color: rgba(44,40,40,0.60);
+  margin-top: 2px;
+}
+
+
+/* ================================================
+   12. ALERT BANNER
+   Full-width dismissible banner. Use at top of
+   page or section. Color variants: orange
+   (weather/advisory), red (emergency), green
+   (success), blue (general info).
+
+   Usage:
+     <div class="alert-banner alert-banner--orange" role="alert">
+       <i data-lucide="alert-triangle"></i>
+       <p><strong>Weather Advisory:</strong> Signal No. 1 in effect.</p>
+       <button class="alert-banner__close" aria-label="Dismiss">
+         <i data-lucide="x"></i>
+       </button>
+     </div>
+
+   JS dismiss:
+     btn.closest('.alert-banner').remove();
+================================================ */
+
+.alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  width: 100%;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--fw-semibold);
+  position: relative;
+  animation: bannerSlideIn 0.3s ease both;
+}
+
+@keyframes bannerSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.alert-banner p {
+  flex: 1;
+  margin: 0;
+  line-height: var(--lh-normal);
+}
+
+.alert-banner strong {
+  font-weight: var(--fw-extrabold);
+}
+
+.alert-banner [data-lucide]:first-child,
+.alert-banner > svg:first-child {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke-width: 2.2;
+}
+
+.alert-banner__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: var(--overlay-black-10);
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.alert-banner__close [data-lucide],
+.alert-banner__close svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.5;
+}
+
+.alert-banner__close:hover {
+  background: var(--overlay-black-18);
+  transform: scale(1.08);
+}
+
+/* Color variants */
+.alert-banner--orange {
+  background: var(--orange);
+  color: var(--black);
+}
+
+.alert-banner--red {
+  background: var(--red-100);
+  color: var(--red-800);
+  border: 1.5px solid var(--red-200);
+}
+
+.alert-banner--green {
+  background: var(--green-100);
+  color: var(--success-950);
+  border: 1.5px solid var(--green-300);
+}
+
+.alert-banner--blue {
+  background: var(--blue-100);
+  color: var(--blue-900);
+  border: 1.5px solid var(--blue-200);
+}
+
+/* Full-width — removes border-radius, extends padding */
+.alert-banner--full {
+  border-radius: 0;
+  padding: 14px var(--space-2xl);
+}
+
+
+/* ================================================
+   13. STEP PROGRESS TRACKER
+   Icon-based horizontal progress for document
+   tracking. Step states: default, .is-done, .is-active.
+   Connector line fills when the preceding step is done.
+================================================ */
+
+.step-progress {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.step-progress__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.step-progress__item:last-child {
+  flex: 0 0 auto;
+}
+
+/* Connector line between steps */
+.step-progress__item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--gray-200);
+  z-index: 0;
+  transition: background 0.3s ease;
+}
+
+.step-progress__item.is-done:not(:last-child)::after   { background: var(--green-dark); }
+.step-progress__item.is-active:not(:last-child)::after { background: var(--alpha-orange-35); }
+
+.step-progress__circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gray-200);
+  color: var(--gray-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.step-progress__circle [data-lucide],
+.step-progress__circle svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 3;
+  color: var(--white);
+}
+
+.step-progress__item.is-done .step-progress__circle {
+  background: var(--green-dark);
+}
+
+.step-progress__item.is-active .step-progress__circle {
+  background: var(--orange);
+  box-shadow: 0 0 0 4px rgba(255,161,53,0.18);
+}
+
+.step-progress__label {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-400);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.step-progress__item.is-done .step-progress__label   { color: var(--gray-700); }
+.step-progress__item.is-active .step-progress__label { color: var(--orange-hover); font-weight: var(--fw-extrabold); }
+
+
+/* ================================================
+   14. NUMBERED STEPPER
+   Number-based horizontal stepper for registration
+   flows. Step states: default, .is-done, .is-active.
+================================================ */
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.stepper__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.stepper__step:last-child {
+  flex: 0 0 auto;
+}
+
+/* Connector line between steps */
+.stepper__step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--gray-200);
+  z-index: 0;
+  transition: background 0.3s ease;
+}
+
+.stepper__step.is-done:not(:last-child)::after {
+  background: var(--green-dark);
+}
+
+.stepper__circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gray-200);
+  color: var(--gray-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--fw-extrabold);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.stepper__circle [data-lucide],
+.stepper__circle svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.8;
+  color: var(--white);
+}
+
+.stepper__step.is-done .stepper__circle {
+  background: var(--green-dark);
+  color: var(--white);
+}
+
+.stepper__step.is-active .stepper__circle {
+  background: var(--green-dark);
+  color: var(--white);
+  box-shadow: 0 0 0 5px rgba(27,75,39,0.14);
+}
+
+.stepper__label {
+  margin-top: 10px;
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-400);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.stepper__step.is-active .stepper__label { color: var(--green-dark); font-weight: var(--fw-extrabold); }
+.stepper__step.is-done   .stepper__label { color: var(--gray-700); }
+
+
+/* ================================================
+   15. COMMUNITY STAT GRID
+   Large animated number counters for the community
+   overview section. Numbers count from 0 to their
+   target value when entering the viewport.
+
+   Add data-target="2436" to .stat-grid__number,
+   and optionally data-suffix="%" or data-suffix="h".
+   Requires: <script src="js/stat-counter.js"></script>
+
+   Usage:
+     <div class="stat-grid">
+       <div class="stat-grid__item">
+         <span class="stat-grid__number" data-target="2436">0</span>
+         <span class="stat-grid__label">Residents</span>
+       </div>
+       <div class="stat-grid__divider"></div>
+       ...
+     </div>
+================================================ */
+
+.stat-grid {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+}
+
+.stat-grid__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  padding: var(--space-xl) var(--space-lg);
+  overflow: visible;
+}
+
+.stat-grid__divider {
+  width: 1px;
+  flex-shrink: 0;
+  align-self: stretch;
+  margin: var(--space-lg) 0;
+  background: var(--gray-200);
+}
+
+.stat-grid__number {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: var(--orange);
+  line-height: var(--lh-none);
+  letter-spacing: -0.03em;
+  transition: color var(--transition);
+}
+
+.stat-grid__label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--gray-500);
+  letter-spacing: 0.01em;
+}
+
+/* Dark variant — for green/dark backgrounds */
+.stat-grid--dark .stat-grid__number  { color: var(--white); }
+.stat-grid--dark .stat-grid__divider { background: var(--overlay-white-15); }
+.stat-grid--dark .stat-grid__label   { color: var(--overlay-white-55); }
+
+/* Centered variant */
+.stat-grid--centered .stat-grid__item {
+  align-items: center;
+  text-align: center;
+}
+
+
+/* ================================================
+   16. ADMIN STAT CARDS
+   Card with bold top accent stripe. Used in
+   admin dashboards for key metric summaries.
+
+   Usage:
+     <div class="stat-card stat-card--green">
+       <div class="stat-card__body">
+         <div class="stat-card__value">2,418</div>
+         <div class="stat-card__label">Total Residents</div>
+       </div>
+       <div class="stat-card__icon">
+         <i data-lucide="users"></i>
+       </div>
+     </div>
+================================================ */
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-top: 3.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-card__value {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-4xl);
+  color: var(--text-dark);
+  line-height: var(--lh-none);
+  letter-spacing: -0.03em;
+}
+
+.stat-card__label {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--gray-500);
+}
+
+.stat-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.stat-card__icon [data-lucide],
+.stat-card__icon svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+}
+
+/* Color variants — top border + icon background */
+.stat-card--green  { border-top-color: var(--green-dark); }
+.stat-card--green  .stat-card__icon { background: var(--alpha-green-10);  color: var(--green-dark);   }
+
+.stat-card--orange { border-top-color: var(--orange); }
+.stat-card--orange .stat-card__icon { background: var(--alpha-orange-14); color: var(--orange-hover); }
+
+.stat-card--red    { border-top-color: var(--red); }
+.stat-card--red    .stat-card__icon { background: var(--alpha-red-10);    color: var(--red);          }
+
+.stat-card--blue   { border-top-color: var(--blue-500); }
+.stat-card--blue   .stat-card__icon { background: var(--alpha-blue-10);   color: var(--blue-600);     }
+
+
+/* ================================================
+   17. AUTH STATS ROW
+   Compact stat counters for the login/register
+   left panel. Designed for dark green backgrounds.
+
+   Usage:
+     <div class="auth-stats">
+       <div class="auth-stat">
+         <span class="auth-stat__number" data-target="2418">0</span>
+         <span class="auth-stat__label">Residents</span>
+       </div>
+     </div>
+================================================ */
+
+.auth-stats {
+  display: flex;
+  gap: var(--space-2xl);
+  padding-top: var(--space-2xl);
+  margin-top: var(--space-2xl);
+  border-top: 1px solid var(--overlay-white-12);
+}
+
+.auth-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.auth-stat__number {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-3xl);
+  color: var(--white);
+  line-height: var(--lh-none);
+  letter-spacing: -1px;
+}
+
+.auth-stat__label {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--overlay-white-55);
+}
+
+
+/* ================================================
+   18. ICON BADGE
+   Circular icon container for success states, step
+   completion, empty states, and feature highlights.
+
+   Sizes: default (~48px), --sm (32px), --lg (64px)
+
+   Usage:
+     <div class="icon-badge icon-badge--green">
+       <i data-lucide="check"></i>
+     </div>
+================================================ */
+
+.icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  flex-shrink: 0;
+}
+
+.icon-badge [data-lucide],
+.icon-badge svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.2;
+}
+
+/* Size variants */
+.icon-badge--sm { width: 32px; height: 32px; }
+.icon-badge--sm [data-lucide], .icon-badge--sm svg { width: 15px; height: 15px; }
+
+.icon-badge--lg { width: 64px; height: 64px; }
+.icon-badge--lg [data-lucide], .icon-badge--lg svg { width: 30px; height: 30px; }
+
+/* Color variants */
+.icon-badge--green {
+  background: var(--alpha-green-10);
+  color: var(--green-dark);
+  border-color: var(--green-dark);
+}
+
+.icon-badge--orange {
+  background: var(--alpha-orange-14);
+  color: var(--orange-hover);
+  border-color: var(--orange);
+}
+
+.icon-badge--red {
+  background: var(--alpha-red-10);
+  color: var(--red);
+  border-color: var(--red);
+}
+
+.icon-badge--gray {
+  background: var(--gray-100);
+  color: var(--gray-500);
+  border-color: var(--gray-200);
+}
+
+/* Solid variants — no border, filled background */
+.icon-badge--solid-green  { background: var(--green-dark); color: var(--white); border-color: transparent; }
+.icon-badge--solid-orange { background: var(--orange);     color: var(--black); border-color: transparent; }
+
+
+/* ================================================
+   19. STATUS PILL
+   Slot / availability / open-closed states.
+
+   Usage:
+     <span class="status-pill status-pill--open">Open</span>
+================================================ */
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.status-pill--open     { background: var(--green-dark); color: var(--white);    }
+.status-pill--closed   { background: var(--gray-700);   color: var(--white);    }
+.status-pill--full     { background: var(--red-100);    color: var(--red-900);  }
+.status-pill--upcoming { background: var(--blue-100);   color: var(--blue-800); }
+
+
+/* ================================================
+   20. POST CATEGORY ICONS
+   Rounded square icon tiles for bulletin and
+   community posts. Solid and muted variants.
+
+   Usage:
+     <div class="post-icon post-icon--green">
+       <i data-lucide="settings-2"></i>
+     </div>
+================================================ */
+
+.post-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.post-icon [data-lucide],
+.post-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+}
+
+/* Size variants */
+.post-icon--sm { width: 32px; height: 32px; border-radius: var(--radius-sm); }
+.post-icon--sm [data-lucide], .post-icon--sm svg { width: 14px; height: 14px; }
+
+.post-icon--lg { width: 56px; height: 56px; border-radius: var(--radius-lg); }
+.post-icon--lg [data-lucide], .post-icon--lg svg { width: 26px; height: 26px; }
+
+/* Solid color variants */
+.post-icon--green  { background: var(--green-dark); color: var(--white); }
+.post-icon--orange { background: var(--orange);     color: var(--black); }
+.post-icon--red    { background: var(--red);         color: var(--white); }
+.post-icon--blue   { background: var(--blue-600);    color: var(--white); }
+.post-icon--amber  { background: var(--amber-500);   color: var(--black); }
+.post-icon--gray   { background: var(--gray-700);    color: var(--white); }
+.post-icon--dark   { background: var(--text-dark);   color: var(--white); }
+
+/* Muted (alpha-tint) variants */
+.post-icon--green-muted  { background: var(--alpha-green-12);  color: var(--green-dark);   }
+.post-icon--orange-muted { background: var(--alpha-orange-15); color: var(--orange-hover); }
+.post-icon--red-muted    { background: var(--alpha-red-10);    color: var(--red);          }
+.post-icon--blue-muted   { background: var(--alpha-blue-12);   color: var(--blue-600);     }
+
+
+/* ================================================
+   21. REACTION BAR
+   Like and comment counters for bulletin and
+   community posts. Icons animate on hover.
+
+   Usage:
+     <div class="reaction-bar">
+       <button class="reaction-count reaction-count--like is-liked">
+         <i data-lucide="heart"></i>
+         <span>38</span>
+       </button>
+       <button class="reaction-count reaction-count--comment">
+         <i data-lucide="message-circle"></i>
+         <span>14</span>
+       </button>
+     </div>
+================================================ */
+
+.reaction-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.reaction-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-medium);
+  color: var(--gray-400);
+  transition: color var(--transition), transform var(--transition);
+}
+
+.reaction-count [data-lucide],
+.reaction-count svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.8;
+  transition: transform var(--transition), color var(--transition);
+}
+
+.reaction-count:hover {
+  color: var(--gray-700);
+}
+
+.reaction-count:hover [data-lucide],
+.reaction-count:hover svg {
+  transform: scale(1.12);
+}
+
+/* Like — filled icon when reacted */
+.reaction-count--like.is-liked {
+  color: var(--red);
+}
+
+.reaction-count--like.is-liked [data-lucide],
+.reaction-count--like.is-liked svg {
+  fill: var(--red);
+  color: var(--red);
+}
+
+/* Comment — blue tint on hover */
+.reaction-count--comment:hover {
+  color: var(--blue-600);
+}
+
+.reaction-count--comment:hover [data-lucide],
+.reaction-count--comment:hover svg {
+  color: var(--blue-600);
+}
+
+/* Share — green tint on hover */
+.reaction-count--share:hover {
+  color: var(--green-dark);
+}
+
+
+/* ================================================
+   22. POLL OPTION
+   Radio-based voting option with animated progress
+   bar. Set --pct on the bar element (e.g. style="--pct: 65%").
+   Add .is-voted to reveal results, .is-selected for
+   the user's chosen option.
+
+   Usage:
+     <div class="poll-options">
+       <label class="poll-option is-voted is-selected">
+         <input type="radio" name="poll1" />
+         <div class="poll-option__bar" style="--pct: 65%"></div>
+         <span class="poll-option__label">Option A</span>
+         <span class="poll-option__pct">65%</span>
+       </label>
+     </div>
+================================================ */
+
+.poll-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.poll-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 12px 16px;
+  min-height: 48px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+/* Radio input is hidden — interaction handled via label */
+.poll-option input[type="radio"] {
+  display: none;
+}
+
+/* Animated progress fill behind the label */
+.poll-option__bar {
+  position: absolute;
+  inset: 0;
+  width: var(--pct, 0%);
+  background: var(--alpha-green-08);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.poll-option__label {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--fw-semibold);
+  color: var(--text-dark);
+  position: relative;
+  z-index: 1;
+}
+
+/* Percentage — hidden until .is-voted */
+.poll-option__pct {
+  font-family: var(--font-display);
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-bold);
+  color: var(--gray-400);
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.poll-option.is-voted .poll-option__pct {
+  opacity: 1;
+  color: var(--gray-700);
+}
+
+/* Voted state — disable pointer interaction */
+.poll-option.is-voted {
+  cursor: default;
+}
+
+/* Selected (user's choice) */
+.poll-option.is-selected {
+  border-color: var(--green-dark);
+  box-shadow: 0 0 0 3px var(--alpha-green-08);
+}
+
+.poll-option.is-selected .poll-option__bar  { background: var(--alpha-green-12); }
+.poll-option.is-selected .poll-option__pct  { color: var(--green-dark); font-weight: var(--fw-extrabold); }
+.poll-option.is-selected .poll-option__label { color: var(--green-dark); }
+
+/* Hover state — only before voting */
+.poll-option:not(.is-voted):hover {
+  border-color: var(--gray-400);
+  background: var(--gray-50);
+}
+
+
+/* ================================================
+   23. NOTICE BANNER
+   Prominent card-like callout for important messages.
+   Color variants: red, orange, blue, green.
+
+   Usage:
+     <div class="notice-banner notice-banner--red">
+       <div class="notice-banner__icon">
+         <i data-lucide="clock"></i>
+       </div>
+       <div class="notice-banner__body">
+         <p class="notice-banner__title">You're not alone.</p>
+         <p class="notice-banner__sub">Report incidents confidentially.</p>
+       </div>
+       <button class="btn btn--red btn--sm">Report Now</button>
+     </div>
+================================================ */
+
+.notice-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 16px 20px;
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1.5px solid transparent;
+}
+
+.notice-banner__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notice-banner__icon [data-lucide],
+.notice-banner__icon svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.2;
+  flex-shrink: 0;
+}
+
+.notice-banner__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notice-banner__title {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+}
+
+.notice-banner__sub {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-normal);
+  line-height: var(--lh-normal);
+  margin-top: 2px;
+  opacity: 0.75;
+}
+
+/* Color variants */
+.notice-banner--red {
+  background: var(--red-50);
+  border-color: var(--red-200);
+  color: var(--red-800);
+}
+
+.notice-banner--red .notice-banner__icon [data-lucide],
+.notice-banner--red .notice-banner__icon svg {
+  color: var(--red);
+}
+
+.notice-banner--orange {
+  background: var(--amber-50);
+  border-color: var(--amber-200);
+  color: var(--amber-900);
+}
+
+.notice-banner--orange .notice-banner__icon [data-lucide],
+.notice-banner--orange .notice-banner__icon svg {
+  color: var(--orange-hover);
+}
+
+.notice-banner--blue {
+  background: var(--blue-50);
+  border-color: var(--blue-200);
+  color: var(--blue-900);
+}
+
+.notice-banner--blue .notice-banner__icon [data-lucide],
+.notice-banner--blue .notice-banner__icon svg {
+  color: var(--blue-600);
+}
+
+.notice-banner--green {
+  background: var(--green-50);
+  border-color: var(--green-200);
+  color: var(--green-800);
+}
+
+.notice-banner--green .notice-banner__icon [data-lucide],
+.notice-banner--green .notice-banner__icon svg {
+  color: var(--green-dark);
+}
+
+
+/* ================================================
+   24. DIGITAL ID CARD WIDGET
+   Glass-card container for the Digital Resident ID
+   on profile.html. The flip card (.id-card-scene)
+   and fullscreen modal (.id-card-modal-overlay) live
+   in id-card.css — import alongside this file.
+
+   Usage:
+     <div class="id-card-widget">
+       <div class="id-card-widget__header">
+         <span class="id-card-widget__title">
+           <i data-lucide="id-card"></i> Digital Resident ID
+         </span>
+         <span class="id-card-widget__role-badge
+                      id-card-widget__role-badge--resident">
+           Resident
+         </span>
+       </div>
+       <div class="id-card-widget__card" id="idCardContainer">
+         <!-- renderIDCard() injects .id-card-scene here -->
+       </div>
+       <div class="id-card-widget__footer">
+         <span class="id-card-widget__hint">
+           <i data-lucide="rotate-ccw"></i> Tap to flip
+         </span>
+         <button class="btn btn--ghost btn--sm" id="viewFullIdBtn">
+           <i data-lucide="expand"></i> Full Size
+         </button>
+       </div>
+     </div>
+
+   Role badge modifiers:
+     --resident → green / --officer → orange / --admin → red
+================================================ */
+
+/* Outer glass shell */
+.id-card-widget {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background: var(--green-dark);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative blob — top-right corner */
+.id-card-widget::before {
+  content: '';
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: var(--overlay-white-05);
+  right: -60px;
+  top: -70px;
+  pointer-events: none;
+}
+
+/* Header row — title + role badge */
+.id-card-widget__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  position: relative;
+  z-index: 1;
+}
+
+.id-card-widget__title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-display);
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-bold);
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.01em;
+}
+
+.id-card-widget__title [data-lucide],
+.id-card-widget__title svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--orange);
+}
+
+/* Role pill — indicates card color variant */
+.id-card-widget__role-badge {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.10);
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.80);
+  white-space: nowrap;
+}
+
+.id-card-widget__role-badge--resident { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.85); }
+.id-card-widget__role-badge--officer  { border-color: var(--orange);          color: var(--orange);          }
+.id-card-widget__role-badge--admin    { border-color: var(--red);             color: var(--red);             }
+
+/* Card slot — JS injects .id-card-scene here */
+.id-card-widget__card {
+  position: relative;
+  z-index: 1;
+}
+
+/* Footer row — flip hint + expand button */
+.id-card-widget__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  position: relative;
+  z-index: 1;
+}
+
+.id-card-widget__hint {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-xs);
+  color: rgba(255,255,255,0.38);
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+.id-card-widget__hint [data-lucide],
+.id-card-widget__hint svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* Override .btn--ghost colours inside the dark widget shell */
+.id-card-widget .btn--ghost {
+  color: rgba(255,255,255,0.65);
+  border-color: rgba(255,255,255,0.18);
+}
+
+.id-card-widget .btn--ghost:hover {
+  background: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.90);
+}

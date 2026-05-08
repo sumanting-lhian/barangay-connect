@@ -1,0 +1,405 @@
+/* ================================================================
+   polls.css — BarangayConnect
+   Poll-specific styles for the Community Polls tab panel and
+   the Admin poll management panel. Extends the base .poll-card
+   styles defined in community.css.
+
+   WHAT IS IN HERE:
+     · .poll-option system — radio-style voting rows with progress bars
+     · Voted / selected / disabled option states
+     · Poll meta row — category chips, priority badges, deadline label
+     · Voted chip and closed pill overrides
+     · Vote confirmation overlay (inline snackbar)
+     · Poll empty state
+     · Poll card pinned modifier
+     · Admin/official action bar
+     · Poll description text
+
+   WHAT IS NOT IN HERE:
+     · .poll-card base layout            → community.css section 11
+     · .status-pill--closed              → components.css
+     · .post-pin-bar                     → community.css section 5
+     · .btn variants                     → buttons.css
+     · Modal/drawer base                 → frames.css
+
+   REQUIRED IMPORTS:
+     <link rel="stylesheet" href="../../css/shared/main.css" />
+     <link rel="stylesheet" href="../../css/shared/buttons.css" />
+     <link rel="stylesheet" href="../../css/shared/components.css" />
+     <link rel="stylesheet" href="../../css/features/community/community.css" />
+     <link rel="stylesheet" href="../../css/features/community/polls.css" />
+
+   QUICK REFERENCE:
+     .poll-option             → single clickable/display voting row
+     .poll-option.is-voted    → post-vote state (bars + pct visible)
+     .poll-option.is-selected → user's own choice (accent border + fill)
+     .poll-option__bar        → CSS fill via --pct custom property
+     .poll-meta-row           → chips row above the question
+     .poll-meta-chip          → category / priority label
+     .poll-deadline           → deadline label with clock icon
+     .poll-voted-chip         → "Voted" confirmation badge
+     .poll-confirm-overlay    → full-screen vote confirmation snackbar
+     .poll-empty              → no polls state
+     .poll-admin-bar          → official/admin action buttons row
+================================================================ */
+
+
+/* ================================================================
+   POLL OPTION — Voting Row
+   Clickable label that contains a background fill bar, the option
+   text, and an optional percentage. Bars are always rendered in the
+   DOM but use --pct: 0% until .is-voted is applied.
+================================================================ */
+
+.poll-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+}
+
+/* Hover only when not yet voted */
+.poll-option:not([data-disabled]):hover {
+  border-color: var(--green-dark);
+  background: var(--gray-50);
+}
+
+/* Voted state — show bars, disable pointer */
+.poll-option.is-voted {
+  cursor: default;
+}
+
+/* User's own selection */
+.poll-option.is-selected {
+  border-color: var(--green-dark);
+  background: var(--green-50, #f0faf4);
+  box-shadow: 0 0 0 2.5px rgba(27, 75, 39, 0.12);
+}
+
+/* ── Progress fill bar ────────────────────────────────────────── */
+
+.poll-option__bar {
+  position: absolute;
+  inset: 0;
+  width: var(--pct, 0%);
+  background: var(--gray-100);
+  border-radius: var(--radius-md);
+  transition: width 0.5s cubic-bezier(0.34, 1.3, 0.64, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.poll-option.is-selected .poll-option__bar {
+  background: rgba(27, 75, 39, 0.1);
+}
+
+/* ── Text and percentage ──────────────────────────────────────── */
+
+.poll-option__label {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-dark);
+  line-height: var(--lh-snug);
+  pointer-events: none;
+}
+
+.poll-option.is-selected .poll-option__label {
+  font-weight: var(--fw-bold);
+  color: var(--green-900, #14532d);
+}
+
+.poll-option__pct {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  color: var(--gray-500);
+  pointer-events: none;
+}
+
+.poll-option.is-selected .poll-option__pct {
+  color: var(--green-dark);
+}
+
+/* ── Poll options container ───────────────────────────────────── */
+
+.poll-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+
+/* ================================================================
+   POLL META ROW
+   Sits above the question — shows category chip, priority badge,
+   and deadline label in a flex row.
+================================================================ */
+
+.poll-meta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-xs);
+}
+
+.poll-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  text-transform: capitalize;
+  background: var(--gray-100);
+  color: var(--gray-600);
+  letter-spacing: 0.03em;
+}
+
+/* Priority variants */
+.poll-meta-chip--high {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+.poll-meta-chip--urgent {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* Deadline label */
+.poll-deadline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-500);
+}
+
+.poll-deadline--urgent {
+  color: #c2410c;
+  font-weight: var(--fw-bold);
+}
+
+/* Poll description — shown below the question */
+.poll-card__desc {
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  margin: 0.2rem 0 0;
+  line-height: var(--lh-snug);
+}
+
+
+/* ================================================================
+   STATUS CHIPS
+================================================================ */
+
+.poll-voted-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--green-50, #f0faf4);
+  color: var(--green-dark);
+  border: 1px solid var(--green-200, #bbf7d0);
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+}
+
+.poll-voted-chip [data-lucide],
+.poll-voted-chip svg {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+}
+
+.poll-card{
+    border-left: 4px solid var(--gray-200); /* overridden per-card by inline style */
+    padding-left: calc(var(--space-xl) - 4px);
+}
+
+/* ================================================================
+   PINNED POLL MODIFIER
+================================================================ */
+
+.poll-card--pinned {
+  border: 1.5px solid #fde68a;
+  background: linear-gradient(to bottom right, #fffbeb 0%, var(--white) 60%);
+}
+
+
+/* ================================================================
+   VOTE CONFIRMATION OVERLAY
+   Fixed snackbar that appears over the page asking the user to
+   confirm before the vote transaction is executed.
+================================================================ */
+
+.poll-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1800;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 2rem;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(2px);
+  animation: confirmFadeIn 0.15s ease both;
+}
+
+.poll-confirm-overlay.is-open {
+  display: flex;
+}
+
+@keyframes confirmFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.poll-confirm {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  max-width: 480px;
+  width: calc(100% - 2rem);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  animation: confirmSlideUp 0.2s cubic-bezier(0.34, 1.3, 0.64, 1) both;
+}
+
+@keyframes confirmSlideUp {
+  from { transform: translateY(24px) scale(0.97); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.poll-confirm__msg {
+  font-size: var(--text-sm);
+  color: var(--gray-600);
+  line-height: var(--lh-relaxed);
+  margin: 0 0 var(--space-lg);
+}
+
+.poll-confirm__msg strong {
+  color: var(--text-dark);
+  font-weight: var(--fw-bold);
+}
+
+.poll-confirm__actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: flex-end;
+}
+
+
+/* ================================================================
+   EMPTY STATE
+================================================================ */
+
+.poll-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 3.5rem var(--space-xl);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-100);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  color: var(--gray-400);
+}
+
+.poll-empty [data-lucide],
+.poll-empty svg {
+  width: 2rem;
+  height: 2rem;
+  stroke-width: 1.5;
+  color: var(--gray-300);
+}
+
+.poll-empty p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-500);
+}
+
+.poll-empty span {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+}
+
+
+/* ================================================================
+   ADMIN / OFFICIAL ACTION BAR
+   Row of management buttons shown inside poll cards for
+   officers and admins. Hidden for residents.
+================================================================ */
+
+.poll-admin-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--gray-100);
+  margin-top: var(--space-sm);
+}
+
+.poll-admin-bar__label {
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-400);
+  flex-shrink: 0;
+}
+
+
+/* ================================================================
+   RESPONSIVE
+================================================================ */
+
+@media (max-width: 640px) {
+  .poll-option {
+    padding: 0.6rem 0.75rem;
+  }
+
+  .poll-confirm {
+    padding: var(--space-lg);
+  }
+
+  .poll-confirm__actions {
+    flex-direction: column-reverse;
+  }
+
+  .poll-confirm__actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

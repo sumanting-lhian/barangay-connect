@@ -1,0 +1,681 @@
+/* ================================================
+   events.css — BarangayConnect
+   Events tab panel styles for community.html.
+   Import after community.css.
+
+   WHAT IS IN HERE:
+     · Events header row and view toggle
+     · Filter system: category pills, seg controls,
+       My Events toggle
+     · Event card grid and card components
+     · Card status bar (postponed / cancelled)
+     · Calendar view layout (shell — wired in Phase 2)
+     · Event detail modal overrides
+     · Empty state and skeleton
+     · Responsive overrides
+
+   WHAT IS NOT IN HERE:
+     · .tag--*, .badge-slots          → components.css
+     · .btn--filter, .toggle-*        → buttons.css / main.css
+     · .modal, .modal__*              → frames.css
+     · .cal, .event-item              → frames.css
+     · Firestore logic                → events.js (Phase 2)
+
+   REQUIRED IMPORTS:
+     main.css → buttons.css → components.css → frames.css
+     → community.css → events.css
+
+   QUICK REFERENCE:
+     Header        → .events-header-row
+     View toggle   → .events-view-toggle > .events-view-btn
+     Filters       → .events-filters-wrap > .events-category-filters
+                     .events-sub-filters-row > .events-seg-control
+     Cards grid    → .events-cards-grid > .event-card
+     Card parts    → .event-card__img-wrap / __body / __footer
+     Status bar    → .event-card__status-bar--postponed / --cancelled
+     Calendar view → .events-cal-layout > #eventsCalContainer + .events-cal-sidebar
+     Empty state   → .events-empty
+================================================ */
+
+
+/* ================================================
+   1. HEADER ROW
+================================================ */
+
+.events-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+
+/* ================================================
+   2. VIEW TOGGLE — Cards / Calendar pill
+   Mirrors .gallery-view-toggle pattern
+================================================ */
+
+.events-view-toggle {
+  display: inline-flex;
+  background: var(--alpha-ink-07);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+}
+
+.events-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-500);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+.events-view-btn [data-lucide],
+.events-view-btn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.events-view-btn:hover {
+  color: var(--text-dark);
+  background: var(--alpha-ink-06);
+}
+
+.events-view-btn.is-active {
+  background: var(--green-dark);
+  color: var(--white);
+  font-weight: var(--fw-bold);
+  box-shadow: var(--shadow-sm);
+}
+
+
+/* ================================================
+   3. FILTER SYSTEM
+================================================ */
+
+.events-filters-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* Row 1: category pills — mirrors .bulletin-filters */
+.events-category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* Row 2: sub-filters row */
+.events-sub-filters-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+/* Label — "Source", "Slots" etc. */
+.events-filter-label {
+  font-size: .65rem;
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  color: var(--gray-400);
+  letter-spacing: .06em;
+  flex-shrink: 0;
+}
+
+/* Seg control wrapper — mirrors .bulletin-source-seg */
+.events-seg-control {
+  display: inline-flex;
+  align-items: center;
+  background: var(--alpha-ink-07);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+}
+
+.events-seg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-500);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+.events-seg-btn:hover {
+  color: var(--text-dark);
+  background: var(--alpha-ink-06);
+}
+
+.events-seg-btn.is-active {
+  background: var(--white);
+  color: var(--text-dark);
+  font-weight: var(--fw-bold);
+  box-shadow: var(--shadow-sm);
+}
+
+/* My Events toggle row — mirrors .anon-toggle-row pattern */
+.events-my-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.events-my-toggle input[type="checkbox"] {
+  display: none;
+}
+
+
+/* ================================================
+   4. CARDS GRID
+================================================ */
+
+.events-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+
+/* ================================================
+   5. EVENT CARD
+================================================ */
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.event-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ---- Status bar — shown above image for non-active events ---- */
+.event-card__status-bar {
+  display: none; /* hidden for active events */
+}
+
+.event-card__status-bar--postponed,
+.event-card__status-bar--cancelled {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.event-card__status-bar--postponed {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.event-card__status-bar--cancelled {
+  background: var(--red-50);
+  color: var(--red);
+}
+
+/* ---- Image wrap — 56% aspect ratio ---- */
+.event-card__img-wrap {
+  position: relative;
+  padding-top: 56%;
+  overflow: hidden;
+  background: var(--gray-100);
+  flex-shrink: 0;
+}
+
+.event-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.event-card:hover img.event-card__img {
+  transform: scale(1.04);
+}
+
+/* Category tag — bottom-left of image */
+.event-card__category-tag {
+  position: absolute;
+  bottom: var(--space-sm);
+  left: var(--space-sm);
+  z-index: 2;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Source badge — top-right of image */
+.event-card__source-badge {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(27,75,39,0.88);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: .02em;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ---- Card body ---- */
+.event-card__body {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.event-card__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-lg);
+  color: var(--text-dark);
+  line-height: var(--lh-tight);
+  margin: 0;
+}
+
+.event-card__date-row,
+.event-card__location-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  margin: 0;
+}
+
+/* ---- Card footer ---- */
+.event-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-top: var(--space-sm);
+  margin-top: auto;
+  border-top: 1px solid var(--gray-100);
+}
+
+
+/* ================================================
+   6. CALENDAR VIEW SHELL
+   Full implementation in Phase 2 (events-calendar.js)
+================================================ */
+
+.events-cal-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+.events-cal-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+
+/* ================================================
+   7. EVENT DETAIL MODAL OVERRIDE
+================================================ */
+
+.modal--event-detail {
+  max-width: 560px;
+}
+
+#eventDetailModal.is-open {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+#eventDetailModal.is-open .modal--event-detail {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+.modal-overlay:not(.is-open) {
+  pointer-events: none;
+}
+
+#eventDetailModal:not(.is-open) {
+  pointer-events: none;
+}
+
+/* header injected into body — remove body padding so header bleeds edge-to-edge */
+.modal--event-detail .modal__body {
+  padding: 0;
+}
+
+/* ================================================
+   8. EMPTY STATE
+================================================ */
+
+.events-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-2xl) 0;
+  text-align: center;
+  color: var(--gray-400);
+}
+
+.events-empty [data-lucide],
+.events-empty svg {
+  width: 40px;
+  height: 40px;
+  stroke-width: 1.5;
+}
+
+.events-empty__title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--fw-bold);
+  color: var(--gray-500);
+  margin: 0;
+}
+
+.events-empty__sub {
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* ================================================
+   BADGE SLOT VARIANTS
+================================================ */
+
+.badge-slots--registered {
+  background: var(--green-100);
+  color: var(--green-800);
+  font-weight: var(--fw-bold);
+}
+
+.badge-slots--waitlist {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-slots--full {
+  background: var(--red-50);
+  color: var(--red);
+}
+
+/* ================================================
+   9. SKELETON LOADER
+   Mirrors bulletin skeleton pattern
+================================================ */
+
+.events-skeleton {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.events-skeleton__img {
+  width: 100%;
+  padding-top: 56%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.4s ease infinite;
+}
+
+.events-skeleton__body {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ================================================
+   9b. CALENDAR MODULE — events-cal specific
+================================================ */
+
+.events-cal__dots {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
+
+.events-cal__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.events-cal__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--gray-100);
+}
+
+.events-cal__legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-600);
+  text-transform: capitalize;
+}
+
+.events-cal__legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.events-cal-sidebar-empty {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+  font-style: italic;
+  text-align: center;
+  padding: var(--space-xl) 0;
+}
+
+/* Suppress frames.css has-event dot — our category dots replace it */
+.events-cal .cal__day--has-event::after,
+.events-cal .cal__day--has-event::before {
+  display: none !important;
+}
+
+/* Day cell layout — flex column so dots sit below number without overlap */
+.events-cal .cal__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 6px;
+  padding-bottom: 10px;
+  position: relative;
+  height: 48px;
+  /* strip whatever frames.css applies to today by default */
+  background: transparent;
+  border: none;
+}
+
+/* Number bubble */
+.events-cal .cal__day-num {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: var(--text-sm);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* Today — green underline below the number */
+.events-cal .cal__day--today {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+.events-cal .cal__day--today .cal__day-num::after {
+  content: '';
+  position: absolute;
+  bottom: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 2px;
+  background: var(--green-dark);
+  border-radius: 2px;
+}
+
+/* Selected — filled circle around the number */
+.events-cal .cal__day--selected .cal__day-num {
+  background: var(--green-dark);
+  color: #fff;
+}
+
+/* Selected + today — circle wins, hide the underline */
+.events-cal .cal__day--selected.cal__day--today .cal__day-num::after {
+  display: none;
+}
+
+/* Prev/next month days — dimmed and non-interactive */
+.events-cal .cal__day--other {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Resident-submitted event modal header */
+.modal__header--resident {
+  background: #374151;
+}
+
+/* ================================================
+   10. RESPONSIVE OVERRIDES
+================================================ */
+
+@media (max-width: 1024px) {
+  .events-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .events-cal-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .events-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .events-sub-filters-row {
+    gap: var(--space-md);
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  .events-sub-filters-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .events-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Closed modals removed from layout entirely */
+.modal-overlay {
+  display: none;
+}
+.modal-overlay.is-open {
+  display: flex;
+}
+
+/* ── Pinned corner badge (replaces full-width pinned bar) ── */
+.event-card__pinned-badge {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff8ed;
+  color: #c2410c;
+  border: 1.5px solid #fde68a;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Community source badge variant ── */
+.event-card__source-badge--community {
+  background: rgba(55,65,81,0.82);
+}

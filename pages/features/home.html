@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+
+  <!--
+    ═══════════════════════════════════════════════
+    home.html — BarangayConnect
+    Public-facing home page. Entry point for all
+    residents, guests, and officials. Displays the
+    hero, quick actions, recent updates, community
+    stats, CTA section, marquee, and footer.
+
+    CSS IMPORT ORDER — DO NOT CHANGE THIS ORDER
+    ═══════════════════════════════════════════════
+    main.css        → design tokens, reset, navbar, footer, form inputs
+    buttons.css     → all clickable elements (.btn and variants)
+    components.css  → badges, tags, banners, stat grid, alert widgets
+    frames.css      → post cards, marquee, modals, drawers
+    home.css        → THIS PAGE ONLY — hero bg, tab panels,
+                      gallery grid, section spacing
+  -->
+  <link rel="stylesheet" href="../../css/shared/main.css" />
+  <link rel="stylesheet" href="../../css/shared/buttons.css" />
+  <link rel="stylesheet" href="../../css/shared/components.css" />
+  <link rel="stylesheet" href="../../css/shared/frames.css" />
+  <link rel="stylesheet" href="../../css/features/home/home.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script type="module" src="../../js/shared/nav-auth.js"></script>
+  <script type="module" src="../../js/features/profile/alerts.js"></script>
+</head>
+
+<!--
+  ─────────────────────────────────────────────
+  ROLE CLASS on <body> controls which navbar
+  items are visible. JS sets this after auth.
+  Values: role-resident | role-officer | role-admin
+  Default for this page: role-guest
+  ─────────────────────────────────────────────
+-->
+<body class="role-guest" data-role-init="pending">
+  <script>!function(){var r=localStorage.getItem('bc_role');if(r){document.body.className='role-'+r;document.body.removeAttribute('data-role-init');}}();</script>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       NAVBAR
+       ───────────────────────────────────────────────────────────────
+       .navbar--transparent: transparent bg with white text, layered
+       over the hero image. JS removes this class on scroll > 60px.
+       Full class reference in main.css.
+  ══════════════════════════════════════════════════════════════════ -->
+  <nav class="navbar navbar--transparent" id="mainNavbar">
+    <div class="navbar__inner">
+
+      <!-- Logo -->
+      <a href="home.html" class="navbar__logo">
+        <img src="../../assets/images/logo.svg" alt="BarangayConnect logo" class="navbar__logo-img" />
+        <span class="navbar__logo-text">BarangayConnect</span>
+      </a>
+
+      <!--
+        Desktop nav links.
+        Active page gets .is-active. Role-gated items use
+        .navbar__item--officer or .navbar__item--admin and
+        auto-show/hide based on the <body> role class.
+      -->
+      <ul class="navbar__nav" style="list-style-type: none;">
+        <li><a href="home.html"      class="navbar__link is-active">Home</a></li>
+        <li><a href="community.html" class="navbar__link">Community</a></li>
+        <li><a href="services.html"  class="navbar__link">Services</a></li>
+        <li><a href="profile.html"   class="navbar__link">My Barangay</a></li>
+        <li class="navbar__item--officer"><a class="navbar__link navbar__link--officer">Officer Panel</a></li>
+        <li class="navbar__item--admin"><a href="../../admin.html" class="navbar__link navbar__link--admin">Admin Panel</a></li>
+      </ul>
+
+      <!-- Right-side actions -->
+      <div class="navbar__actions">
+
+        <!--
+          Role pill — modifier reflects logged-in user role:
+            .navbar__role--resident (green outline)
+            .navbar__role--officer  (orange outline)
+            .navbar__role--admin    (red outline)
+        -->
+        <span class="navbar__role navbar__role--resident" id="navRole">Resident</span>
+
+        <!-- Bell — remove .navbar__bell-dot when no notifications -->
+        <button class="navbar__bell" aria-label="Notifications" id="bellBtn">
+          <i data-lucide="bell"></i>
+          <span class="navbar__bell-dot"></span>
+        </button>
+
+        <!-- Avatar — replace icon with <img> when user has a photo -->
+        <button class="navbar__avatar" aria-label="Open profile" id="avatarBtn">
+          <i data-lucide="user"></i>
+        </button>
+
+        <!-- Mobile hamburger (auto-shows on small screens via CSS) -->
+        <button class="navbar__hamburger" aria-label="Open menu" id="hamburgerBtn">
+          <i data-lucide="menu"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile drawer (toggled by JS adding .is-open) -->
+    <div class="navbar__mobile-drawer" id="mobileDrawer">
+      <a href="home.html"      class="navbar__link is-active">Home</a>
+      <a href="community.html" class="navbar__link">Community</a>
+      <a href="services.html"  class="navbar__link">Services</a>
+      <a href="profile.html"   class="navbar__link">My Barangay</a>
+      <a class="navbar__link navbar__link--officer navbar__item--officer">Officer Panel</a>
+      <a href="../../admin.html" class="navbar__link navbar__link--admin navbar__item--admin">Admin Panel</a>
+    </div>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 1 — HERO
+       ───────────────────────────────────────────────────────────────
+       Full-viewport section with a dark-overlaid barangay photo.
+       Background image and dark green overlay are set in home.css.
+
+       Layout:
+         Left  → location pill, headline, description, CTA buttons
+         Right → clock card, active alert card, widget buttons
+         Bottom → scroll indicator
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero__content">
+
+      <!-- LEFT COLUMN -->
+      <div class="hero__left">
+
+        <!--
+          Location pill
+          CLASS: .location-pill from components.css
+          Orange dot before text handled by CSS.
+          VARIANT: .location-pill--light for white backgrounds.
+        -->
+        <span class="location-pill">
+          <span class="location-pill__dot"></span>Barangay Bancod, Indang, Cavite
+        </span>
+
+        <!--
+          Hero headline
+          "Your Barangay," is white; "Connected." uses --orange.
+          Accent span colored in home.css.
+        -->
+        <h1 class="hero__headline">
+          Your Barangay,<br>
+          <span class="hero__headline--accent">Connected.</span>
+        </h1>
+
+        <p class="hero__desc">
+          Your one-stop digital hub for barangay services,
+          community updates, and real-time alerts — all in one place.
+        </p>
+
+        <!--
+          CTA buttons — ghost/outline style for dark backgrounds.
+          CLASS: .btn .btn--outline-hero from buttons.css
+        -->
+        <div class="hero__cta">
+          <a href="services.html" onclick="localStorage.setItem('servicesTab','report')" class="btn btn--outline-hero">
+            Get Started <i data-lucide="arrow-right"></i>
+          </a>
+          <a href="community.html" onclick="localStorage.setItem('communityTab','bulletin')" class="btn btn--outline-hero">
+            Browse Community
+          </a>
+        </div>
+
+      </div><!-- /hero__left -->
+
+
+      <!-- RIGHT COLUMN — widget panel -->
+      <div class="hero__right">
+
+        <div class="hero__clock-card">
+          <p class="hero__clock-label">LOCAL TIME</p>
+          <p class="hero__clock-time" id="live-clock">--:-- --</p>
+          <p class="hero__clock-date" id="live-date">Loading...</p>
+        </div>
+
+        <div class="hero__alert-card">
+          <div class="hero__alert-header">
+            <span class="hero__alert-dot"></span>
+            <span class="hero__alert-label">Active Alerts</span>
+          </div>
+          <p class="hero__alert-title">Flood Alert</p>
+          <p class="hero__alert-sub">Signal No. 1 in effect.</p>
+        </div>
+
+        <div class="hero__widget-btns">
+          <a href="services.html" onclick="localStorage.setItem('servicesTab','documents')" class="hero__widget-btn">
+          <i data-lucide="shield"></i>
+          <span>Docs</span>
+        </a>
+        <a href="community.html" onclick="localStorage.setItem('communityTab','events')" class="hero__widget-btn">
+          <i data-lucide="triangle-alert"></i>
+          <span>Events</span>
+        </a>
+        </div>
+
+      </div><!-- /hero__right -->
+
+    </div><!-- /hero__content -->
+
+    <!-- Scroll indicator — "SCROLL" label with a vertical line. Styled in home.css. -->
+    <div class="hero__scroll-indicator" aria-hidden="true">
+      <span class="hero__scroll-text">SCROLL</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+
+  </section><!-- /hero -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 2 — QUICK ACTIONS
+       ───────────────────────────────────────────────────────────────
+       White background section below the hero wave transition.
+       Eyebrow label, heading, and 6 square action tiles.
+
+       Tiles: .btn .btn--selector from buttons.css
+       Centered icon on top, label below. On .is-selected, fills green.
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="section-quick-actions">
+
+    <p class="section-eyebrow">QUICK ACTIONS</p>
+    <h2 class="section-heading">What do you need today?</h2>
+
+    <div class="quick-actions__grid">
+  <a href="services.html" onclick="localStorage.setItem('servicesTab','emergency')"
+    class="btn btn--selector"><i data-lucide="shield"></i> Emergency</a>
+  <a href="services.html" onclick="localStorage.setItem('servicesTab','report')"
+    class="btn btn--selector"><i data-lucide="triangle-alert"></i> Report Issue</a>
+  <a href="services.html" onclick="localStorage.setItem('servicesTab','documents')"
+    class="btn btn--selector"><i data-lucide="file-text"></i> Request Docs</a>
+  <a href="community.html" onclick="localStorage.setItem('communityTab','events')"
+    class="btn btn--selector"><i data-lucide="calendar"></i> Events</a>
+  <a href="community.html" onclick="localStorage.setItem('communityTab','bulletin')"
+    class="btn btn--selector"><i data-lucide="users"></i> Community</a>
+  <a href="services.html" onclick="localStorage.setItem('servicesTab','report')"
+    class="btn btn--selector"><i data-lucide="wrench"></i> Services</a>
+</div>
+
+  </section><!-- /section-quick-actions -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 3 — RECENT UPDATES
+       ───────────────────────────────────────────────────────────────
+       Two-column layout:
+         Left  → .post-featured (large dark green card)
+         Right → two .post-row items + "View all" dashed button
+
+       .post-featured  → from frames.css (badge, title, body, footer)
+       .post-row       → from frames.css (.post-row--accented + color modifier)
+       .btn--dashed    → from buttons.css
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="section-updates">
+
+    <div class="section-updates__header">
+      <div>
+        <p class="section-eyebrow">RECENT UPDATES</p>
+        <h2 class="section-heading">What's happening?</h2>
+      </div>
+      <a href="community.html" class="section-view-all">
+        View all <i data-lucide="chevron-right"></i>
+      </a>
+    </div>
+
+    <div class="section-updates__grid">
+
+      <!-- Featured post — large dark green card -->
+      <article class="post-featured">
+        <div class="post-featured__top">
+          <div class="badge-featured">
+            <span class="badge-featured__label">FEATURED</span>
+            <span class="badge-featured__category">Health</span>
+          </div>
+        </div>
+        <h3 class="post-featured__title">
+          Free Medical Mission this Saturday at the Barangay Hall
+        </h3>
+        <p class="post-featured__body">
+          Free check-ups, dental services, and medicine distribution for all residents.
+          Bring your barangay ID.
+        </p>
+        <div class="post-featured__footer">
+          <img src="../../assets/images/avatars/health-center.jpg" alt="Barangay Health Center" class="post-featured__avatar" />
+          <div class="post-featured__author">
+            <span class="post-featured__author-name">Barangay Health Center</span>
+            <span class="post-featured__author-time">2 hours ago</span>
+          </div>
+          <span class="post-featured__replies">
+            <i data-lucide="message-circle"></i> 14 replies
+          </span>
+        </div>
+      </article>
+
+      <!-- Right column — bulletin rows + view-all -->
+      <div class="section-updates__rows">
+
+        <!-- Orange accent — infrastructure/general category -->
+        <article class="post-row post-row--accented post-row--orange">
+          <div class="post-row__tags">
+            <span class="tag tag--amber">Infrastructure</span>
+            <span class="post-row__time">5 hours ago</span>
+          </div>
+          <h4 class="post-row__title">Road repair schedule along Rizal St.</h4>
+          <p class="post-row__excerpt">Construction work begins Monday. Alternate routes have been designated.</p>
+          <div class="post-row__footer">
+            <img src="../../assets/images/avatars/dpwh.jpg" alt="DPWH Liaison" class="post-row__avatar" />
+            <span class="post-row__author">DPWH Liaison</span>
+            <div class="reaction-bar" style="margin-left:auto">
+              <button class="reaction-count reaction-count--comment">
+                <i data-lucide="message-circle"></i><span>7</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Red accent — safety/emergency category -->
+        <article class="post-row post-row--accented post-row--red">
+          <div class="post-row__tags">
+            <span class="tag tag--red">Safety</span>
+            <span class="post-row__time">Yesterday</span>
+          </div>
+          <h4 class="post-row__title">Advisory: Dengue prevention drive ongoing</h4>
+          <p class="post-row__excerpt">Fogging operations scheduled this week. Clear any stagnant water around your property.</p>
+          <div class="post-row__footer">
+            <img src="../../assets/images/avatars/health-officer.jpg" alt="Brgy. Health Officer" class="post-row__avatar" />
+            <span class="post-row__author">Brgy. Health Officer</span>
+            <div class="reaction-bar" style="margin-left:auto">
+              <button class="reaction-count reaction-count--comment">
+                <i data-lucide="message-circle"></i><span>22</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Full-width view-all link — .btn--dashed from buttons.css -->
+        <a href="community.html" class="btn btn--dashed btn--full">
+          View all announcements <i data-lucide="chevron-right"></i>
+        </a>
+
+      </div><!-- /section-updates__rows -->
+
+    </div><!-- /section-updates__grid -->
+
+  </section><!-- /section-updates -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 4 — COMMUNITY OVERVIEW (Stats)
+       ───────────────────────────────────────────────────────────────
+       Centered section with 4 animated stat columns.
+       CLASS: .stat-grid from components.css
+       Numbers animate from 0 on scroll via inline counter script.
+
+       .stat-grid__number  → large orange counter (data-target drives animation)
+       .stat-grid__label   → gray descriptor below the number
+       .stat-grid__divider → vertical rule between columns
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="section-stats">
+
+    <h2 class="section-heading section-heading--center">Community Overview</h2>
+    <p class="section-eyebrow section-eyebrow--center">A QUICK LOOK AT YOUR BARANGAY TODAY</p>
+
+    <div class="stat-grid stat-grid--centered">
+
+      <div class="stat-grid__item">
+        <p class="stat-grid__number" data-target="2436">2,436</p>
+        <p class="stat-grid__label">Residents</p>
+      </div>
+
+      <div class="stat-grid__divider"></div>
+
+      <div class="stat-grid__item">
+        <p class="stat-grid__number" data-target="38">38</p>
+        <p class="stat-grid__label">Concerns Resolved</p>
+      </div>
+
+      <div class="stat-grid__divider"></div>
+
+      <div class="stat-grid__item">
+        <p class="stat-grid__number" data-target="12">12</p>
+        <p class="stat-grid__label">Events This Week</p>
+      </div>
+
+      <div class="stat-grid__divider"></div>
+
+      <div class="stat-grid__item">
+        <p class="stat-grid__number" data-target="96" data-suffix="%">96%</p>
+        <p class="stat-grid__label">Satisfaction Rate</p>
+      </div>
+
+    </div>
+  </section><!-- /section-stats -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       DARK FOOTER WRAP
+       ───────────────────────────────────────────────────────────────
+       Wraps the marquee, CTA section, and footer in a shared
+       dark background context.
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="dark-footer-wrap">
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         MARQUEE BANNER
+         ───────────────────────────────────────────────────────────────
+         Full-width horizontally scrolling text strip.
+         CLASS: .marquee-banner .marquee-banner--dark from frames.css
+         Text is admin-configurable. Duplicated for seamless looping.
+    ══════════════════════════════════════════════════════════════════ -->
+    <div class="marquee-banner marquee-banner--dark" aria-hidden="true">
+      <div class="marquee-track">
+        <span class="marquee-text">UMUNLAD</span>
+        <span class="marquee-text--solid">•</span>
+        <span class="marquee-text">BARANGAY BANCOD</span>
+        <span class="marquee-text--solid">•</span>
+        <span class="marquee-text">UMUNLAD</span>
+        <span class="marquee-text--solid">•</span>
+        <span class="marquee-text">BARANGAY BANCOD</span>
+        <span class="marquee-text--solid">•</span>
+        <span class="marquee-text">UMUNLAD</span>
+        <span class="marquee-text--solid">•</span>
+        <span class="marquee-text">BARANGAY BANCOD</span>
+        <span class="marquee-text--solid">•</span>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SECTION 5 — CTA
+         ───────────────────────────────────────────────────────────────
+         Dark green section with curved top edge.
+         Centered layout: icon, heading, description, orange CTA button.
+         Curve achieved via clip-path or border-radius in home.css.
+    ══════════════════════════════════════════════════════════════════ -->
+    <section class="section-cta">
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+      fill="none" stroke="var(--orange)" stroke-width="1.5" stroke-linecap="round"
+      stroke-linejoin="round" style="display:block;margin:0 auto var(--space-md);">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="m9 12 2 2 4-4"/>
+    </svg>
+
+      <h2 class="section-cta__heading">
+        Ready to connect with<br> your community?
+      </h2>
+
+      <p class="section-cta__desc">
+        Join thousands of residents staying informed and engaged with their barangay.
+      </p>
+
+      <!-- .btn--orange from buttons.css -->
+      <a href="profile.html" class="btn btn--orange">
+        Open My Barangay <i data-lucide="arrow-right"></i>
+      </a>
+
+    </section><!-- /section-cta -->
+
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         FOOTER
+         ───────────────────────────────────────────────────────────────
+         .site-footer from main.css — shared across all pages.
+    ══════════════════════════════════════════════════════════════════ -->
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div class="site-footer__brand">
+          <div class="site-footer__brand-logo">
+            <img src="../../assets/images/logo.svg" alt="BarangayConnect" class="site-footer__logo-img" />
+            <span class="site-footer__logo-text">BarangayConnect</span>
+          </div>
+          <p class="site-footer__tagline">Barangay Bancod, Indang, Cavite &copy; 2026</p>
+        </div>
+        <nav class="site-footer__links" aria-label="Footer navigation">
+          <a href="#" class="site-footer__link">Privacy Policy</a>
+          <a href="#" class="site-footer__link">Terms of Use</a>
+          <a href="#" class="site-footer__link">Contact Us</a>
+          <a href="#" class="site-footer__link">Sitemap</a>
+        </nav>
+      </div>
+    </footer>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PROFILE DRAWER
+         ───────────────────────────────────────────────────────────────
+         Slide-in panel opened by the avatar button in the navbar.
+         Toggled via .is-open on #profileDrawer and #drawerBackdrop.
+    ══════════════════════════════════════════════════════════════════ -->
+    <div class="profile-drawer" id="profileDrawer">
+      <div class="profile-drawer__header">
+        <button class="btn btn--close btn--sm profile-drawer__close" id="drawerCloseBtn" aria-label="Close">
+          <i data-lucide="x"></i>
+        </button>
+        <div class="profile-drawer__avatar" id="drawerAvatar">…</div>
+        <p class="profile-drawer__name" id="drawerName">Loading…</p>
+        <p class="profile-drawer__role" id="drawerRole">—</p>
+        <span class="profile-drawer__id" id="drawerIdNumber">
+          <i data-lucide="id-card"></i> —
+        </span>
+      </div>
+      <nav class="profile-drawer__menu">
+        <a href="profile.html" class="profile-drawer__item">
+          <div class="profile-drawer__item-icon"><i data-lucide="user-pen"></i></div>
+          <div class="profile-drawer__item-body">
+            <span class="profile-drawer__item-title">My Barangay</span>
+            <span class="profile-drawer__item-sub">View your profile and ID</span>
+          </div>
+        </a>
+        <a href="services.html" class="profile-drawer__item">
+          <div class="profile-drawer__item-icon"><i data-lucide="file-text"></i></div>
+          <div class="profile-drawer__item-body">
+            <span class="profile-drawer__item-title">My Documents</span>
+            <span class="profile-drawer__item-sub">Request or track documents</span>
+          </div>
+        </a>
+        <a href="community.html" class="profile-drawer__item">
+          <div class="profile-drawer__item-icon"><i data-lucide="users"></i></div>
+          <div class="profile-drawer__item-body">
+            <span class="profile-drawer__item-title">Community</span>
+            <span class="profile-drawer__item-sub">Bulletin, polls, pet board</span>
+          </div>
+        </a>
+        <button class="profile-drawer__item profile-drawer__item--signout" id="signOutBtn">
+          <div class="profile-drawer__item-icon"><i data-lucide="log-out"></i></div>
+          <div class="profile-drawer__item-body">
+            <span class="profile-drawer__item-title">Sign Out</span>
+          </div>
+        </button>
+      </nav>
+    </div>
+    <div class="profile-drawer-backdrop" id="drawerBackdrop"></div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SIGN-OUT CONFIRM MODAL
+    ══════════════════════════════════════════════════════════════════ -->
+    <div class="modal-overlay" id="signoutModal" onclick="this.classList.remove('is-open')">
+      <div class="modal modal--confirm">
+        <div class="modal-confirm__icon"><i data-lucide="log-out"></i></div>
+        <h2 class="modal-confirm__title">Sign out?</h2>
+        <p class="modal-confirm__body">You'll be signed out of your BarangayConnect account on this device.</p>
+        <div class="modal-confirm__footer">
+          <button class="btn btn--outline" onclick="document.getElementById('signoutModal').classList.remove('is-open')">
+            Cancel
+          </button>
+          <button class="btn btn--red btn--full" id="confirmSignOutBtn">Sign Out</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /dark-footer-wrap -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SCRIPTS
+       ───────────────────────────────────────────────────────────────
+       1. lucide.createIcons()  — renders all data-lucide icons
+       2. Live clock            — updates #live-clock / #live-date every second
+       3. Navbar scroll         — removes .navbar--transparent past 60px scroll
+       4. Alert banner dismiss  — clicking × removes the banner element
+       5. Stat counter          — animates numbers on scroll via IntersectionObserver
+       6. Profile drawer        — avatar button toggles slide-in drawer
+  ══════════════════════════════════════════════════════════════════ -->
+  <script>
+
+    /* 1. Render Lucide icons */
+    lucide.createIcons();
+
+
+    /* 2. Live clock — updates every second */
+    function updateClock() {
+      const now  = new Date();
+      const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const date = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+      document.getElementById('live-clock').textContent = time;
+      document.getElementById('live-date').textContent  = date;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+
+    /* 3. Navbar transparent-on-scroll */
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.remove('navbar--transparent');
+      } else {
+        navbar.classList.add('navbar--transparent');
+      }
+    });
+
+
+    /* 4. Alert banner dismiss */
+    document.querySelector('.alert-banner .btn--close')
+      ?.addEventListener('click', e => {
+        e.target.closest('.alert-banner').remove();
+      });
+
+
+    /* 5. Stat counter — animates [data-target] elements on viewport entry */
+    (function () {
+      function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+      function formatNumber(value, separator) {
+        if (!separator && separator !== '') separator = ',';
+        return Math.floor(value).toLocaleString('en-US').replace(/,/g, separator);
+      }
+
+      function animateCounter(el) {
+        if (el.dataset.animated === 'true') return;
+        el.dataset.animated = 'true';
+
+        const target    = parseFloat(el.dataset.target)    || 0;
+        const duration  = parseFloat(el.dataset.duration)  || 1500;
+        const suffix    = el.dataset.suffix    ?? '';
+        const prefix    = el.dataset.prefix    ?? '';
+        const separator = el.dataset.separator ?? ',';
+        let startTime   = null;
+
+        function step(timestamp) {
+          if (!startTime) startTime = timestamp;
+          const progress = Math.min((timestamp - startTime) / duration, 1);
+          const current  = target * easeOutCubic(progress);
+          el.textContent = prefix + formatNumber(current, separator) + suffix;
+          progress < 1
+            ? requestAnimationFrame(step)
+            : el.textContent = prefix + formatNumber(target, separator) + suffix;
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      const elements = document.querySelectorAll('[data-target]');
+      if (!elements.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        elements.forEach(animateCounter);
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            animateCounter(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.25 });
+
+      elements.forEach((el) => observer.observe(el));
+    })();
+
+
+    /* 6. Profile drawer */
+    const drawer   = document.getElementById('profileDrawer');
+    const backdrop = document.getElementById('drawerBackdrop');
+
+    function openDrawer()  { drawer.classList.add('is-open');    backdrop.classList.add('is-open'); }
+    function closeDrawer() { drawer.classList.remove('is-open'); backdrop.classList.remove('is-open'); }
+
+    document.getElementById('avatarBtn').addEventListener('click', openDrawer);
+    document.getElementById('drawerCloseBtn').addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+
+    document.getElementById('signOutBtn').addEventListener('click', () => {
+      closeDrawer();
+      document.getElementById('signoutModal').classList.add('is-open');
+    });
+
+  </script>
+
+  <script type="module">
+  import { db }           from '../../js/core/firebase-config.js';
+  import { userIndexDoc } from '../../js/core/db-paths.js';
+  import { collection, query, where, orderBy, limit, onSnapshot, getDocs }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { auth } from '../../js/core/firebase-config.js';
+
+  /* ── Helpers ── */
+  function esc(s) {
+    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function relTime(ts) {
+    if (!ts?.toDate) return '';
+    const d = Date.now() - ts.toDate().getTime();
+    const m = Math.floor(d/60000), h = Math.floor(d/3600000), dy = Math.floor(d/86400000);
+    if (m < 1) return 'Just now';
+    if (m < 60) return `${m}m ago`;
+    if (h < 24) return `${h}h ago`;
+    if (dy < 2) return 'Yesterday';
+    return ts.toDate().toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'});
+  }
+  const CAT = {
+    announcements: { tag:'tag--blue',   accent:'post-row--blue',   label:'Announcement'   },
+    health:        { tag:'tag--green',  accent:'post-row--green',  label:'Health'         },
+    infrastructure:{ tag:'tag--amber',  accent:'post-row--orange', label:'Infrastructure' },
+    safety:        { tag:'tag--red',    accent:'post-row--red',    label:'Safety'         },
+    events:        { tag:'tag--purple', accent:'post-row--purple', label:'Events'         },
+    general:       { tag:'tag--teal',   accent:'post-row--teal',   label:'General'        },
+  };
+  const meta = c => CAT[c] ?? CAT.general;
+
+  onAuthStateChanged(auth, async user => {
+    if (!user) return;
+    const snap = await getDocs(query(collection(db,'userIndex'), where('__name__','==',user.uid)));
+    // use userIndexDoc helper
+    const { getDoc, doc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const idxSnap = await getDoc(doc(db,'userIndex',user.uid));
+    if (!idxSnap.exists()) return;
+
+    const { barangayId: toBid } = await import('../../js/core/db-paths.js');
+    const bid = toBid(idxSnap.data().barangay);
+
+    /* ── Subscribe to top 3 pinned-first announcements ── */
+    const q = query(
+      collection(db,'barangays',bid,'announcements'),
+      where('status','==','published'),
+      orderBy('isPinned','desc'),
+      orderBy('createdAt','desc'),
+      limit(3)
+    );
+
+    onSnapshot(q, s => {
+      const posts = s.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (!posts.length) return;
+
+      const [featured, ...rows] = posts;
+      const fm = meta(featured.category);
+
+      /* Featured card */
+      const featuredEl = document.querySelector('.post-featured');
+      if (featuredEl && featured) {
+        featuredEl.querySelector('.badge-featured__category').textContent = esc(fm.label);
+        featuredEl.querySelector('.post-featured__title').textContent     = esc(featured.title);
+        featuredEl.querySelector('.post-featured__body').textContent      = esc((featured.body ?? '').slice(0,160));
+        const footerName = featuredEl.querySelector('.post-featured__author-name');
+        const footerTime = featuredEl.querySelector('.post-featured__author-time');
+        const footerReplies = featuredEl.querySelector('.post-featured__replies');
+        if (footerName) footerName.textContent = esc(featured.authorName ?? 'BarangayConnect');
+        if (footerTime) footerTime.textContent = relTime(featured.createdAt);
+        if (footerReplies) footerReplies.innerHTML = `<i data-lucide="message-circle"></i> ${featured.commentCount ?? 0} comments`;
+        lucide.createIcons({ el: featuredEl });
+      }
+
+      /* Row cards */
+      const rowsEl = document.querySelector('.section-updates__rows');
+      if (!rowsEl || !rows.length) return;
+
+      /* Remove old static articles but keep the view-all button */
+      rowsEl.querySelectorAll('article.post-row').forEach(a => a.remove());
+
+      rows.forEach(post => {
+        const m = meta(post.category);
+        const article = document.createElement('article');
+        article.className = `post-row post-row--accented ${m.accent}`;
+        article.innerHTML = `
+          <div class="post-row__tags">
+            <span class="tag ${m.tag}">${esc(m.label)}</span>
+            <span class="post-row__time">${relTime(post.createdAt)}</span>
+          </div>
+          <h4 class="post-row__title">${esc(post.title)}</h4>
+          <p class="post-row__excerpt">${esc((post.body ?? '').slice(0,100))}${(post.body?.length??0)>100?'…':''}</p>
+          <div class="post-row__footer">
+            <span class="post-row__author">${esc(post.authorName ?? 'BarangayConnect')}</span>
+            <div class="reaction-bar" style="margin-left:auto">
+              <button class="reaction-count reaction-count--comment">
+                <i data-lucide="message-circle"></i><span>${post.commentCount ?? 0}</span>
+              </button>
+            </div>
+          </div>`;
+
+        /* Insert before the view-all button */
+        const viewAll = rowsEl.querySelector('a.btn--dashed');
+        rowsEl.insertBefore(article, viewAll);
+        lucide.createIcons({ el: article });
+      });
+    });
+  });
+</script>
+
+  <script src="../../js/features/home/home-animations.js" defer></script>
+  <script type="module" src="../../js/features/profile/profile.js"></script>
+
+</body>
+</html>

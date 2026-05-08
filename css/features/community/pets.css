@@ -1,0 +1,94 @@
+/* ================================================
+   pets.css — BarangayConnect
+   Pet Board panel extensions.
+   Extends .pet-card / .pets-grid / .pets-toolbar
+   from frames.css and community.css — never rewrites them.
+   Import AFTER community.css.
+   ================================================ */
+
+/* ── Toolbar layout ── */
+.pets-toolbar__left         { flex: 1; display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+.pets-species-wrap          { flex-shrink: 0; }
+.pets-species-select        { height: 38px; padding: 8px 32px 8px 12px; font-size: var(--text-sm); width: auto; }
+.pets-my-toggle             { display: flex; align-items: center; gap: var(--space-sm); cursor: pointer; }
+
+/* ── Card state variants ── */
+.pet-card--resolved         { filter: grayscale(0.6); opacity: 0.8; }
+.pet-card--pending          { border: 2px solid #f59e0b; }
+.pet-card--expired          { border: 1.5px solid var(--gray-200); opacity: 0.7; }
+
+/* ── Status bar (full-width bar at card bottom) ── */
+.pet-card__status-bar       { display: flex; align-items: center; justify-content: center;
+                               gap: 5px; padding: 5px; font-size: var(--text-xs);
+                               font-weight: var(--fw-bold); font-family: var(--font-display); }
+.pet-card__status-bar--resolved  { background: var(--green-100); color: var(--green-900); }
+.pet-card__status-bar--pending   { background: #d97706; color: #fff; font-weight: 700; }
+.pet-card__status-bar--rejected  { background: var(--red-100); color: var(--red-900); cursor: pointer; }
+.pet-card__status-bar--expired   { background: var(--gray-100); color: var(--gray-500); }
+
+/* ── Contact count chip ── */
+.pet-contact-count          { display: inline-flex; align-items: center; gap: 4px;
+                               font-size: var(--text-xs); color: var(--gray-400);
+                               font-family: var(--font-display); }
+.pet-contact-count [data-lucide] { width: 11px; height: 11px; }
+
+/* ── Resolve link (owner only) ── */
+.pet-resolve-btn            { font-size: var(--text-xs); color: var(--green-dark);
+                               background: none; border: none; cursor: pointer;
+                               font-family: var(--font-display); font-weight: var(--fw-semibold);
+                               padding: 2px 4px; text-decoration: underline;
+                               text-underline-offset: 2px; }
+.pet-resolve-btn:hover      { color: var(--green-hover); }
+
+/* ── Empty state ── */
+.pets-empty                 { grid-column: 1/-1; padding: 3rem; text-align: center;
+                               color: var(--gray-400); font-size: var(--text-base-sm); }
+.pets-empty__icon           { font-size: 3rem; margin-bottom: var(--space-md); }
+.pets-empty__title          { font-family: var(--font-display); font-weight: var(--fw-bold);
+                               font-size: var(--text-lg); color: var(--gray-500); margin-bottom: 4px; }
+
+/* ── Skeleton card ── */
+.pets-skeleton              { background: var(--white); border-radius: var(--radius-lg);
+                               border: 1px solid var(--gray-100); overflow: hidden; }
+.pets-skeleton__img         { height: 160px; }
+.pets-skeleton__body        { padding: var(--space-md); display: flex; flex-direction: column; gap: 8px; }
+
+/* ── Pagination ── */
+.pets-pagination            { grid-column: 1/-1; display: flex; align-items: center;
+                               justify-content: center; gap: var(--space-md);
+                               padding: var(--space-lg) 0; }
+.pets-pagination__label     { font-family: var(--font-display); font-size: var(--text-sm);
+                               font-weight: var(--fw-medium); color: var(--gray-500); }
+
+/* ── Resolve success animation ── */
+.pet-resolve-success        { animation: resolveSuccess 0.5s ease both; }
+@keyframes resolveSuccess   { from { transform: scale(1.02); } to { transform: scale(1); } }
+
+/* ── Skeleton shimmer (mirrors events.css pattern) ── */
+.skeleton-shimmer           { background: linear-gradient(90deg,var(--gray-100) 25%,var(--gray-50) 50%,var(--gray-100) 75%);
+                               background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+.skeleton-line              { border-radius: 4px; }
+@keyframes shimmer          { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* ── Matcher list scroll — sits outside .modal__body ── */
+#petMatcherList {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  max-height: 360px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+  box-sizing: border-box;
+  margin-bottom: var(--space-sm);
+}
+#petMatcherList::-webkit-scrollbar        { width: 4px; }
+#petMatcherList::-webkit-scrollbar-track  { background: transparent; }
+#petMatcherList::-webkit-scrollbar-thumb  { background: #d1d5db; border-radius: 4px; }
+
+/* ── Matcher radio colors ── */
+#petMatcherList input[type="radio"] {
+  accent-color: var(--green-dark, #1a3a1a);
+}

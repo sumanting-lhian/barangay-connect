@@ -1,0 +1,1402 @@
+<!--
+  ================================================
+  admin.html — BarangayConnect
+  Full admin panel page. Entry point for all
+  administrative management features including
+  user roles, pending registrations, bulletin
+  moderation, alerts, curfew, and settings.
+
+  WHAT IS IN HERE:
+    · Top navigation tabs (Overview, Requests, Community, Management, Alerts, Settings)
+    · Sub-tab panels for each main section
+    · Pending registrations list with approve/reject actions
+    · Users & Roles table with role assignment modal
+    · Bulletin Posts, Reports, and Comment Manager
+    · Site Alerts and Curfew sub-panels
+    · ID photo lightbox viewer
+    · Role change confirmation modal
+    · Toast notification container
+    · Profile drawer and sign-out modal
+
+  WHAT IS NOT IN HERE:
+    · Auth logic         → js/shared/nav-auth.js
+    · Admin data logic   → js/features/admin/admin.js
+    · Role management    → js/features/admin/roles-admin.js
+    · Alert management   → js/features/admin/alerts-admin.js
+    · Curfew management  → js/features/admin/curfew-admin.js
+    · Bulletin admin     → js/features/admin/bulletin-admin.js
+    · Community posts    → js/features/admin/community-posts-admin.js
+    · Reported posts     → js/features/admin/reported-posts-admin.js
+    · Reported comments  → js/features/admin/reported-comments-admin.js
+    · Comment manager    → js/features/admin/comment-manager-admin.js
+    · Settings           → js/features/admin/settings-admin.js
+    · Shared styles      → css/shared/main.css, buttons.css, components.css, frames.css, home.css
+
+  REQUIRED IMPORTS:
+    · lucide (UMD)       → https://unpkg.com/lucide@latest/dist/umd/lucide.js
+    · js/shared/nav-auth.js     → sets body role class after auth
+    · js/shared/image-viewer.js → openImageViewer utility
+
+  QUICK REFERENCE:
+    · Tab switching      → switchTab(tab)
+    · Sub-tab switching  → switchSubTab(sub, btn) / switchAlertsSubTab / etc.
+    · Role modal         → closeModal(), confirmRoleChange(), onAdminConfirmInput()
+    · Lightbox           → openLightbox(urls, idx), closeLightbox(), lightboxStep(dir)
+    · Toast container    → #toastContainer
+  ================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin</title>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script type="module" src="js/shared/nav-auth.js"></script>
+  <script type="module" src="js/features/profile/alerts.js"></script>
+
+  <!--
+    CSS IMPORT ORDER — DO NOT CHANGE THIS ORDER
+    main.css        → design tokens, reset, navbar, footer, form inputs
+    buttons.css     → all clickable elements (.btn and variants)
+    components.css  → badges, tags, banners, stat grid, alert widgets
+    frames.css      → post cards, marquee, modals, drawers
+    home.css        → shared page layout utilities
+  -->
+  <link rel="stylesheet" href="/css/shared/main.css" />
+  <link rel="stylesheet" href="/css/shared/buttons.css" />
+  <link rel="stylesheet" href="/css/shared/components.css" />
+  <link rel="stylesheet" href="/css/shared/frames.css" />
+  <link rel="stylesheet" href="/css/features/home/home.css" />
+  <link rel="stylesheet" href="/css/features/community/community.css" />
+<link rel="stylesheet" href="/css/features/community/gallery.css" />
+<link rel="stylesheet" href="/css/features/admin/admin.css" />
+
+</head>
+
+<!--
+  ─────────────────────────────────────────────
+  ROLE CLASS on <body> controls navbar item
+  visibility. JS sets this after auth.
+  Values: role-resident | role-officer | role-admin
+  Default: role-guest
+  ─────────────────────────────────────────────
+-->
+<body class="role-guest" data-role-init="pending">
+  <script>!function(){var r=localStorage.getItem('bc_role');if(r){document.body.className='role-'+r;document.body.removeAttribute('data-role-init');}}();</script>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       NAVBAR
+       ───────────────────────────────────────────────────────────────
+       Overridden to use the admin red gradient theme.
+       Role-gated items (.navbar__item--admin etc.) are controlled
+       by the body role class set in nav-auth.js.
+  ══════════════════════════════════════════════════════════════════ -->
+  <nav class="navbar navbar--transparent" id="mainNavbar">
+    <div class="navbar__inner">
+
+      <!-- Logo -->
+      <a href="pages/features/home.html" class="navbar__logo">
+        <img src="assets/images/logo.svg" alt="BarangayConnect logo" class="navbar__logo-img" />
+        <span class="navbar__logo-text">BarangayConnect</span>
+      </a>
+
+      <!-- Desktop nav links -->
+      <ul class="navbar__nav" style="list-style-type: none;">
+        <li><a href="pages/features/home.html"      class="navbar__link">Home</a></li>
+        <li><a href="pages/features/community.html" class="navbar__link">Community</a></li>
+        <li><a href="pages/features/services.html"  class="navbar__link">Services</a></li>
+        <li><a href="pages/features/profile.html"   class="navbar__link">My Barangay</a></li>
+        <li class="navbar__item--officer">
+          <a class="navbar__link navbar__link--officer">Officer Panel</a>
+        </li>
+        <li class="navbar__item--admin">
+          <a href="./admin.html" class="navbar__link navbar__link--admin is-active">Admin Panel</a>
+        </li>
+      </ul>
+
+      <!-- Right-side actions -->
+      <div class="navbar__actions">
+        <span class="navbar__role navbar__role--resident" id="navRole">Resident</span>
+        <button class="navbar__bell" aria-label="Notifications" id="bellBtn">
+          <i data-lucide="bell"></i>
+          <span class="navbar__bell-dot"></span>
+        </button>
+        <button class="navbar__avatar" aria-label="Open profile" id="avatarBtn">
+          <i data-lucide="user"></i>
+        </button>
+        <button class="navbar__hamburger" aria-label="Open menu" id="hamburgerBtn">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+
+    </div><!-- /navbar__inner -->
+
+    <!-- Mobile drawer -->
+    <div class="navbar__mobile-drawer" id="mobileDrawer">
+      <a href="pages/features/home.html"      class="navbar__link">Home</a>
+      <a href="pages/features/community.html" class="navbar__link is-active">Community</a>
+      <a href="pages/features/services.html"  class="navbar__link">Services</a>
+      <a href="pages/features/profile.html"   class="navbar__link">My Barangay</a>
+    </div>
+  </nav>
+
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+     ADMIN HERO — Red gradient header with tab navigation
+     ───────────────────────────────────────────────────────────────
+     Mirrors the community-hero pattern. Tabs use .btn--category
+     from buttons.css (dark semi-transparent inactive, orange active).
+══════════════════════════════════════════════════════════════════ -->
+  <header class="admin-hero">
+    <div class="admin-hero__inner">
+
+      <span class="admin-hero__badge" id="adminHeroBadge">
+        <i data-lucide="shield-check"></i>
+        Full Control
+      </span>
+
+      <h1 class="admin-hero__title">Admin Control Panel</h1>
+      <p class="admin-hero__sub">Barangay Bancod &middot; System Administration</p>
+
+      <div class="admin-tabs btn-tab-bar" role="tablist">
+
+        <button class="btn btn--category is-active"
+          data-tab="overview" role="tab" aria-selected="true"
+          onclick="switchTab('overview', this)">
+          <i data-lucide="layout-dashboard"></i> Overview
+        </button>
+
+        <button class="btn btn--category"
+          data-tab="requests" role="tab" aria-selected="false"
+          onclick="switchTab('requests', this)">
+          <i data-lucide="inbox"></i> Requests &amp; Concerns
+        </button>
+
+        <button class="btn btn--category"
+          data-tab="community" role="tab" aria-selected="false"
+          onclick="switchTab('community', this)">
+          <i data-lucide="newspaper"></i> Community Board
+        </button>
+
+        <button class="btn btn--category"
+          data-tab="management" role="tab" aria-selected="false"
+          onclick="switchTab('management', this)">
+          <i data-lucide="users"></i> Management
+          <span id="pendingBadgeCount"
+            style="background:rgba(255,255,255,0.22);border-radius:999px;
+                  padding:1px 7px;font-size:.68rem;font-weight:700;display:none;">
+          </span>
+        </button>
+
+        <button class="btn btn--category"
+          data-tab="alerts" role="tab" aria-selected="false"
+          onclick="switchTab('alerts', this)">
+          <i data-lucide="bell"></i> Announcements &amp; Alerts
+          <span id="activeAlertCount"
+            style="background:rgba(255,255,255,0.22);border-radius:999px;
+                  padding:1px 7px;font-size:.68rem;font-weight:700;display:none;">
+          </span>
+        </button>
+
+        <button class="btn btn--category"
+          data-tab="settings" role="tab" aria-selected="false"
+          onclick="switchTab('settings', this)">
+          <i data-lucide="settings"></i> Settings
+        </button>
+
+      </div>
+
+    </div>
+  </header><!-- /admin-hero -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ADMIN CONTENT — Panel container
+       ───────────────────────────────────────────────────────────────
+       Each .admin-panel corresponds to a top nav tab.
+       Only the .active panel is visible at a time.
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="admin-content">
+
+
+    <!-- ══ PANEL: OVERVIEW ═══════════════════════════════════════ -->
+    <div id="panel-overview" class="admin-panel active">
+
+      <!-- Sub-tab row -->
+      <div class="admin-subtab-row">
+          <button class="overview-sub-btn admin-subtab-btn active" onclick="switchOverviewSubTab('stats',this)">
+            <i data-lucide="bar-chart-2" style="width:14px;height:14px;"></i> Stats
+          </button>
+          <button class="overview-sub-btn admin-subtab-btn" onclick="switchOverviewSubTab('activity',this)">
+            <i data-lucide="activity" style="width:14px;height:14px;"></i> Recent Activity
+          </button>
+      </div>
+
+      <!-- Stats sub-panel (default) -->
+      <div id="overview-sub-stats">
+        <h1 class="panel-heading">Overview</h1>
+        <div style="background:white;border-radius:12px;padding:3rem;text-align:center;
+                    color:#aaa;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+          <div style="font-size:2rem;margin-bottom:.5rem;"><i data-lucide="chart-bar"></i></div>
+          <p style="margin:0;font-size:.9rem;">Stats and summary cards will appear here.</p>
+        </div>
+      </div>
+
+      <!-- Activity sub-panel -->
+      <div id="overview-sub-activity" hidden>
+        <h1 class="panel-heading">Recent Activity</h1>
+        <div style="background:white;border-radius:12px;padding:3rem;text-align:center;
+                    color:#aaa;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+          <div style="font-size:2rem;margin-bottom:.5rem;"><i data-lucide="clock"></i></div>
+          <p style="margin:0;font-size:.9rem;">Recent activity feed will appear here.</p>
+        </div>
+      </div>
+
+    </div><!-- /panel-overview -->
+
+
+    <!-- ══ PANEL: REQUESTS & CONCERNS ════════════════════════════ -->
+    <div id="panel-requests" class="admin-panel">
+
+      <!-- Sub-tab row -->
+      <div class="admin-subtab-row">
+          <button class="requests-sub-btn admin-subtab-btn active" onclick="switchRequestsSubTab('concerns',this)">
+            <i data-lucide="message-circle" style="width:14px;height:14px;"></i> Concern Queue
+          </button>
+          <button class="requests-sub-btn admin-subtab-btn" onclick="switchRequestsSubTab('documents',this)">
+            <i data-lucide="file-stack" style="width:14px;height:14px;"></i> Document Requests
+        </button>
+      </div>
+
+      <!-- Concern Queue sub-panel (default) -->
+      <div id="requests-sub-concerns">
+        <h1 class="panel-heading">Concern Queue</h1>
+        <div style="background:white;border-radius:12px;padding:3rem;text-align:center;
+                    color:#aaa;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+          <div style="font-size:2rem;margin-bottom:.5rem;"><i data-lucide="clipboard-minus"></i></div>
+          <p style="margin:0;font-size:.9rem;">Resident concerns and reports will appear here.</p>
+        </div>
+      </div>
+
+      <!-- Document Requests sub-panel -->
+      <div id="requests-sub-documents" hidden>
+        <h1 class="panel-heading">Document Requests</h1>
+        <div style="background:white;border-radius:12px;padding:3rem;text-align:center;
+                    color:#aaa;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+          <div style="font-size:2rem;margin-bottom:.5rem;"><i data-lucide="file-minus"></i></div>
+          <p style="margin:0;font-size:.9rem;">Barangay clearance, certificates, and other document requests will appear here.</p>
+        </div>
+      </div>
+
+    </div><!-- /panel-requests -->
+
+
+    <!-- ══ PANEL: COMMUNITY BOARD ═════════════════════════════════ -->
+    <div id="panel-community" class="admin-panel">
+
+      <!-- Sub-tab row -->
+      <div class="admin-subtab-row">
+          <button class="community-sub-btn admin-subtab-btn is-active" onclick="switchCommunitySubTab('bulletin',this)">
+            <i data-lucide="layout-list" style="width:14px;height:14px;"></i> Bulletin Posts
+          </button>
+          <button class="community-sub-btn admin-subtab-btn" onclick="switchCommunitySubTab('pets',this)">
+            <i data-lucide="paw-print" style="width:14px;height:14px;"></i> Pets
+          </button>
+          <button class="community-sub-btn admin-subtab-btn" onclick="switchCommunitySubTab('events',this)">
+            <i data-lucide="calendar-days" style="width:14px;height:14px;"></i> Events
+            <span id="eventsAdminPendingBadge"
+              style="display:none;background:rgba(255,255,255,0.22);border-radius:999px;
+              padding:0 6px;font-size:.68rem;font-weight:700;"></span>
+          </button>
+          <button class="community-sub-btn admin-subtab-btn" onclick="switchCommunitySubTab('polls',this)">
+            <i data-lucide="bar-chart-2" style="width:14px;height:14px;"></i> Polls
+          </button>
+          <button class="community-sub-btn admin-subtab-btn" onclick="switchCommunitySubTab('gallery',this)">
+            <i data-lucide="images" style="width:14px;height:14px;"></i> Gallery
+          </button>
+      </div>
+
+      <!-- ── Bulletin Posts sub-panel ────────────────────────── -->
+      <div id="community-sub-bulletin">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;
+                    margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;">
+          <h1 class="panel-heading" style="margin:0;">Bulletin Posts</h1>
+        </div>
+
+        <!-- Section toggle: Posts / Reports / Comments -->
+        <div class="admin-subtab-row">
+          <button class="bulletin-section-btn admin-subtab-btn active" onclick="switchBulletinSection('posts',this)">
+            <i data-lucide="layout-list" style="width:11px;height:11px;"></i> Posts
+          </button>
+          <button class="bulletin-section-btn admin-subtab-btn" onclick="switchBulletinSection('reports',this)">
+            <i data-lucide="flag" style="width:11px;height:11px;"></i> Reports
+            <span id="reportsMainBadge"
+              style="display:none;background:rgba(255,255,255,0.22);
+              border-radius:999px;padding:0 5px;font-size:.68rem;">
+            </span>
+          </button>
+          <button class="bulletin-section-btn admin-subtab-btn" onclick="switchBulletinSection('comments',this)">
+            <i data-lucide="message-circle" style="width:11px;height:11px;"></i> Comments
+          </button>
+        </div>
+
+        <!-- Dynamic sub-filter row — populated by switchBulletinSection() -->
+        <div id="bulletin-subfilters"
+          style="display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap;
+                 padding-top:.75rem;border-top:1.5px solid #f0f0f0;">
+        </div>
+
+        <!-- Bulletin view containers — toggled by switchBulletinView() -->
+        <div id="bulletin-view-official">
+          <div id="announcementList" style="margin-bottom:1.5rem;"></div>
+          <div id="announcementForm"></div>
+        </div>
+
+        <div id="bulletin-view-community" hidden>
+          <div id="communityPostsList" style="display:flex;flex-direction:column;gap:.75rem;"></div>
+        </div>
+
+        <div id="bulletin-view-pending" hidden>
+          <div id="pendingPostsList" style="display:flex;flex-direction:column;gap:1rem;"></div>
+        </div>
+
+        <div id="bulletin-view-reported" hidden>
+          <div id="reportedPostsList" style="display:flex;flex-direction:column;gap:1rem;">
+            <p style="color:#aaa;">Loading…</p>
+          </div>
+        </div>
+
+        <div id="bulletin-view-reported-comments" hidden>
+          <div id="reportedCommentsList" style="display:flex;flex-direction:column;gap:.75rem;">
+            <p style="color:#aaa;">Loading…</p>
+          </div>
+        </div>
+
+        <!-- Comments view — search + list -->
+        <div id="bulletin-view-comments" hidden>
+          <div style="position:relative;margin-bottom:1rem;max-width:400px;">
+            <i data-lucide="search"
+              style="position:absolute;left:12px;top:50%;transform:translateY(-50%);
+                     width:15px;height:15px;color:#aaa;pointer-events:none;">
+            </i>
+            <input id="commentSearchInput" type="text"
+              placeholder="Search by author or content…"
+              oninput="filterComments()"
+              style="width:100%;padding:.55rem 1rem .55rem 2.4rem;border:1.5px solid #e0e0e0;
+                     border-radius:10px;font-size:.875rem;outline:none;
+                     background:#fff;box-sizing:border-box;" />
+          </div>
+          <div id="commentManagerList" style="display:flex;flex-direction:column;gap:.75rem;">
+            <p style="color:#aaa;font-size:.9rem;">Click Refresh to load comments.</p>
+          </div>
+        </div>
+
+      </div><!-- /community-sub-bulletin -->
+
+      <!-- ── Comment Manager sub-panel (legacy slot) ─────────── -->
+      <div id="community-sub-comments" hidden>
+        <div style="display:flex;align-items:center;justify-content:space-between;
+                    margin-bottom:1rem;flex-wrap:wrap;gap:.75rem;">
+          <h1 class="panel-heading" style="margin:0;">Comment Manager</h1>
+          <button onclick="refreshComments()"
+            style="display:inline-flex;align-items:center;gap:.4rem;padding:.45rem 1rem;
+                   border-radius:999px;border:1.5px solid #e0e0e0;background:#fff;
+                   color:#555;font-size:.82rem;font-weight:600;cursor:pointer;">
+            <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i> Refresh
+          </button>
+        </div>
+
+        <!-- Source filter -->
+        <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+          <button class="comment-source-btn" onclick="setCommentSource('all',this)"
+            style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;
+                   border-radius:999px;border:1.5px solid #1a3a1a;background:#1a3a1a;
+                   color:#fff;font-size:.82rem;font-weight:600;cursor:pointer;">
+            All
+          </button>
+          <button class="comment-source-btn" onclick="setCommentSource('announcements',this)"
+            style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;
+                   border-radius:999px;border:1.5px solid #e0e0e0;background:#fff;
+                   color:#555;font-size:.82rem;font-weight:600;cursor:pointer;">
+            <i data-lucide="shield-check" style="width:13px;height:13px;"></i> Official
+          </button>
+          <button class="comment-source-btn" onclick="setCommentSource('communityPosts',this)"
+            style="display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;
+                   border-radius:999px;border:1.5px solid #e0e0e0;background:#fff;
+                   color:#555;font-size:.82rem;font-weight:600;cursor:pointer;">
+            <i data-lucide="users" style="width:13px;height:13px;"></i> Community
+          </button>
+        </div>
+
+        <div id="commentManagerList" style="display:flex;flex-direction:column;gap:.75rem;">
+          <p style="color:#aaa;font-size:.9rem;">Click Refresh to load comments.</p>
+        </div>
+      </div><!-- /community-sub-comments -->
+
+      <!-- Pets sub-panel — driven by pets-admin.js -->
+      <div id="community-sub-pets" hidden>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;
+          margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;">
+          <h1 class="panel-heading" style="margin:0;">Pet Board</h1>
+        </div>
+
+        <!-- Section tabs — mirrors bulletin section tabs -->
+        <div class="admin-subtab-row">
+          <button class="pets-admin-sub-btn bulletin-section-btn admin-subtab-btn active"
+            onclick="window.setPetsAdminSubTab('pending',this)">
+            <i data-lucide="clock" style="width:11px;height:11px;"></i> Pending
+            <span id="petsAdminPendingBadge"
+              style="display:none;background:rgba(255,255,255,0.22);border-radius:999px;
+              padding:0 6px;font-size:.68rem;font-weight:700;margin-left:2px;"></span>
+          </button>
+          <button class="pets-admin-sub-btn bulletin-section-btn admin-subtab-btn"
+            onclick="window.setPetsAdminSubTab('active',this)">
+            <i data-lucide="paw-print" style="width:11px;height:11px;"></i> Active
+          </button>
+          <button class="pets-admin-sub-btn bulletin-section-btn admin-subtab-btn"
+            onclick="window.setPetsAdminSubTab('resolved',this)">
+            <i data-lucide="check-circle" style="width:11px;height:11px;"></i> Resolved
+          </button>
+          <button class="pets-admin-sub-btn bulletin-section-btn admin-subtab-btn"
+            onclick="window.setPetsAdminSubTab('archive',this)">
+            <i data-lucide="archive" style="width:11px;height:11px;"></i> Archive
+          </button>
+        </div>
+
+        <div id="pets-admin-sub-pending" style="margin-top:1.25rem;">
+          <div id="petsAdminPendingList" style="display:flex;flex-direction:column;gap:.75rem;"></div>
+        </div>
+        <div id="pets-admin-sub-active" hidden style="margin-top:1.25rem;">
+          <div id="petsAdminActiveList" style="display:flex;flex-direction:column;gap:.75rem;"></div>
+        </div>
+        <div id="pets-admin-sub-resolved" hidden style="margin-top:1.25rem;">
+          <div id="petsAdminResolvedList" style="display:flex;flex-direction:column;gap:.75rem;"></div>
+        </div>
+        <div id="pets-admin-sub-archive" hidden style="margin-top:1.25rem;">
+          <div id="petsAdminArchiveList" style="display:flex;flex-direction:column;gap:.75rem;"></div>
+        </div>
+
+      </div>
+
+      <!-- Events sub-panel — driven by events-admin.js -->
+      <div id="community-sub-events" hidden>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;
+          margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;">
+          <h1 class="panel-heading" style="margin:0;">Events</h1>
+        </div>
+
+        <!-- Filter row — two separate rows like bulletin -->
+        <div style="display:flex;flex-direction:column;gap:var(--space-sm);
+          padding-bottom:var(--space-md);border-bottom:2px solid var(--gray-100);">
+
+          <!-- Row 1: Section tabs -->
+          <div style="display:inline-flex;gap:var(--space-sm);">
+            <button class="events-filter-btn bulletin-section-btn admin-subtab-btn active"
+              onclick="window.setEventsAdminFilter('all',this)">
+              <i data-lucide="calendar-days" style="width:13px;height:13px;"></i> All Events
+            </button>
+            <button class="events-filter-btn bulletin-section-btn admin-subtab-btn"
+              onclick="window.setEventsAdminFilter('pending',this)">
+              <i data-lucide="clock" style="width:13px;height:13px;"></i> Pending
+              <span id="eventsAdminPendingBadgeInner"
+                style="display:none;background:rgba(255,255,255,0.22);border-radius:999px;
+                padding:0 6px;font-size:.68rem;font-weight:700;margin-left:2px;"></span>
+            </button>
+          </div>
+
+          <!-- Row 2: Source filter (hidden when Pending is active) -->
+          <div id="eventsAdminSourceRow" style="display:flex;align-items:center;gap:.4rem;">
+            <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;color:#9ca3af;letter-spacing:.06em;flex-shrink:0;align-self:center;">Source</span>
+            <div style="display:inline-flex;background:var(--alpha-ink-07);border-radius:var(--radius-full);padding:3px;gap:2px;">
+              <button class="events-source-btn bulletin-view-btn admin-subtab-btn is-active"
+                onclick="window.setEventsAdminSource('all',this)">All</button>
+              <button class="events-source-btn bulletin-view-btn admin-subtab-btn"
+                onclick="window.setEventsAdminSource('official',this)">
+                <i data-lucide="shield-check" style="width:11px;height:11px;"></i> Official
+              </button>
+              <button class="events-source-btn bulletin-view-btn admin-subtab-btn"
+                onclick="window.setEventsAdminSource('community',this)">
+                <i data-lucide="users" style="width:11px;height:11px;"></i> Community
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="eventsAdminList" style="margin-bottom:1.5rem;margin-top:1.25rem;"></div>
+        <div id="eventsAdminForm"></div>
+
+      </div><!-- /community-sub-events -->
+
+      <!-- Polls sub-panel — shell rendered by polls-admin.js on auth -->
+      <div id="community-sub-polls" hidden></div>
+
+      <!-- Gallery sub-panel — shell rendered by gallery-admin.js on auth -->
+      <div id="community-sub-gallery" hidden>
+        <div id="galleryAdminContainer">
+          <p style="color:#aaa;">Loading gallery…</p>
+        </div>
+      </div>
+
+    </div><!-- /panel-community -->
+
+
+    <!-- ══ PANEL: MANAGEMENT ══════════════════════════════════════ -->
+    <div id="panel-management" class="admin-panel">
+
+      <!-- Sub-tab row -->
+      <div class="admin-subtab-row">
+        <button class="mgmt-sub-btn admin-subtab-btn active" data-sub="pending" onclick="switchSubTab('pending',this)">
+          <i data-lucide="clock" style="width:14px;height:14px;"></i> Pending Registrations
+          <span id="pendingSubBadge"
+            style="background:rgba(255,255,255,0.25);border-radius:999px;
+                   padding:0 6px;font-size:0.7rem;display:none">
+          </span>
+        </button>
+        <button class="mgmt-sub-btn admin-subtab-btn" data-sub="users" onclick="switchSubTab('users',this)">
+          <i data-lucide="users" style="width:14px;height:14px;"></i> Users &amp; Roles
+        </button>
+        <button class="mgmt-sub-btn admin-subtab-btn" data-sub="reports" onclick="switchSubTab('reports',this)">
+          <i data-lucide="file-text" style="width:14px;height:14px;"></i> Reports
+        </button>
+      </div>
+
+      <!-- ── Sub: Pending Registrations ──────────────────────── -->
+      <div id="sub-pending">
+        <h1 class="panel-heading">Pending Registrations</h1>
+
+        <div style="margin:var(--space-lg) 0 var(--space-md);padding-bottom:var(--space-md);border-bottom:2px solid var(--gray-100);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;color:#9ca3af;letter-spacing:.06em;">Sort</span>
+          <div style="display:inline-flex;background:var(--alpha-ink-07);border-radius:var(--radius-full);padding:3px;gap:2px;">
+            <button class="bulletin-view-btn admin-subtab-btn is-active" id="pendingSortNewest" onclick="setPendingSort('newest',this)">Newest</button>
+            <button class="bulletin-view-btn admin-subtab-btn" id="pendingSortOldest" onclick="setPendingSort('oldest',this)">Oldest</button>
+            <button class="bulletin-view-btn admin-subtab-btn" id="pendingSortName" onclick="setPendingSort('name',this)">Name</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;color:#9ca3af;letter-spacing:.06em;">ID Type</span>
+          <div style="display:inline-flex;background:var(--alpha-ink-07);border-radius:var(--radius-full);padding:3px;gap:2px;">
+            <button class="bulletin-view-btn admin-subtab-btn is-active" id="pendingIdAll" onclick="setPendingIdType('all',this)">All</button>
+            <button class="bulletin-view-btn admin-subtab-btn" onclick="setPendingIdType('PhilSys',this)">PhilSys</button>
+            <button class="bulletin-view-btn admin-subtab-btn" onclick="setPendingIdType('Drivers License',this)">Driver's</button>
+            <button class="bulletin-view-btn admin-subtab-btn" onclick="setPendingIdType('Passport',this)">Passport</button>
+            <button class="bulletin-view-btn admin-subtab-btn" onclick="setPendingIdType('Voter',this)">Voter</button>
+          </div>
+        </div>
+      </div>
+      <div class="roles-search-wrap" style="margin-bottom:1.5rem;">
+          <i data-lucide="search"></i>
+          <input type="text" id="pendingSearch"
+            placeholder="Search by name, email, or resident ID…"
+            autocomplete="off"
+            style="width:100%;padding:0.6rem 1rem 0.6rem 2.4rem;
+                   border:1.5px solid #e0e0e0;border-radius:10px;
+                   font-size:0.875rem;outline:none;
+                   transition:border-color 0.15s;background:white;" />
+        </div>
+
+        <div id="loadingState">Loading applications…</div>
+        <p id="emptyState" hidden>No pending applications.</p>
+        <div id="pendingList"></div>
+      </div><!-- /sub-pending -->
+
+      <!-- ── Sub: Users & Roles ───────────────────────────────── -->
+      <div id="sub-users" hidden>
+
+        <div class="roles-header">
+          <h1 class="panel-heading" style="margin:0">Users &amp; Roles</h1>
+        </div>
+
+        <!-- Role filter pills -->
+         <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;
+            color:#9ca3af;letter-spacing:.06em;flex-shrink:0;align-self:center;">View</span>
+        <div class="role-filters" style="display:inline-flex;background:var(--alpha-ink-07);border-radius:var(--radius-full);padding:3px;gap:2px;">
+          <button class="role-filter-btn active" data-role-filter="all" onclick="setRoleFilter('all', this)">
+            <i data-lucide="users"></i> All Users
+          </button>
+          <button class="role-filter-btn" data-role-filter="resident" onclick="setRoleFilter('resident', this)">
+            <i data-lucide="user"></i> Resident
+          </button>
+          <button class="role-filter-btn" data-role-filter="officer" onclick="setRoleFilter('officer', this)">
+            <i data-lucide="shield"></i> Officer
+          </button>
+          <button class="role-filter-btn" data-role-filter="admin" onclick="setRoleFilter('admin', this)">
+            <i data-lucide="settings"></i> Administrator
+          </button>
+      </div>
+
+        <!-- Household filter bar — populated by JS -->
+        <div id="householdSection" style="margin-bottom:1.25rem;display:none;">
+        <button class="role-filter-btn" id="householdToggleBtn"
+          onclick="window.toggleHouseholdPanel()"
+          style="margin-bottom:.5rem;border:1.5px solid var(--gray-200);">
+          <i data-lucide="home"></i>
+          Households <span id="householdCount" style="font-weight:700;"></span>
+          <i data-lucide="chevron-down" id="householdChevron" style="width:12px;height:12px;transition:transform .2s;"></i>
+        </button>
+        <div id="householdPanel" style="display:none;">
+          <div class="role-filters" id="householdBar"></div>
+        </div>
+      </div>
+
+        <!-- Search -->
+        <div class="roles-search-wrap">
+          <i data-lucide="search"></i>
+          <input type="text" id="rolesSearch"
+            placeholder="Search by name or email…"
+            oninput="filterUsers()" />
+        </div>
+
+        <!-- Users table — rows injected by roles-admin.js -->
+        <div class="users-table" id="usersTable">
+          <div id="rolesLoadingState">Loading users…</div>
+        </div>
+
+      </div><!-- /sub-users -->
+
+      <!-- ── Sub: Reports (placeholder) ──────────────────────── -->
+      <div id="sub-reports" hidden>
+        <h1 class="panel-heading">Reports</h1>
+        <div style="background:white;border-radius:12px;padding:3rem;text-align:center;
+                    color:#aaa;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+          <div style="font-size:2rem;margin-bottom:.5rem;"><i data-lucide="clipboard-minus"></i></div>
+          <p style="margin:0;font-size:.9rem;">Resident reports will appear here.<br>This section is coming soon.</p>
+        </div>
+      </div><!-- /sub-reports -->
+
+    </div><!-- /panel-management -->
+
+
+    <!-- ══ PANEL: ANNOUNCEMENTS & ALERTS ═════════════════════════ -->
+    <div id="panel-alerts" class="admin-panel">
+
+      <!-- Sub-tab row -->
+      <div class="admin-subtab-row">
+        <button class="alerts-sub-btn admin-subtab-btn active" data-sub="alerts" onclick="switchAlertsSubTab('alerts',this)">
+          <i data-lucide="bell" style="width:14px;height:14px;"></i> Alerts
+        </button>
+        <button class="alerts-sub-btn admin-subtab-btn" data-sub="curfew" onclick="switchAlertsSubTab('curfew',this)">
+          <i data-lucide="moon" style="width:14px;height:14px;"></i> Curfew
+        </button>
+      </div>
+
+      <!-- ── Sub: Site Alerts ─────────────────────────────────── -->
+      <div id="alerts-sub-alerts">
+        <h1 class="panel-heading">Site Alerts</h1>
+        <div id="alertsList" style="display:flex;flex-direction:column;gap:0.75rem;">
+          <p style="color:#aaa;">Loading…</p>
+        </div>
+        <div id="alertCreateFormWrap"></div>
+      </div><!-- /alerts-sub-alerts -->
+
+      <!-- ── Sub: Curfew Schedules ────────────────────────────── -->
+      <div id="alerts-sub-curfew" hidden>
+        <h1 class="panel-heading">Curfew Schedules</h1>
+        <div id="curfewList" style="margin-bottom:1.5rem;"></div>
+        <div id="curfewForm"></div>
+      </div><!-- /alerts-sub-curfew -->
+
+    </div><!-- /panel-alerts -->
+
+
+    <!-- ══ PANEL: SETTINGS ════════════════════════════════════════ -->
+    <div id="panel-settings" class="admin-panel">
+      <h1 class="panel-heading">Settings &amp; Preferences</h1>
+      <div id="settingsContainer">
+        <p style="color:#aaa;">Loading settings…</p>
+      </div>
+    </div><!-- /panel-settings -->
+
+  </div><!-- /admin-content -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       JS TOOLTIP — hover tooltip for action buttons
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="adminTooltip"></div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ROLE CHANGE MODAL
+       ───────────────────────────────────────────────────────────────
+       Shown when assigning a new role to a user.
+       Admin role changes require a typed confirmation phrase.
+       Controlled by roles-admin.js.
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="roleModal">
+    <div class="modal">
+      <div class="modal__icon" id="modalIcon">
+        <i data-lucide="user" id="modalIconInner"></i>
+      </div>
+      <div class="modal__title" id="modalTitle">Assign Role</div>
+      <div class="modal__body"  id="modalBody"></div>
+      <div class="modal__confirm-wrap" id="adminConfirmWrap">
+        <label class="modal__confirm-label">
+          Type <span>CONFIRM ADMIN</span> to proceed:
+        </label>
+        <input class="modal__confirm-input" id="adminConfirmInput" type="text"
+          placeholder="CONFIRM ADMIN"
+          oninput="onAdminConfirmInput()" />
+      </div>
+      <div class="modal__actions">
+        <button class="modal__btn modal__btn--cancel" onclick="closeModal()">Cancel</button>
+        <button class="modal__btn modal__btn--confirm" id="modalConfirmBtn" onclick="confirmRoleChange()">
+          Assign Role
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TOAST CONTAINER — rendered by admin JS modules
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="toastContainer"></div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ID PHOTO LIGHTBOX
+       ───────────────────────────────────────────────────────────────
+       Displays front and back of an applicant's ID in full-screen.
+       Keyboard: Esc = close, ← → = navigate.
+       State managed by openLightbox() / closeLightbox() below.
+  ══════════════════════════════════════════════════════════════════ -->
+  <div id="idLightbox" role="dialog" aria-modal="true" aria-label="ID Photo Viewer"
+       onclick="closeLightbox()">
+
+    <div class="lb-card" onclick="event.stopPropagation()">
+      <div class="lb-label" id="lightboxLabel">Front of ID</div>
+      <img id="lightboxImg" src="" alt="ID Photo" />
+      <button class="lb-close" onclick="closeLightbox()" aria-label="Close lightbox">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <div class="lb-nav" onclick="event.stopPropagation()">
+      <button class="lb-nav-btn" id="lightboxPrev" onclick="lightboxStep(-1)">
+        <i data-lucide="chevron-left"></i> Front
+      </button>
+      <button class="lb-nav-btn" id="lightboxNext" onclick="lightboxStep(1)">
+        Back <i data-lucide="chevron-right"></i>
+      </button>
+    </div>
+
+    <p class="lb-hint">
+      Click outside &nbsp;·&nbsp; <kbd>Esc</kbd> to close &nbsp;·&nbsp;
+      <kbd>←</kbd> <kbd>→</kbd> to navigate
+    </p>
+
+  </div><!-- /idLightbox -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PROFILE DRAWER
+       ───────────────────────────────────────────────────────────────
+       Slide-in panel opened by the avatar button in the navbar.
+       Toggled via .is-open on #profileDrawer and #drawerBackdrop.
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="profile-drawer" id="profileDrawer">
+    <div class="profile-drawer__header">
+      <button class="btn btn--close btn--sm profile-drawer__close" id="drawerCloseBtn" aria-label="Close">
+        <i data-lucide="x"></i>
+      </button>
+      <div class="profile-drawer__avatar" id="drawerAvatar">…</div>
+      <p class="profile-drawer__name" id="drawerName">Loading…</p>
+      <p class="profile-drawer__role" id="drawerRole">—</p>
+      <span class="profile-drawer__id" id="drawerIdNumber">
+        <i data-lucide="id-card"></i> —
+      </span>
+    </div>
+    <nav class="profile-drawer__menu">
+      <a href="pages/features/profile.html" class="profile-drawer__item">
+        <div class="profile-drawer__item-icon"><i data-lucide="user-pen"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">My Barangay</span>
+          <span class="profile-drawer__item-sub">View your profile and ID</span>
+        </div>
+      </a>
+      <a href="pages/features/services.html" class="profile-drawer__item">
+        <div class="profile-drawer__item-icon"><i data-lucide="file-text"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">My Documents</span>
+          <span class="profile-drawer__item-sub">Request or track documents</span>
+        </div>
+      </a>
+      <a href="pages/features/community.html" class="profile-drawer__item">
+        <div class="profile-drawer__item-icon"><i data-lucide="users"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">Community</span>
+          <span class="profile-drawer__item-sub">Bulletin, polls, pet board</span>
+        </div>
+      </a>
+      <button class="profile-drawer__item profile-drawer__item--signout" id="signOutBtn">
+        <div class="profile-drawer__item-icon"><i data-lucide="log-out"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">Sign Out</span>
+        </div>
+      </button>
+    </nav>
+  </div>
+  <div class="profile-drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       EVENT DETAIL VIEWER MODAL — read-only, used for pending review
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="eventsDetailModal"
+    onclick="this.classList.remove('is-open')">
+    <div class="modal" style="max-width:560px;" onclick="event.stopPropagation()">
+      <div class="modal__header modal__header--green">
+        <div class="modal__header-icon"><i data-lucide="calendar-days"></i></div>
+        <div class="modal__header-content">
+          <p class="modal__header-label">Event Submission</p>
+          <h2 class="modal__header-title" id="eventsDetailTitle">Event Details</h2>
+          <p class="modal__header-sub" id="eventsDetailMeta"></p>
+        </div>
+        <button class="btn btn--close btn--sm modal__close"
+          onclick="document.getElementById('eventsDetailModal').classList.remove('is-open')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal__body" id="eventsDetailBody"
+        style="padding:var(--space-lg);max-height:60vh;overflow-y:auto;"></div>
+      <div class="modal__footer" id="eventsDetailFooter">
+        <button class="btn btn--outline"
+          onclick="document.getElementById('eventsDetailModal').classList.remove('is-open')">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       EVENTS ATTENDEE VIEWER MODAL — controlled by events-admin.js
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="eventsAttendeeModal"
+    onclick="this.classList.remove('is-open')">
+    <div class="modal" style="max-width:540px;" onclick="event.stopPropagation()">
+      <div class="modal__header modal__header--green">
+        <div class="modal__header-icon"><i data-lucide="users"></i></div>
+        <div class="modal__header-content">
+          <p class="modal__header-label">Events Admin</p>
+          <h2 class="modal__header-title" id="attendeeModalTitle">Attendees</h2>
+        </div>
+        <button class="btn btn--close btn--sm modal__close"
+          style="margin-left:auto;"
+          onclick="document.getElementById('eventsAttendeeModal').classList.remove('is-open')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal__body" id="eventsAttendeeBody"
+        style="padding:0;max-height:60vh;overflow-y:auto;"></div>
+      <div class="modal__footer">
+        <button class="btn btn--outline"
+          onclick="document.getElementById('eventsAttendeeModal').classList.remove('is-open')">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       STATUS REASON MODAL — reason shown publicly on event cards
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="eventsStatusReasonModal"
+    onclick="this.classList.remove('is-open')">
+    <div class="modal" style="max-width:480px;" onclick="event.stopPropagation()">
+      <div class="modal__header modal__header--green">
+        <div class="modal__header-icon"><i data-lucide="alert-triangle"></i></div>
+        <div class="modal__header-content">
+          <p class="modal__header-label">Status Change</p>
+          <h2 class="modal__header-title" id="statusReasonModalTitle">Reason Required</h2>
+          <p class="modal__header-sub">This reason will appear publicly on the event card.</p>
+        </div>
+      </div>
+      <div class="modal__body" style="padding:var(--space-lg);display:flex;flex-direction:column;gap:var(--space-sm);">
+        <p style="font-size:var(--text-sm);color:var(--gray-600);margin:0;">
+          Residents and officers will see this reason on the event card. Be clear and concise.
+        </p>
+        <textarea id="statusReasonInput" rows="3"
+          style="width:100%;padding:.55rem .75rem;border:1.5px solid #e0e0e0;border-radius:8px;
+            font-size:.875rem;outline:none;resize:vertical;box-sizing:border-box;"
+          placeholder="e.g. Postponed due to inclement weather. New date TBA."></textarea>
+        <p id="statusReasonError" style="display:none;font-size:var(--text-xs);color:var(--red);margin:0;">
+          Please enter a reason before confirming.
+        </p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--outline"
+          onclick="document.getElementById('eventsStatusReasonModal').classList.remove('is-open');window._statusReasonReject?.()">
+          Cancel
+        </button>
+        <button class="btn btn--green" id="statusReasonConfirmBtn"
+          onclick="window._statusReasonConfirm?.()">
+          Confirm Change
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PET DETAIL MODAL — admin read-only viewer
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="petsAdminDetailModal"
+    onclick="this.classList.remove('is-open')">
+    <div class="modal" style="max-width:540px;" onclick="event.stopPropagation()">
+      <div class="modal__header modal__header--green">
+        <div class="modal__header-icon"><i data-lucide="paw-print"></i></div>
+        <div class="modal__header-content">
+          <p class="modal__header-label" id="petsAdminDetailLabel">Pet Board</p>
+          <h2 class="modal__header-title" id="petsAdminDetailName">—</h2>
+          <p class="modal__header-sub"   id="petsAdminDetailSub">—</p>
+        </div>
+        <button class="btn btn--close btn--sm modal__close"
+          onclick="document.getElementById('petsAdminDetailModal').classList.remove('is-open')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal__body" id="petsAdminDetailBody"
+        style="padding:var(--space-lg);max-height:60vh;overflow-y:auto;"></div>
+      <div class="modal__footer">
+        <button class="btn btn--outline"
+          onclick="document.getElementById('petsAdminDetailModal').classList.remove('is-open')">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SIGN-OUT CONFIRM MODAL
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="signoutModal" onclick="this.classList.remove('is-open')">
+    <div class="modal modal--confirm">
+      <div class="modal-confirm__icon"><i data-lucide="log-out"></i></div>
+      <h2 class="modal-confirm__title">Sign out?</h2>
+      <p class="modal-confirm__body">You'll be signed out of your BarangayConnect account on this device.</p>
+      <div class="modal-confirm__footer">
+        <button class="btn btn--outline"
+          onclick="document.getElementById('signoutModal').classList.remove('is-open')">
+          Cancel
+        </button>
+        <button class="btn btn--red btn--full" id="confirmSignOutBtn">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SCRIPTS
+       ───────────────────────────────────────────────────────────────
+       1. Profile drawer     — avatar button toggles slide-in panel
+       2. Lightbox           — full-screen ID photo viewer
+       3. Tab switchers      — switchTab, switchSubTab, switchBulletinSection, etc.
+       4. lucide.createIcons — renders all data-lucide icons
+       5. Admin modules      — feature logic split across JS modules
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <!-- 1. Profile drawer -->
+  <script>
+    const _avatarBtn      = document.getElementById('avatarBtn');
+    const _profileDrawer  = document.getElementById('profileDrawer');
+    const _drawerBackdrop = document.getElementById('drawerBackdrop');
+    const _drawerClose    = document.getElementById('drawerCloseBtn');
+
+    function openDrawer() {
+      _profileDrawer.classList.add('is-open');
+      _drawerBackdrop.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDrawer() {
+      _profileDrawer.classList.remove('is-open');
+      _drawerBackdrop.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    _avatarBtn?.addEventListener('click', openDrawer);
+    _drawerClose?.addEventListener('click', closeDrawer);
+    _drawerBackdrop?.addEventListener('click', closeDrawer);
+
+    const _signOutBtn   = document.getElementById('signOutBtn');
+    const _signoutModal = document.getElementById('signoutModal');
+
+    _signOutBtn?.addEventListener('click', () => {
+      closeDrawer();
+      _signoutModal.classList.add('is-open');
+    });
+  </script>
+
+  <!-- 2. Lightbox — full-screen ID photo viewer with keyboard navigation -->
+  <script>
+    let _lbUrls = [];
+    let _lbIdx  = 0;
+
+    window.openLightbox = function(urls, startIdx) {
+      _lbUrls = urls;
+      _lbIdx  = startIdx;
+      _renderLightbox();
+      const lb = document.getElementById('idLightbox');
+      lb.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      lucide.createIcons({ el: lb });
+    };
+
+    window.closeLightbox = function() {
+      document.getElementById('idLightbox').classList.remove('is-open');
+      document.body.style.overflow = '';
+    };
+
+    window.lightboxStep = function(dir) {
+      const next = _lbIdx + dir;
+      if (next < 0 || next >= _lbUrls.length) return;
+      _lbIdx = next;
+      _renderLightbox();
+    };
+
+    function _renderLightbox() {
+      const img   = document.getElementById('lightboxImg');
+      const label = document.getElementById('lightboxLabel');
+      const prev  = document.getElementById('lightboxPrev');
+      const next  = document.getElementById('lightboxNext');
+
+      img.classList.add('is-loading');
+      img.onload  = () => img.classList.remove('is-loading');
+      img.onerror = () => img.classList.remove('is-loading');
+
+      img.src           = _lbUrls[_lbIdx].url;
+      label.textContent = _lbUrls[_lbIdx].label;
+      prev.disabled     = _lbIdx === 0;
+      next.disabled     = _lbIdx === _lbUrls.length - 1;
+    }
+
+    /* Keyboard navigation */
+    document.addEventListener('keydown', (e) => {
+      const lb = document.getElementById('idLightbox');
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape')     { e.preventDefault(); closeLightbox(); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); lightboxStep(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); lightboxStep(1); }
+    });
+  </script>
+
+  <!-- 3. Tab & sub-tab switching -->
+  <script>
+
+    /* Top-level tab switcher */
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.admin-tabs .btn--category').forEach(b => {
+        b.classList.remove('is-active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      if (btn) {
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-selected', 'true');
+      } else {
+        const target = document.querySelector(`.admin-tabs [data-tab="${tab}"]`);
+        if (target) { target.classList.add('is-active'); target.setAttribute('aria-selected','true'); }
+      }
+      document.querySelectorAll('.admin-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === `panel-${tab}`);
+      });
+      
+      /* Re-apply pending badge in case it was reset */
+      if (typeof _pendingTotal !== 'undefined') {
+        const _pb = document.getElementById('pendingBadgeCount');
+        if (_pb) { _pb.textContent = _pendingTotal; _pb.style.display = _pendingTotal > 0 ? 'inline' : 'none'; }
+        const _sb = document.getElementById('pendingSubBadge');
+        if (_sb) { _sb.textContent = _pendingTotal; _sb.style.display = _pendingTotal > 0 ? 'inline' : 'none'; }
+      }
+    }
+
+    /* Overview sub-tabs */
+    function switchOverviewSubTab(sub, btn) {
+      document.querySelectorAll('[id^="overview-sub-"]').forEach(el => el.hidden = true);
+      document.getElementById('overview-sub-' + sub).hidden = false;
+      document.querySelectorAll('.overview-sub-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    /* Requests & Concerns sub-tabs */
+    function switchRequestsSubTab(sub, btn) {
+      document.querySelectorAll('[id^="requests-sub-"]').forEach(el => el.hidden = true);
+      document.getElementById('requests-sub-' + sub).hidden = false;
+      document.querySelectorAll('.requests-sub-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    /* Community Board sub-tabs */
+    function switchCommunitySubTab(sub, btn) {
+      if (sub !== 'events') window.eventAdminCancelEdit?.();
+      document.querySelectorAll('[id^="community-sub-"]').forEach(el => el.hidden = true);
+      document.getElementById('community-sub-' + sub).hidden = false;
+      document.querySelectorAll('.community-sub-btn').forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+    }
+
+    /* Management sub-tabs — re-renders Lucide icons for the users sub-panel */
+    function switchSubTab(sub, btn) {
+      document.querySelectorAll('[id^="sub-"]').forEach(el => el.hidden = true);
+      document.getElementById('sub-' + sub).hidden = false;
+      document.querySelectorAll('.mgmt-sub-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (sub === 'users') lucide.createIcons({ el: document.getElementById('sub-users') });
+    }
+
+    /* Alerts sub-tabs — re-renders Lucide icons for the curfew sub-panel */
+    function switchAlertsSubTab(sub, btn) {
+      document.querySelectorAll('[id^="alerts-sub-"]').forEach(el => el.hidden = true);
+      document.getElementById('alerts-sub-' + sub).hidden = false;
+      document.querySelectorAll('.alerts-sub-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (sub === 'curfew') lucide.createIcons({ el: document.getElementById('alerts-sub-curfew') });
+    }
+
+    /* Bulletin view toggler — shows/hides bulletin-view-* containers */
+    function switchBulletinView(view, btn) {
+      document.querySelectorAll('[id^="bulletin-view-"]').forEach(el => el.hidden = true);
+      document.getElementById('bulletin-view-' + view).hidden = false;
+
+      document.querySelectorAll(
+        '#bulletin-subfilters .bulletin-view-btn, #bulletin-subfilters .comment-source-btn'
+      ).forEach(b => b.classList.remove('is-active'));
+      if (btn) btn.classList.add('is-active');
+
+      /* Lazy-load comments on first visit */
+      if (view === 'comments' && (!window._allComments || window._allComments.length === 0)) {
+        window.refreshComments?.();
+      }
+    }
+
+    /*
+      Bulletin section switcher — rebuilds the sub-filter row based on section:
+        'posts'    → Official / Community / Pending filters
+        'reports'  → Posts / Comments filters
+        'comments' → Refresh button
+    */
+    function switchBulletinSection(section, btn) {
+      document.querySelectorAll('.bulletin-section-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const subEl = document.getElementById('bulletin-subfilters');
+
+      if (section === 'posts') {
+        subEl.innerHTML = `
+          <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;
+            color:#9ca3af;letter-spacing:.06em;flex-shrink:0;align-self:center;">View</span>
+            <div style="display:inline-flex;background:var(--alpha-ink-07);border-radius:var(--radius-full);padding:3px;gap:2px;">
+              <button class="bulletin-view-btn admin-subtab-btn is-active" onclick="switchBulletinView('official',this)">
+                <i data-lucide="shield-check" style="width:11px;height:11px;"></i> Official
+              </button>
+              <button class="bulletin-view-btn admin-subtab-btn" onclick="switchBulletinView('community',this)">
+                <i data-lucide="users" style="width:11px;height:11px;"></i> Community
+              </button>
+              <button class="bulletin-view-btn admin-subtab-btn" onclick="switchBulletinView('pending',this)">
+                <i data-lucide="clock" style="width:11px;height:11px;"></i> Pending
+                <span id="pendingPostsBadge"
+                  style="display:none;background:rgba(255,255,255,0.22);
+                  border-radius:999px;padding:0 5px;font-size:.68rem;margin-left:2px;">
+                </span>
+              </button>
+            </div>`;
+        lucide.createIcons({ el: subEl });
+        switchBulletinView('official', subEl.querySelector('.bulletin-view-btn'));
+        /* Restore pending badge after HTML rebuild */
+        const _ppb = document.getElementById('pendingPostsBadge');
+        if (_ppb && window._pendingPostsCount != null) {
+          _ppb.textContent   = window._pendingPostsCount;
+          _ppb.style.display = window._pendingPostsCount > 0 ? 'inline' : 'none';
+        }
+
+      } else if (section === 'reports') {
+        subEl.innerHTML = `
+          <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;
+            color:#9ca3af;letter-spacing:.06em;flex-shrink:0;align-self:center;">View</span>
+            <div style="display:inline-flex;background:var(--alpha-ink-07);border-radius:var(--radius-full);padding:3px;gap:2px;">
+              <button class="bulletin-view-btn admin-subtab-btn is-active" onclick="switchBulletinView('reported',this)">
+                <i data-lucide="file-text" style="width:11px;height:11px;"></i> Posts
+                <span id="reportedPostsBadge"
+                  style="display:none;background:rgba(255,255,255,0.22);
+                  border-radius:999px;padding:0 5px;font-size:.68rem;margin-left:2px;">
+                </span>
+              </button>
+              <button class="bulletin-view-btn admin-subtab-btn" onclick="switchBulletinView('reported-comments',this)">
+                <i data-lucide="message-circle" style="width:11px;height:11px;"></i> Comments
+                <span id="reportedCommentsBadge"
+                  style="display:none;background:rgba(255,255,255,0.22);
+                  border-radius:999px;padding:0 5px;font-size:.68rem;margin-left:2px;">
+                </span>
+              </button>
+            </div>`;
+        lucide.createIcons({ el: subEl });
+        switchBulletinView('reported', subEl.querySelector('.bulletin-view-btn'));
+
+      } else if (section === 'comments') {
+        subEl.innerHTML = `
+          <button class="btn btn--filter" onclick="refreshComments()">
+            <i data-lucide="refresh-cw" style="width:11px;height:11px;"></i> Refresh
+          </button>`;
+        lucide.createIcons({ el: subEl });
+        switchBulletinView('comments', null);
+      }
+    }
+
+    /* Init — activate the first bulletin section button on load */
+    document.addEventListener('DOMContentLoaded', () => {
+      const firstBtn = document.querySelector('.bulletin-section-btn');
+      if (firstBtn) switchBulletinSection('posts', firstBtn);
+    });
+
+  </script>
+
+  <!-- 4. Lucide icon render -->
+  <script>
+  
+  lucide.createIcons();
+  /* Navbar loses transparency on scroll */
+    const _adminNavbar = document.getElementById('mainNavbar');
+    window.addEventListener('scroll', () => {
+      _adminNavbar.classList.toggle('navbar--transparent', window.scrollY < 60);
+    });
+
+  </script>
+  
+  
+
+  <!-- Image viewer utility -->
+  <script type="module">
+    import { openImageViewer } from '/js/shared/image-viewer.js';
+    window.openImageViewer = openImageViewer;
+  </script>
+
+  <script type="module">
+    import { openImageViewer } from '/js/shared/image-viewer.js';
+    window.openImageViewer = openImageViewer;
+    window.eventOpenViewer = function(images, index, title, eventId) {
+      openImageViewer(images, index, title);
+    };
+  </script>
+
+  <!-- 5. Admin feature modules -->
+  <script type="module" src="js/features/admin/admin.js"></script>
+  <script type="module" src="js/features/admin/roles-admin.js"></script>
+  <script type="module" src="js/features/admin/alerts-admin.js"></script>
+  <script type="module" src="js/features/admin/curfew-admin.js"></script>
+  <script type="module" src="js/features/admin/bulletin-admin.js"></script>
+  <script type="module" src="js/features/admin/community-posts-admin.js"></script>
+  <script type="module" src="js/features/admin/reported-posts-admin.js"></script>
+  <script type="module" src="js/features/admin/reported-comments-admin.js"></script>
+  <script type="module" src="js/features/admin/comment-manager-admin.js"></script>
+  <script type="module" src="js/features/admin/settings-admin.js"></script>
+  <script type="module" src="js/features/admin/polls-admin.js"></script>
+  <script type="module" src="js/features/admin/gallery-admin.js"></script>
+  <script type="module" src="js/features/admin/events-admin.js"></script>
+  <script type="module" src="js/features/admin/pets-admin.js"></script>
+
+  <!-- Tab state persistence — saves/restores across reloads -->
+  <script>
+    const _TS_KEY = 'adminTabState';
+
+    function _saveTab() {
+      try { localStorage.setItem(_TS_KEY, JSON.stringify(_tabState)); } catch(e) {}
+    }
+
+    const _tabState = (() => {
+      try { return JSON.parse(localStorage.getItem(_TS_KEY)) || {}; } catch(e) { return {}; }
+    })();
+
+    /* Patch each switch function to auto-save */
+    const _origSwitchTab        = switchTab;
+    const _origSubTab           = switchSubTab;
+    const _origAlertsSubTab     = switchAlertsSubTab;
+    const _origCommunitySubTab  = switchCommunitySubTab;
+    const _origOverviewSubTab   = switchOverviewSubTab;
+    const _origRequestsSubTab   = switchRequestsSubTab;
+    const _origBulletinSection  = switchBulletinSection;
+    const _origBulletinView     = window.switchBulletinView;
+
+    switchTab = function(tab, btn) {
+      _tabState.tab = tab; _saveTab();
+      _origSwitchTab(tab, btn);
+    };
+    switchSubTab = function(sub, btn) {
+      _tabState.subMgmt = sub; _saveTab();
+      _origSubTab(sub, btn);
+    };
+    switchAlertsSubTab = function(sub, btn) {
+      _tabState.subAlerts = sub; _saveTab();
+      _origAlertsSubTab(sub, btn);
+    };
+    switchCommunitySubTab = function(sub, btn) {
+      _tabState.subCommunity = sub; _saveTab();
+      _origCommunitySubTab(sub, btn);
+    };
+    switchOverviewSubTab = function(sub, btn) {
+      _tabState.subOverview = sub; _saveTab();
+      _origOverviewSubTab(sub, btn);
+    };
+    switchRequestsSubTab = function(sub, btn) {
+      _tabState.subRequests = sub; _saveTab();
+      _origRequestsSubTab(sub, btn);
+    };
+    switchBulletinSection = function(section, btn) {
+      _tabState.bulletinSection = section; _saveTab();
+      _origBulletinSection(section, btn);
+    };
+    window.switchBulletinView = function(view, btn) {
+      _tabState.bulletinView = view; _saveTab();
+      _origBulletinView?.(view, btn);
+    };
+
+    /* Restore on load */
+    document.addEventListener('DOMContentLoaded', () => {
+      const s = _tabState;
+
+      if (s.tab) {
+        const btn = document.querySelector(`.admin-tabs [data-tab="${s.tab}"]`);
+        if (btn) _origSwitchTab(s.tab, btn);
+      }
+
+      if (s.subMgmt) {
+        const btn = document.querySelector(`.mgmt-sub-btn[data-sub="${s.subMgmt}"]`);
+        if (btn) _origSubTab(s.subMgmt, btn);
+      }
+
+      if (s.subAlerts) {
+        const btn = document.querySelector(`.alerts-sub-btn[data-sub="${s.subAlerts}"]`);
+        if (btn) _origAlertsSubTab(s.subAlerts, btn);
+      }
+
+      if (s.subCommunity) {
+        const btn = document.querySelector(`.community-sub-btn[onclick*="'${s.subCommunity}'"]`);
+        if (btn) _origCommunitySubTab(s.subCommunity, btn);
+      }
+
+      if (s.subOverview) {
+        const btn = document.querySelector(`[onclick*="switchOverviewSubTab('${s.subOverview}')"]`);
+        if (btn) _origOverviewSubTab(s.subOverview, btn);
+      }
+
+      if (s.bulletinSection) {
+        const btn = document.querySelector(`.bulletin-section-btn[onclick*="'${s.bulletinSection}'"]`);
+        if (btn) _origBulletinSection(s.bulletinSection, btn);
+      }
+
+      if (s.bulletinView) {
+        /* switchBulletinSection already sets a default view; override only if different */
+        setTimeout(() => {
+          const btn = document.querySelector(`[onclick*="switchBulletinView('${s.bulletinView}')"]`);
+          if (btn) window.switchBulletinView(s.bulletinView, btn);
+        }, 0);
+      }
+    });
+  </script>
+
+</body>
+</html>

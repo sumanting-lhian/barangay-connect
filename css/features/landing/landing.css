@@ -1,0 +1,1362 @@
+/* ================================================
+   landing.css — BarangayConnect
+
+   TODO
+   ─────────
+   Fill in every TODO.
+
+   RULES
+   ─────
+   · No hardcoded colors — use variables from main.css
+   · No hardcoded spacing — use the spacing scale variables
+   · Don't rename any selector
+
+   VARIABLE CHEATSHEET  (all defined in main.css)
+   ────────────────────────────────────────────────
+   Colors:
+     --green-dark         main dark green
+     --green-mid          mid-tone green
+     --green-light        lighter green
+     --orange             the accent color
+     --orange-hover       slightly darker orange, used for eyebrow labels
+     --off-white          warm off-white, used as alternate section bg
+     --white              pure white
+     --text-dark          near-black for headings
+     --gray-50 thru --gray-700
+     --alpha-green-06     green at 6% opacity
+     --alpha-green-10     green at 10% opacity
+     --alpha-ink-06       dark ink at 6% opacity
+     --red                used for alert/danger contexts
+     --navbar-h           the fixed navbar height (a spacing token)
+     --navbar-border      the navbar border color when scrolled
+     --navbar-shadow      the navbar shadow when scrolled
+
+   Spacing:
+     --space-xs  --space-sm  --space-md  --space-lg
+     --space-xl  --space-2xl  --space-3xl
+
+   Type:
+     --font-display      heading font (Nunito)
+     --font-body         body font
+     --text-2xs thru --text-3xl
+     --fw-medium  --fw-semibold  --fw-bold  --fw-extrabold  --fw-black
+     --lh-none  --lh-tight  --lh-snug  --lh-relaxed  --lh-loose
+
+   Misc:
+     --radius-sm  --radius-md  --radius-lg  --radius-xl  --radius-full
+     --shadow-sm  --shadow-md  --shadow-lg
+     --transition  --transition-slow
+
+   Hero bg:
+     The hero background photo is set via a CSS custom property
+     so it can be swapped without touching anything else.
+     Define it here at :root level.
+
+================================================ */
+
+
+/* ── Hero background photo variable ──────────── */
+/*
+  Define this at :root so landing.css controls the hero photo.
+  The value should be a CSS url() pointing to the hero image.
+  The .hero__bg-img div uses this as its background-image.
+  TODO
+*/
+:root {
+}
+
+.landing-page {
+  /* TODO: stack sections vertically, page fills at least the full screen height */
+}
+
+
+/* ================================================
+   NAVBAR
+   ─────────
+   Fixed to the top of the viewport at all times.
+   Starts transparent (so the hero bleeds behind it).
+   When the user scrolls down, JS adds .is-scrolled —
+   that's when it gets a white background and border.
+   The rules under .landing-nav.is-scrolled are already
+   written because they're tied to that JS class toggle.
+================================================ */
+
+.landing-nav {
+  /*
+    Sticks to the top of the screen no matter how far you scroll.
+    Spans the full width. Sits above everything else.
+    Starts completely transparent — no background, no border.
+    Height is set by the --navbar-h token.
+    Background, border, and shadow transition smoothly
+    when the .is-scrolled class gets added.
+    TODO
+  */
+}
+
+/* DO NOT CHANGE — JS adds this class when the user scrolls past 60px */
+.landing-nav.is-scrolled {
+  background: var(--white);
+  border-bottom-color: var(--navbar-border);
+  box-shadow: var(--navbar-shadow);
+}
+
+.landing-nav__inner {
+  /*
+    Centers the nav content and caps its width.
+    Logo on the left, links in the middle, buttons on the right —
+    all in one horizontal row, vertically centered.
+    Comfortable horizontal padding.
+    Full height of the navbar.
+    TODO
+  */
+}
+
+/* ── Logo ─────────────────────────────────────── */
+/*
+  Logo is a row — icon on the left, wordmark on the right.
+  Already a flex row, just needs gap and no underline.
+  Shouldn't shrink when the nav gets tight.
+  TODO
+*/
+.landing-nav__logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.landing-nav__logo-img {
+  /*
+    The logo SVG needs to show as white over the dark hero.
+    Use a CSS filter to force it white.
+    When the nav scrolls to white bg, it switches to green — already handled below.
+    TODO: size, filter to make it white
+  */
+}
+
+/* DO NOT CHANGE — JS adds .is-scrolled, this switches the logo to green */
+.landing-nav.is-scrolled .landing-nav__logo-img {
+  filter: brightness(0) saturate(100%) invert(21%) sepia(28%) saturate(800%) hue-rotate(100deg) brightness(85%);
+}
+
+.landing-nav__logo-text {
+  /*
+    White over the hero, transitions to green when scrolled.
+    Color transition is already handled by .is-scrolled below.
+    TODO: font, weight, size, color (white), letter-spacing, transition
+  */
+}
+
+/* DO NOT CHANGE — JS adds .is-scrolled */
+.landing-nav.is-scrolled .landing-nav__logo-text { color: var(--green-dark); }
+
+/* ── Nav links ────────────────────────────────── */
+/*
+  The three nav links sit centered between the logo and buttons.
+  Each link is a pill shape — padding gives it some click area.
+  Default: white-ish text over the dark hero background.
+  On hover: brighter white text, a subtle frosted background.
+  TODO
+*/
+.landing-nav__links {
+  display: flex;
+  align-items: center;
+}
+
+.landing-nav__link {
+  /* TODO: padding, rounded shape, font, weight, size, color (semi-transparent white), no underline, transition */
+}
+
+.landing-nav__link:hover {
+  /* TODO: brighter text, subtle frosted bg */
+}
+
+/* DO NOT CHANGE — JS adds .is-scrolled */
+.landing-nav.is-scrolled .landing-nav__link { color: var(--gray-700); }
+.landing-nav.is-scrolled .landing-nav__link:hover { color: var(--green-dark); background: var(--alpha-green-06); }
+
+/* ── Nav action buttons ───────────────────────── */
+/*
+  "Log In" outline button and "Create Account" orange button.
+  Sit on the right end of the nav. Shouldn't shrink.
+  TODO
+*/
+.landing-nav__actions {
+  display: flex;
+  align-items: center;
+}
+
+/* DO NOT CHANGE — JS adds .is-scrolled, adjusts outline button for white bg */
+.landing-nav.is-scrolled .btn--outline-hero {
+  color: var(--black);
+  border-color: rgba(44,40,40,0.22);
+}
+
+.landing-nav.is-scrolled .btn--outline-hero:hover {
+  background: var(--alpha-ink-06);
+  color: var(--black);
+  box-shadow: none;
+}
+
+/* Nav links hide on small screens — buttons are enough */
+@media (max-width: 768px) { .landing-nav__links { display: none; } }
+@media (max-width: 520px) {
+  /* TODO: reduce inner padding, hide the logo wordmark */
+}
+
+
+/* ================================================
+   HERO
+   ──────
+   Full-screen dark green section with a background photo,
+   dot grid overlay, and two blurred blobs for depth.
+   All that sits behind the centered text and buttons.
+================================================ */
+
+.hero {
+  /*
+    Starts at the top but content should clear the fixed navbar.
+    Use padding-top with the --navbar-h token plus extra room.
+    Dark green background. Overflows hidden so the blobs don't
+    escape. Full viewport height minimum. Centers its inner content.
+    TODO
+  */
+}
+
+/*
+  The background photo — spans the entire hero section.
+  Very low opacity so the dark green still dominates.
+  Should cover the whole area and center on the top of the image.
+  Sits behind everything else — use z-index accordingly.
+  Uses the --hero-bg-url variable you defined at :root.
+  TODO
+*/
+.hero__bg-img {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/*
+  Dot grid overlay — a repeating pattern of tiny white dots
+  that adds texture. Sits above the photo but below everything else.
+  TODO: use radial-gradient to make small dot pattern, set repeat size
+*/
+.hero__dot-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/*
+  Two large blurred blobs that add glow to the background.
+  Both are absolutely positioned circles with blur applied.
+  They should sit above the dot grid but behind the text.
+  TODO: shared blob styles — size varies per blob, set them below
+*/
+.hero__blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  /* TODO: blur amount */
+}
+
+/*
+  Left blob — large, sits on the left side, vertically centered.
+  Uses a radial gradient going from a lighter green to transparent.
+  TODO
+*/
+.hero__blob--left {
+}
+
+/*
+  Right blob — smaller, sits in the bottom-right corner.
+  Darker green gradient.
+  TODO
+*/
+.hero__blob--right {
+}
+
+/*
+  The actual content — badge, heading, subtext, buttons.
+  Centered column, capped width, sits above all the background layers.
+  TODO
+*/
+.hero__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  width: 100%;
+}
+
+/*
+  The "Now live in 50+ barangays" pill badge.
+  Frosted look — semi-transparent white bg and border.
+  Has a pulsing green dot on the left.
+  TODO
+*/
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+}
+
+/*
+  The small pulsing green dot inside the badge.
+  Always a circle. Has a growing/shrinking glow effect on loop.
+  TODO: size, shape, green color, animation
+*/
+.hero__badge-dot {
+}
+
+@keyframes hero-dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(74,222,128,0.22); }
+  50%       { box-shadow: 0 0 0 6px rgba(74,222,128,0.08); }
+}
+
+.hero__heading {
+  /* TODO: font, weight, very large size (clamp), white, tight line-height, tight letter-spacing, no margin */
+}
+
+.hero__heading-accent {
+  /* The word "Connected." is orange. TODO */
+}
+
+.hero__sub {
+  /* TODO: max-width, font-size, semi-transparent white, relaxed line-height */
+}
+
+/*
+  "Get Started" and "Log In" buttons side by side.
+  Center-aligned, wrap if needed, a little gap between them.
+  TODO
+*/
+.hero__ctas {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 520px) {
+  /* TODO: reduce hero padding, shrink heading, stack buttons full-width */
+}
+
+
+/* ================================================
+   CITIES STRIP
+   ─────────────
+   A thin section just below the hero. Off-white background.
+   A small all-caps label on top, then a row of city names
+   each with an orange dot on the left.
+================================================ */
+
+.cities-strip {
+  /* TODO: padding, background (off-white), bottom border */
+}
+
+.cities-strip__label {
+  /* TODO: centered, font, size, weight, uppercase, letter-spacing, gray color, bottom margin */
+}
+
+.cities-strip__row {
+  /*
+    All city items in one horizontal row, centered.
+    Shouldn't wrap — if it gets too tight, let it clip.
+    Cap the width and center it with some horizontal padding.
+    TODO
+  */
+}
+
+.city-item {
+  /* TODO: row layout, gap, font, weight, size, gray color, nowrap */
+}
+
+.city-item__dot {
+  /* TODO: small circle, orange, slight transparency, don't shrink */
+}
+
+
+/* ================================================
+   WHAT WE OFFER — Bento Grid
+   ───────────────────────────
+   Off-white section with a header on the left and
+   an interactive bento grid on the right.
+   The bento grid has a large main card on the left
+   and a 2×2 grid of smaller cards on the right.
+
+   The .is-selected class on side cards is toggled by JS —
+   those rules are already written. Everything else is TODO.
+================================================ */
+
+.what-we-offer {
+  /* TODO: top and bottom padding, off-white background */
+}
+
+.what-we-offer__inner {
+  /* TODO: max-width, centered, horizontal padding */
+}
+
+.what-we-offer__header {
+  /* TODO: bottom margin before the bento grid */
+}
+
+.what-we-offer__eyebrow {
+  /* TODO: font, size, weight, uppercase, letter-spacing, orange-hover color, bottom margin */
+}
+
+.what-we-offer__title {
+  /* TODO: font, weight, large size (clamp), text-dark, tight line-height, letter-spacing, bottom margin */
+}
+
+.what-we-offer__title-accent {
+  /* The word "digitized." is dark green. TODO */
+}
+
+.what-we-offer__sub {
+  /* TODO: font-size, gray color, relaxed line-height, max-width */
+}
+
+/* ── Bento grid layout ─────────────────────── */
+/*
+  Two columns: main card on the left (slightly wider),
+  2×2 side grid on the right (slightly narrower).
+  Gap between them.
+  TODO
+*/
+.bento-grid {
+}
+
+/*
+  Shared styles for all bento cards — main and side.
+  Rounded corners, padding, vertical flex layout with gap.
+  Clips content that overflows.
+  TODO
+*/
+.bento-card {
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Main card needs a minimum height so it doesn't collapse */
+.bento-card--main {
+  /* TODO: min-height */
+}
+
+/* Background colors for each card variant */
+.bento-card--dark  { background: var(--green-dark); color: var(--white); }
+.bento-card--pink  { background: #fff0f2; }
+.bento-card--cream { background: #fdf8f0; }
+.bento-card--mint  { background: #f0faf5; }
+.bento-card--amber { background: #fff8ed; }
+
+/* ── Icon tiles ─────────────────────────────── */
+/*
+  Large icon tile for the main card.
+  A square with rounded corners, frosted bg, centered icon.
+  Icon itself is orange.
+  TODO
+*/
+.bento-card__icon-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bento-card__icon-tile [data-lucide],
+.bento-card__icon-tile svg {
+  /* TODO: size, orange color, stroke-width */
+}
+
+/*
+  Smaller icon tile for the side cards.
+  Same idea but slightly smaller. Color varies per card.
+  TODO
+*/
+.bento-card__icon-sm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bento-card__icon-sm [data-lucide],
+.bento-card__icon-sm svg {
+  /* TODO: size, stroke-width */
+}
+
+/* Icon background and color per variant */
+.bento-card__icon-sm--red    { background: rgba(220,38,38,0.10); }
+.bento-card__icon-sm--red    [data-lucide],
+.bento-card__icon-sm--red    svg { color: var(--red); }
+
+.bento-card__icon-sm--orange { background: rgba(255,161,53,0.12); }
+.bento-card__icon-sm--orange [data-lucide],
+.bento-card__icon-sm--orange svg { color: var(--orange-hover); }
+
+.bento-card__icon-sm--green  { background: rgba(27,75,39,0.10); }
+.bento-card__icon-sm--green  [data-lucide],
+.bento-card__icon-sm--green  svg { color: var(--green-dark); }
+
+.bento-card__icon-sm--amber  { background: rgba(245,158,11,0.12); }
+.bento-card__icon-sm--amber  [data-lucide],
+.bento-card__icon-sm--amber  svg { color: #854d0e; }
+
+/* ── Titles and descriptions ─────────────────── */
+.bento-card__title {
+  /* TODO: font, weight, size, white color (default for main dark card), tight line-height */
+}
+
+.bento-card__title--dark {
+  /* Side cards have dark text instead of white. TODO */
+}
+
+.bento-card__desc {
+  /* TODO: font-size, semi-transparent white, relaxed line-height */
+}
+
+.bento-card__desc--dark {
+  /* Side cards have gray text instead. TODO */
+}
+
+/* ── Doc list inside the main card ──────────── */
+/*
+  A mini list of document items inside the main card.
+  Frosted dark bg, rounded, clips overflow.
+  Small top margin below the description.
+  Each row has a subtle bottom border — removed on the last item.
+  TODO
+*/
+.bento-doc-list {
+}
+
+.bento-doc-item {
+  /*
+    Each item is a row — name on the left, status badge on the right.
+    Vertically centered. Padding top and bottom, horizontal padding.
+    Bottom border separates items.
+    Font, size, weight — white-ish text on the dark card.
+    TODO
+  */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bento-doc-item:last-child { border-bottom: none; }
+
+/*
+  Status badges — small pill labels with a colored bg and text.
+  Already written — don't touch.
+*/
+.bento-doc-status {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  font-family: var(--font-display);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.bento-doc-status--approved   { background: rgba(16,185,129,0.18);  color: #4ade80; }
+.bento-doc-status--processing { background: rgba(255,161,53,0.18);  color: var(--orange); }
+.bento-doc-status--ready      { background: rgba(16,185,129,0.18);  color: #4ade80; }
+.bento-doc-status--alert      { background: rgba(220,38,38,0.22);   color: #f87171; }
+
+/* ── Side 2×2 grid ──────────────────────────── */
+/*
+  The four smaller cards sit in a 2×2 grid on the right.
+  Equal gap between all four.
+  TODO
+*/
+.bento-side {
+}
+
+/*
+  Side cards are clickable buttons.
+  Cursor pointer, left-aligned text, transparent border by default.
+  On hover (when not selected): lifts slightly, gets a shadow,
+  and gets a subtle green border.
+  TODO: hover styles
+*/
+.bento-side-card {
+  cursor: pointer;
+  text-align: left;
+  border: 2px solid transparent;
+  /* TODO: transitions for transform, shadow, background, border */
+}
+
+.bento-side-card:hover:not(.is-selected) {
+  /* TODO: lift, shadow, border hint */
+}
+
+/* DO NOT CHANGE — JS toggles this class when a card is clicked */
+.bento-side-card.is-selected {
+  background: var(--green-dark) !important;
+  border-color: rgba(255,255,255,0.10);
+  box-shadow: var(--shadow-md);
+}
+
+/* DO NOT CHANGE — these make the text and icon readable on the dark selected bg */
+.bento-side-card.is-selected .bento-card__title--dark { color: var(--white); }
+.bento-side-card.is-selected .bento-card__desc--dark  { color: rgba(255,255,255,0.62); }
+.bento-side-card.is-selected .bento-card__icon-sm     { background: rgba(255,255,255,0.12) !important; }
+.bento-side-card.is-selected .bento-card__icon-sm [data-lucide],
+.bento-side-card.is-selected .bento-card__icon-sm svg { color: var(--orange) !important; }
+
+@media (max-width: 900px) {
+  /* TODO: bento grid drops to a single column */
+}
+@media (max-width: 540px) {
+  /* TODO: side grid also drops to single column, reduce inner padding */
+}
+
+
+/* ================================================
+   FILIPINO MARQUEE
+   ─────────────────
+   Full-width dark green band with large text scrolling
+   left in an infinite loop. The track is duplicated in
+   HTML so the loop is seamless — don't change the HTML.
+   The animation is pure CSS.
+================================================ */
+
+.ph-marquee {
+  /* TODO: dark green background, clip overflow, vertical padding, borders top and bottom, nowrap */
+}
+
+/*
+  The track scrolls from right to left continuously.
+  It moves exactly half its width — because the HTML content
+  is duplicated, so when it finishes sliding, it looks the same.
+  TODO: inline-flex, vertically centered, define the animation
+*/
+.ph-marquee__track {
+  display: inline-flex;
+  align-items: center;
+  will-change: transform;
+  /* TODO: animation using ph-marquee-scroll */
+}
+
+@keyframes ph-marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.ph-marquee__item {
+  /* TODO: font, weight, very large size (clamp), line-height, letter-spacing, uppercase, horizontal padding, nowrap */
+}
+
+.ph-marquee__item--white  { color: var(--white); }
+.ph-marquee__item--orange { color: var(--orange); }
+
+.ph-marquee__sep {
+  /* TODO: font, size, weight, muted semi-transparent color, don't shrink */
+}
+
+
+/* ================================================
+   HOW IT WORKS
+   ─────────────
+   White section. Centered header on top.
+   Three step cards in a row below — each with an icon,
+   a big faded number, a title, and a description.
+   On hover the whole card turns dark green.
+================================================ */
+
+.how-it-works {
+  /* TODO: top and bottom padding, white background, top border */
+}
+
+.how-it-works__inner {
+  /* TODO: max-width, centered, horizontal padding */
+}
+
+.how-it-works__header {
+  /* TODO: center-align text, bottom margin */
+}
+
+.how-it-works__eyebrow {
+  /* TODO: font, size, weight, uppercase, letter-spacing, orange-hover color, bottom margin */
+}
+
+.how-it-works__title {
+  /* TODO: font, weight, large size (clamp), text-dark, tight line-height, letter-spacing */
+}
+
+.how-it-works__title-accent {
+  /* TODO: dark green */
+}
+
+/*
+  Three equal columns side by side.
+  No gap — the cards use borders to separate themselves.
+  TODO
+*/
+.how-it-works__steps {
+}
+
+/*
+  Each step card.
+  Padding, vertical flex layout, gap between children.
+  On hover: whole card turns dark green, lifts slightly, gets a shadow.
+  The transitions for all the color changes on hover need to be
+  set on the base state so they animate smoothly.
+  TODO: padding, layout, transition
+*/
+.step-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border-radius: var(--radius-lg);
+}
+
+.step-card:hover {
+  /* TODO: dark green bg, shadow, lift, sit above siblings */
+}
+
+/* Cards 2 and 3 have a left border divider — removed on hover */
+.step-card--divided {
+  /* TODO: left border */
+}
+.step-card--divided:hover {
+  /* TODO: remove the border */
+}
+
+/*
+  The top row of each card — icon on the left, big number on the right.
+  They sit at opposite ends of the row.
+  TODO
+*/
+.step-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/*
+  The icon square — dark green background, centered icon.
+  On hover the card background is already dark green, so the
+  icon bg switches to a frosted white instead.
+  TODO: size, rounded, background, centered, transition
+*/
+.step-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-card:hover .step-card__icon {
+  /* TODO: frosted white bg on hover */
+}
+
+.step-card__icon [data-lucide],
+.step-card__icon svg {
+  /* TODO: size, white color, stroke-width */
+}
+
+/*
+  The big faded number — "01", "02", "03".
+  Very large, light gray, purely decorative.
+  On hover it fades even more (barely visible against the dark green).
+  TODO: font, weight, huge size, gray color, line-height, letter-spacing, no text selection, transition
+*/
+.step-card__number {
+}
+
+.step-card:hover .step-card__number {
+  /* TODO: near-invisible on dark green bg */
+}
+
+.step-card__title {
+  /* TODO: font, weight, size, text-dark, tight line-height, transition */
+}
+
+.step-card:hover .step-card__title {
+  /* TODO: white on hover */
+}
+
+.step-card__desc {
+  /* TODO: font-size, gray color, relaxed line-height, flex: 1 to push CTA down, transition */
+}
+
+.step-card:hover .step-card__desc {
+  /* TODO: semi-transparent white on hover */
+}
+
+/*
+  "Get Started →" link at the bottom of step 3 only.
+  Default dark text. On hover turns orange.
+  TODO
+*/
+.how-it-works__cta {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.step-card:hover .how-it-works__cta {
+  /* TODO: orange on hover */
+}
+
+.how-it-works__cta [data-lucide],
+.how-it-works__cta svg {
+  /* TODO: size, stroke-width */
+}
+
+@media (max-width: 768px) {
+  /* TODO: stack steps vertically, switch divider from left to top border, reduce padding */
+}
+
+
+/* ================================================
+   TESTIMONIALS
+   ─────────────
+   Off-white section. Centered header.
+   One large featured testimonial card (dark green) on top.
+   Two smaller cards side by side below it.
+================================================ */
+
+.testimonials {
+  /* TODO: top and bottom padding, off-white background */
+}
+
+.testimonials__inner {
+  /* TODO: max-width, centered, horizontal padding */
+}
+
+.testimonials__header {
+  /* TODO: center-align, bottom margin */
+}
+
+.testimonials__eyebrow {
+  /* TODO: font, size, weight, uppercase, letter-spacing, orange-hover color, bottom margin */
+}
+
+.testimonials__title {
+  /* TODO: font, weight, large size (clamp), text-dark, tight line-height, letter-spacing */
+}
+
+.testimonials__title-accent {
+  /* TODO: dark green */
+}
+
+/*
+  The big featured card — dark green bg, rounded corners, padding.
+  Has a large decorative quote mark, the quote text, and a footer
+  with avatar, name, role, and stars.
+  Clips overflow. Bottom margin before the two smaller cards.
+  TODO
+*/
+.testimonial-featured {
+  position: relative;
+  overflow: hidden;
+}
+
+/*
+  The giant decorative opening quote — "".
+  Georgia serif, huge, very low opacity white.
+  Not selectable.
+  TODO
+*/
+.testimonial-featured__quote-mark {
+}
+
+.testimonial-featured__text {
+  /* TODO: font, weight, large size (clamp), white, line-height, bottom margin */
+}
+
+/*
+  Footer row inside the featured card — avatar, name+role, stars.
+  Row layout, top border separating it from the quote.
+  TODO
+*/
+.testimonial-featured__footer {
+  display: flex;
+  align-items: center;
+}
+
+.testimonial-featured__avatar {
+  /* TODO: size, circle, cover, don't shrink, subtle white border */
+}
+
+.testimonial-featured__author {
+  /* TODO: stack name and role vertically, small gap, grow to fill */
+}
+
+.testimonial-featured__name {
+  /* TODO: font, weight, size, white */
+}
+
+.testimonial-featured__role {
+  /* TODO: size, semi-transparent white */
+}
+
+.testimonial-featured__stars {
+  /* TODO: font-size, orange, letter-spacing */
+}
+
+/*
+  Two smaller testimonial cards side by side.
+  White background, border, shadow, rounded corners.
+  Each has stars, quote text, and a footer with avatar + name.
+  TODO
+*/
+.testimonials__grid {
+}
+
+.testimonial-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.testimonial-card__stars {
+  /* TODO: orange, size, letter-spacing */
+}
+
+.testimonial-card__text {
+  /* TODO: size, gray-700 color, relaxed line-height, flex: 1 */
+}
+
+/*
+  Footer row — avatar + name + role.
+  Top border separates it from the quote.
+  TODO
+*/
+.testimonial-card__footer {
+  display: flex;
+  align-items: center;
+}
+
+.testimonial-card__avatar {
+  /* TODO: size, circle, cover, don't shrink */
+}
+
+.testimonial-card__name {
+  /* TODO: display block, font, weight, size, text-dark */
+}
+
+.testimonial-card__role {
+  /* TODO: display block, size, gray-400 color, top margin */
+}
+
+@media (max-width: 640px) {
+  /* TODO: stack testimonial grid, reduce inner padding and featured card padding */
+}
+
+
+/* ================================================
+   PLATFORM STATS
+   ───────────────
+   Orange section. Four large numbers in a row.
+   Each number animates up from 0 when scrolled into view —
+   that's handled by stat-counter.js. The styling here
+   is purely visual.
+================================================ */
+
+.platform-stats {
+  /* TODO: orange background, top and bottom padding */
+}
+
+.platform-stats__inner {
+  /* TODO: max-width, centered, horizontal padding, center-align text */
+}
+
+.platform-stats__eyebrow {
+  /* TODO: font, size, weight, uppercase, letter-spacing, dark green color at low opacity, bottom margin */
+}
+
+/*
+  Four stat columns side by side.
+  No gap between them — borders divide them instead.
+  TODO
+*/
+.platform-stats__grid {
+}
+
+.platform-stat {
+  /* TODO: stack number and label vertically, centered, padding left and right */
+}
+
+/*
+  Stats 2, 3, 4 each have a left border divider.
+  Subtle dark green at low opacity.
+  TODO
+*/
+.platform-stat--divided {
+}
+
+.platform-stat__number {
+  /* TODO: font, weight, very large size (clamp), dark green, no line-height gap, tight letter-spacing */
+}
+
+.platform-stat__label {
+  /* TODO: font, size, weight, dark green, centered, snug line-height */
+}
+
+.platform-stats__note {
+  /* TODO: top margin, size, dark green at low opacity, font, weight */
+}
+
+@media (max-width: 640px) {
+  /*
+    TODO: drop to 2×2 grid, add top borders for the bottom two stats,
+    reduce inner padding.
+  */
+}
+
+
+/* ================================================
+   CTA BANNER
+   ───────────
+   Dark green section. Heading + subtext on the left,
+   two buttons on the right. Stacks on mobile.
+   There's a decorative blob (::after) in the top-right
+   corner — already written, don't touch.
+================================================ */
+
+.cta-banner {
+  /* TODO: dark green background, top and bottom padding, position relative, overflow hidden, top border */
+}
+
+/* Decorative blob in the top-right corner — don't touch */
+.cta-banner::after {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.03);
+  right: -80px; top: -100px;
+  pointer-events: none;
+}
+
+.cta-banner__inner {
+  /*
+    Max-width, centered, horizontal padding.
+    Heading+sub on the left, buttons on the right — one horizontal row.
+    If it gets too tight, the items wrap.
+    Sits above the ::after blob.
+    TODO
+  */
+}
+
+.cta-banner__text {
+  /* TODO: grows to fill available space, don't overflow */
+}
+
+.cta-banner__title {
+  /* TODO: font, weight, large size (clamp), white, letter-spacing, tight line-height, bottom margin */
+}
+
+.cta-banner__sub {
+  /* TODO: size, semi-transparent white, relaxed line-height, max-width */
+}
+
+.cta-banner__actions {
+  /* TODO: row layout, gap, don't shrink, wrap if needed */
+}
+
+@media (max-width: 640px) {
+  /* TODO: stack everything vertically, full-width buttons, reduce padding */
+}
+
+
+/* ================================================
+   ROLE CARDS — Resident · Officer · Captain
+   ──────────────────────────────────────────
+   Off-white section with a top orange border.
+   Centered header, then three equal cards side by side.
+   Each card turns dark green on hover — lots of child
+   elements need to update color on that hover.
+================================================ */
+
+.role-section {
+  /* TODO: top and bottom padding, off-white background, thick orange top border */
+}
+
+.role-section__inner {
+  /* TODO: max-width, centered, horizontal padding */
+}
+
+.role-section__header {
+  /* TODO: center-align, bottom margin */
+}
+
+.role-section__eyebrow {
+  /* TODO: font, size, weight, uppercase, letter-spacing, orange-hover color, bottom margin */
+}
+
+.role-section__title {
+  /* TODO: font, weight, large size (clamp), text-dark, tight line-height, letter-spacing, bottom margin */
+}
+
+.role-section__title-accent {
+  /* TODO: dark green */
+}
+
+.role-section__sub {
+  /* TODO: size, gray color, relaxed line-height, max-width, centered with auto margins */
+}
+
+/*
+  Three equal columns. Consistent gap. Cards stretch to match height.
+  TODO
+*/
+.role-cards {
+}
+
+/* ── Base role card ─────────────────────────── */
+/*
+  White bg, subtle border, rounded corners, shadow.
+  Vertical flex layout. Comfortable padding.
+  On hover: dark green bg, shadow, lifts slightly.
+  Transitions set on the base state so they animate smoothly.
+  TODO
+*/
+.role-card {
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+}
+
+.role-card:hover {
+  /* TODO: dark green bg, no border, bigger shadow, lift */
+}
+
+/* ── Header row ─────────────────────────────── */
+/*
+  Icon tile + label (or label-group for captain) in a row.
+  Bottom margin pushes it from the title below.
+  TODO
+*/
+.role-card__header {
+  display: flex;
+  align-items: center;
+}
+
+/*
+  Square icon tile — rounded corners, centered.
+  Default bg and color differ per card variant (handled below).
+  On hover: switches to frosted white bg, orange icon.
+  TODO: size, rounded, centered content, don't shrink, transition
+*/
+.role-card__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Default icon bg colors per card */
+.role-card--resident .role-card__icon-wrap { background: var(--alpha-green-10); color: var(--green-dark); }
+.role-card--officer  .role-card__icon-wrap { background: rgba(255,161,53,0.14); color: var(--orange-hover); }
+.role-card--captain  .role-card__icon-wrap { background: var(--alpha-green-10); color: var(--green-dark); }
+
+.role-card:hover .role-card__icon-wrap {
+  /* TODO: frosted white bg, orange icon */
+}
+
+.role-card__icon-wrap [data-lucide],
+.role-card__icon-wrap svg {
+  /* TODO: size, stroke-width, transition */
+}
+
+.role-card:hover .role-card__icon-wrap [data-lucide],
+.role-card:hover .role-card__icon-wrap svg { color: var(--orange); }
+
+/* The captain card has a stacked label + sublabel */
+.role-card__label-group {
+  /* TODO: stack vertically, tiny gap */
+}
+
+/*
+  Small all-caps label — "RESIDENT", "OFFICER", "CAPTAIN".
+  Color varies per card. Turns orange on hover.
+  TODO
+*/
+.role-card__label {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-extrabold);
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  /* TODO: transition */
+}
+
+.role-card--resident .role-card__label { color: var(--green-dark); }
+.role-card--officer  .role-card__label { color: var(--orange-hover); }
+.role-card--captain  .role-card__label { color: var(--green-dark); }
+.role-card:hover .role-card__label { color: var(--orange); }
+
+/* "Admin" sublabel on the captain card */
+.role-card__label-sub {
+  /* TODO: font, size, weight, uppercase, letter-spacing, gray color, transition */
+}
+
+.role-card:hover .role-card__label-sub {
+  /* TODO: faded white on hover */
+}
+
+/* ── Title ──────────────────────────────────── */
+.role-card__title {
+  /* TODO: font, weight, large size (clamp), text-dark, tight line-height, letter-spacing, transition */
+}
+
+.role-card:hover .role-card__title { color: var(--white); }
+
+/* ── Description ────────────────────────────── */
+.role-card__desc {
+  /* TODO: size, gray color, relaxed line-height, transition */
+}
+
+.role-card:hover .role-card__desc {
+  /* TODO: semi-transparent white */
+}
+
+/* ── Feature list ───────────────────────────── */
+/*
+  List of checkmark items — no bullets, vertical stack.
+  Top border separates it from the description.
+  Border color changes on hover.
+  TODO
+*/
+.role-card__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  /* TODO: gap, top padding, top border, transition */
+}
+
+.role-card:hover .role-card__list {
+  /* TODO: faded white border on hover */
+}
+
+.role-card__list li {
+  display: flex;
+  align-items: center;
+  /* TODO: gap, font, size, weight, gray-700 color, transition */
+}
+
+.role-card:hover .role-card__list li {
+  /* TODO: semi-transparent white */
+}
+
+/* The checkmark icon next to each list item */
+.role-card__list [data-lucide],
+.role-card__list svg {
+  /* TODO: small size, thicker stroke, don't shrink, transition */
+}
+
+/* Check icon color per card variant */
+.role-card--resident .role-card__list [data-lucide],
+.role-card--resident .role-card__list svg { color: var(--green-dark); }
+
+.role-card--officer .role-card__list [data-lucide],
+.role-card--officer .role-card__list svg { color: var(--orange-hover); }
+
+.role-card--captain .role-card__list [data-lucide],
+.role-card--captain .role-card__list svg { color: var(--green-dark); }
+
+.role-card:hover .role-card__list [data-lucide],
+.role-card:hover .role-card__list svg {
+  /* TODO: bright green on hover */
+}
+
+/* ── CTA button ─────────────────────────────── */
+/*
+  The button sits at the very bottom of the card.
+  Push it down with margin-top: auto. Give it top padding.
+  On hover the card bg is dark green, so the green button
+  switches to orange so it still stands out.
+  TODO
+*/
+.role-card__btn {
+}
+
+.role-card:hover .btn--green {
+  /* TODO: orange bg, dark text, orange glow shadow */
+}
+
+/* ── Note text ──────────────────────────────── */
+/*
+  Small disclaimer below the button.
+  Has an info icon on the left.
+  Muted gray normally, barely-visible white on hover.
+  TODO
+*/
+.role-card__note {
+  display: flex;
+  align-items: flex-start;
+  font-family: var(--font-display);
+  font-weight: var(--fw-medium);
+  /* TODO: gap, size, gray color, relaxed line-height, transition */
+}
+
+.role-card:hover .role-card__note {
+  /* TODO: near-invisible white */
+}
+
+.role-card__note [data-lucide],
+.role-card__note svg {
+  /* TODO: small size, don't shrink, slight top margin to align with text */
+}
+
+@media (max-width: 900px) {
+  /* TODO: stack cards in a single column, cap width and center */
+}
+
+@media (max-width: 520px) {
+  /* TODO: reduce inner padding */
+}
+
+
+/* ================================================
+   SITE FOOTER
+   ────────────
+   Simple footer — logo + tagline on the left,
+   nav links on the right. Dark border on top.
+================================================ */
+
+.site-footer {
+  /* TODO: background (white or off-white), top border, padding */
+}
+
+.site-footer__inner {
+  /*
+    Logo side on the left, nav links on the right.
+    One horizontal row, vertically centered.
+    Max-width and centered.
+    TODO
+  */
+}
+
+.site-footer__brand {
+  /* TODO: stack logo and tagline vertically */
+}
+
+.site-footer__brand-logo {
+  /* TODO: row layout, gap, aligned */
+}
+
+.site-footer__logo-img {
+  /* TODO: size */
+}
+
+.site-footer__logo-text {
+  /* TODO: font, weight, size, color */
+}
+
+.site-footer__tagline {
+  /* TODO: size, gray color, top margin */
+}
+
+.site-footer__links {
+  /* TODO: row layout, gap */
+}
+
+.site-footer__link {
+  /* TODO: size, gray color, no underline, hover color */
+}

@@ -1,0 +1,710 @@
+/* ================================================
+   auth.css — BarangayConnect
+   Auth-page layout. Import AFTER main.css.
+   Contains only styles unique to the login and
+   register pages.
+
+   SECTIONS:
+     1. Two-panel split layout
+     2. Left panel (decorations, logo, badge, hero, stats)
+     3. Right panel (form wrapper, notice banner)
+     4. Register page (nav, header, body, card)
+     5. Step indicator
+     6. File upload area
+     7. Register success screen
+     8. Page transition
+     9. Responsive overrides
+
+   WHAT IS NOT IN HERE:
+     .form-input, .form-label, .form-group  → main.css
+     .form-select, .form-grid-2             → main.css
+     .btn-* variants                        → buttons.css
+
+   REQUIRED IMPORTS on auth pages:
+     <link rel="stylesheet" href="css/shared/main.css" />
+     <link rel="stylesheet" href="css/shared/buttons.css" />
+     <link rel="stylesheet" href="css/shared/components.css" />
+     <link rel="stylesheet" href="css/features/auth/auth.css" />
+
+   QUICK REFERENCE:
+     Split layout     → .login-page > .auth-left + .auth-right
+     Left decorations → .auth-left__circle--top / --bottom
+     Left badge pill  → .auth-left__badge
+     Hero heading     → .auth-left__heading + .auth-left__subtext
+     Left stats row   → .auth-left__stats > .stat-item
+     Form wrapper     → .auth-form-wrapper > .auth-form
+     Demo notice      → .auth-notice
+     Register nav     → .register-nav + .register-nav__logo
+     Step indicator   → .step-indicator > .step-item + .step-connector
+     Register card    → .register-card
+     File upload      → .upload-area + .upload-preview
+================================================ */
+
+
+/* ================================================
+   1. TWO-PANEL SPLIT LAYOUT
+================================================ */
+
+.login-page {
+  display: flex;
+  min-height: 100vh;
+}
+
+
+/* ================================================
+   2. LEFT PANEL
+================================================ */
+
+.auth-left {
+  width: 46%;
+  min-height: 100vh;
+  padding: var(--space-xl) var(--space-2xl);
+  background: var(--green-dark);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative large circles — purely visual, non-interactive */
+.auth-left__circle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--green-muted);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.auth-left__circle--top {
+  width: 360px;
+  height: 360px;
+  top: -80px;
+  right: -60px;
+}
+
+.auth-left__circle--bottom {
+  width: 440px;
+  height: 440px;
+  bottom: -120px;
+  left: -100px;
+}
+
+/* Logo */
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  position: relative;
+  z-index: 2;
+  margin-bottom: var(--space-3xl);
+}
+
+.auth-logo__icon {
+  width: 38px;
+  height: 38px;
+  background: var(--overlay-white-15);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.auth-logo__icon [data-lucide] {
+  width: 20px;
+  height: 20px;
+}
+
+.auth-logo__text {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-lg);
+  color: var(--white);
+  letter-spacing: -0.3px;
+}
+
+/* Pill badge shown above the hero heading */
+.auth-left__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 6px 14px;
+  background: var(--overlay-white-12);
+  border: 1px solid var(--overlay-white-20);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-base-sm);
+  color: var(--white);
+  position: relative;
+  z-index: 2;
+  margin-bottom: var(--space-lg);
+}
+
+.auth-left__badge [data-lucide] {
+  width: 14px;
+  height: 14px;
+  color: var(--orange);
+}
+
+/* Hero section fills remaining vertical space */
+.auth-left__hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.auth-left__heading {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  color: var(--white);
+  line-height: var(--lh-tight)5;
+  letter-spacing: -0.5px;
+  margin-bottom: var(--space-md);
+}
+
+.auth-left__subtext {
+  max-width: 380px;
+  font-size: var(--text-base);
+  color: var(--overlay-white-70);
+  line-height: var(--lh-loose);
+}
+
+/* Stats row — sits at the bottom of the hero, separated by a divider */
+.auth-left__stats {
+  display: flex;
+  gap: var(--space-2xl);
+  padding-top: var(--space-2xl);
+  margin-top: var(--space-2xl);
+  border-top: 1px solid var(--overlay-white-12);
+  position: relative;
+  z-index: 2;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-item__number {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-3xl);
+  color: var(--white);
+  line-height: var(--lh-none);
+  letter-spacing: -1px;
+}
+
+.stat-item__label {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--overlay-white-55);
+}
+
+
+/* ================================================
+   3. RIGHT PANEL
+================================================ */
+
+.auth-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-xl);
+  background: var(--white);
+}
+
+.auth-form-wrapper {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.auth-form__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-4xl);
+  color: var(--text-dark);
+  letter-spacing: -0.5px;
+}
+
+/* Warm notice banner for demo/environment context */
+.auth-notice {
+  padding: 12px 16px;
+  background: #fff8ed;
+  border: 1.5px solid #f5d6a0;
+  border-radius: var(--radius-md);
+}
+
+.auth-notice p {
+  font-size: var(--text-base-sm);
+  color: #92400e;
+  line-height: var(--lh-relaxed);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Right-aligned "Forgot password?" link */
+.form-forgot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -4px;
+}
+
+.form-forgot .form-link {
+  font-size: var(--text-base-sm);
+}
+
+.auth-switch {
+  text-align: center;
+  font-size: var(--text-base);
+  color: var(--gray-500);
+}
+
+
+/* ================================================
+   4. REGISTER PAGE
+   Uses a top navbar layout instead of a split panel.
+================================================ */
+
+.register-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--off-white);
+}
+
+/* Top navbar */
+.register-nav {
+  height: 60px;
+  padding: 0 var(--space-2xl);
+  background: var(--green-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* Decorative blob behind the nav */
+.register-nav::after {
+  content: '';
+  position: absolute;
+  right: 80px;
+  top: -30px;
+  width: 160px;
+  height: 120px;
+  background: var(--green-mid);
+  border-radius: 50%;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.register-nav__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-lg);
+  color: var(--white);
+  position: relative;
+  z-index: 2;
+}
+
+.register-nav__logo-icon {
+  width: 34px;
+  height: 34px;
+  background: var(--overlay-white-15);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.register-nav__signin {
+  font-size: var(--text-base-sm);
+  color: var(--overlay-white-70);
+  position: relative;
+  z-index: 2;
+}
+
+.register-nav__signin a {
+  color: var(--orange);
+  font-weight: var(--fw-bold);
+}
+
+/* Page body — centers the card column */
+.register-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-2xl) var(--space-xl);
+}
+
+/* Header row: page title + any right-side controls */
+.register-header {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xl);
+}
+
+.register-header__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-3xl);
+  color: var(--text-dark);
+  letter-spacing: -0.5px;
+}
+
+/* Form card */
+.register-card {
+  width: 100%;
+  max-width: 520px;
+  padding: var(--space-xl) var(--space-2xl);
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.register-card__section-title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-lg);
+  color: var(--text-dark);
+  margin-bottom: var(--space-lg);
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Card footer actions — space-between by default, flex-end variant available */
+.register-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-md);
+  gap: var(--space-md);
+}
+
+.register-actions--end {
+  justify-content: flex-end;
+}
+
+
+/* ================================================
+   5. STEP INDICATOR
+================================================ */
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 520px;
+  margin-bottom: var(--space-xl);
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.step-item__circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-base);
+  transition: background var(--transition), color var(--transition);
+}
+
+/* State variants: pending → active → completed */
+.step-item.pending .step-item__circle {
+  background: var(--gray-200);
+  color: var(--gray-400);
+}
+
+.step-item.active .step-item__circle,
+.step-item.completed .step-item__circle {
+  background: var(--green-dark);
+  color: var(--white);
+}
+
+.step-item__label {
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.step-item.pending   .step-item__label { color: var(--gray-400); }
+.step-item.active    .step-item__label { color: var(--green-dark); font-weight: var(--fw-bold); }
+.step-item.completed .step-item__label { color: var(--green-dark); }
+
+/* Connector line — fills the gap between step circles */
+.step-connector {
+  flex: 1;
+  height: 2px;
+  /* Offset downward to align visually with circle centers, not labels */
+  margin-bottom: 22px;
+  background: var(--gray-200);
+  transition: background var(--transition-slow);
+}
+
+.step-connector.active {
+  background: var(--green-dark);
+}
+
+
+/* ================================================
+   6. FILE UPLOAD AREA
+================================================ */
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-2xl) var(--space-xl);
+  border: 2px dashed var(--gray-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.upload-area:hover {
+  border-color: var(--green-light);
+  background: #f0faf4;
+}
+
+.upload-area [data-lucide] {
+  width: 28px;
+  height: 28px;
+  color: var(--gray-400);
+}
+
+.upload-area__label {
+  font-size: var(--text-base);
+  font-weight: var(--fw-medium);
+  color: var(--gray-500);
+  text-align: center;
+}
+
+.upload-area__hint {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+}
+
+/* Hidden — triggered programmatically via .upload-area click */
+.upload-area input[type="file"] {
+  display: none;
+}
+
+/* Preview shown after a file is selected; hidden by default */
+.upload-preview {
+  display: none;
+  max-width: 100%;
+  max-height: 160px;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+}
+
+
+/* ================================================
+   7. REGISTER SUCCESS SCREEN
+   Shown after submission. Toggle .show to reveal.
+================================================ */
+
+/* Hidden by default; .show switches display to flex */
+.register-success {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  text-align: center;
+  padding: var(--space-2xl);
+}
+
+.register-success.show {
+  display: flex;
+}
+
+.register-success__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2.5px solid var(--green-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green-dark);
+}
+
+.register-success__icon [data-lucide] {
+  width: 30px;
+  height: 30px;
+}
+
+.register-success__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-2xl);
+  color: var(--text-dark);
+}
+
+.register-success__sub {
+  max-width: 360px;
+  font-size: var(--text-base);
+  color: var(--gray-500);
+  line-height: var(--lh-loose);
+}
+
+
+/* ================================================
+   8. PAGE TRANSITION
+   Wrap page root in .page-transition for a GSAP-
+   compatible entrance (fadeUp). CSS handles the
+   animation; JS can override timing if needed.
+================================================ */
+
+.page-transition {
+  animation: fadeUp 0.4s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ================================================
+   9. RESPONSIVE OVERRIDES
+================================================ */
+
+@media (max-width: 768px) {
+  /* Stack the two panels vertically */
+  .login-page,
+  body.login-page {
+    flex-direction: column;
+    min-height: 100svh;
+  }
+
+  /* Collapse the left panel into a compact header strip */
+  .auth-left {
+    width: 100%;
+    min-height: unset;
+    flex: unset;
+    padding: 2rem 1.5rem 1.5rem;
+  }
+
+  /* Decorative circles and stats are too cluttered at narrow widths */
+  .auth-left__circle,
+  .auth-left__stats {
+    display: none;
+  }
+
+  .auth-left__hero {
+    flex: none;
+  }
+
+  .auth-left__heading {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .auth-left__subtext {
+    font-size: 0.875rem;
+  }
+
+  /* Right panel slides up slightly to overlap the left panel bottom edge */
+  .auth-right {
+    flex: 1;
+    padding: 2rem 1.5rem;
+    background: #fff;
+    border-radius: 1.5rem 1.5rem 0 0;
+    margin-top: -1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .auth-form-wrapper {
+    max-width: 100%;
+  }
+
+  /* Register nav */
+  .register-nav {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .register-nav__signin {
+    font-size: 0.8rem;
+  }
+
+  .register-body {
+    padding: 1rem;
+  }
+
+  /* Shrink step labels to fit narrow screens */
+  .step-item__label {
+    font-size: 0.65rem;
+  }
+
+  .register-card {
+    padding: 1.25rem 1rem;
+  }
+
+  /* Two-column form grids collapse to single column */
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Action buttons stack vertically, reversed so primary is on top */
+  .register-actions {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+
+  .register-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .register-success {
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+}

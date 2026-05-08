@@ -1,0 +1,1103 @@
+/* ================================================
+   main.css — BarangayConnect
+   Global foundation stylesheet. Must be imported
+   first on every page before all other CSS files.
+
+   WHAT IS IN HERE:
+     · CSS custom properties (design tokens)
+     · Global reset and base element styles
+     · Shared form components (input, label, select, error)
+     · Shared layout utilities (.card, .divider, .sr-only)
+     · Toast notification component
+     · Navbar (.navbar and all sub-elements)
+     · Site footer (.site-footer and all sub-elements)
+
+   WHAT IS NOT IN HERE:
+     · Badge / tag / pill variants    → components.css
+     · Button / toggle / FAB          → buttons.css
+     · Modals / drawers / card frames → frames.css
+     · Auth-page specific layout      → auth.css
+
+   REQUIRED IMPORTS (every page, in this order):
+     <link rel="stylesheet" href="css/shared/main.css" />
+     <link rel="stylesheet" href="css/shared/buttons.css" />
+     <link rel="stylesheet" href="css/shared/components.css" />
+     <link rel="stylesheet" href="css/shared/frames.css" />
+
+   QUICK REFERENCE:
+     Navbar wrapper        → .navbar
+     Navbar transparent    → .navbar--transparent
+     Navbar role pill      → .navbar__role--resident / --officer / --admin
+     Role-gated nav items  → .navbar__item--officer / .navbar__item--admin
+     Footer wrapper        → .site-footer
+     Footer inner grid     → .site-footer__inner
+   ================================================ */
+
+
+/* ================================================
+   FONTS
+   ================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@font-face {
+  font-family: 'Circular Std';
+  src: url('../assets/fonts/CircularStd-Black.ttf') format('ttf');
+  font-weight: 700;
+}
+
+
+/* ================================================
+   CSS VARIABLES — Design Tokens
+   ================================================ */
+
+:root {
+
+  /* ── Brand Colors ───────────────────────────────*/
+  --green-dark:    #1B4B27;
+  --green-hover:   #12361B;
+  --green-active:  #102A16;
+  --green-mid:     #2d5a3d;
+  --green-light:   #4a8c5c;
+  --green-muted:   #2a4a38;
+
+  --orange:        #FFA135;
+  --orange-hover:  #DB8B2F;
+  --orange-active: #92400E;
+
+  --red:           #DC2626;
+  --red-hover:     #821414;
+  --red-dark:      #7A1A1A;
+
+  --black:         #2C2828;
+
+  /* ── Neutrals ───────────────────────────────────*/
+  --white:         #ffffff;
+  --off-white:     #f9fafb;
+  --gray-50:       #f3f4f6;
+  --gray-100:      #e5e7eb;
+  --gray-200:      #d1d5db;
+  --gray-400:      #9ca3af;
+  --gray-500:      #6b7280;
+  --gray-700:      #374151;
+  --gray-900:      #111827;
+  --text-dark:     #1a1a1a;
+  --text-muted:    #6b7280;
+
+  /* ── Muted / Located State ──────────────────────*/
+  --muted-bg:      #E8EDE9;
+  --muted-text:    #3a5c42;
+  --muted-icon:    #5a8a68;
+
+  /* ── Status Colors ──────────────────────────────*/
+  --status-pending:    #f59e0b;
+  --status-inprogress: #3b82f6;
+  --status-resolved:   #10b981;
+  --status-draft:      #9ca3af;
+  --priority-high:     #ef4444;
+  --priority-medium:   #f97316;
+  --priority-low:      #22c55e;
+
+  /* ── Spacing ────────────────────────────────────*/
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* ── Border Radius ──────────────────────────────*/
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ────────────────────────────────────*/
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px var(--overlay-black-10), 0 2px 4px var(--overlay-black-06);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.12), 0 4px 8px var(--overlay-black-06);
+
+  /* ── Navbar ─────────────────────────────────────*/
+  --navbar-h:      64px;
+  --navbar-bg:     #ffffff;
+  --navbar-border: rgba(0,0,0,0.07);
+  --navbar-shadow: 0 1px 0 var(--overlay-black-06), 0 2px 8px rgba(0,0,0,0.04);
+
+  /* ── Typography — Fonts ─────────────────────────*/
+  --font-display: 'Circular Std', sans-serif;
+  --font-body:    'Poppins', sans-serif;
+
+  /* ── Typography — Type Scale ────────────────────
+     10 named steps replace scattered raw rem values.
+     Modify here to propagate changes across all components.
+
+     2xs      tiny labels, timestamps, eyebrow text
+     xs       caption/meta, badge content
+     sm       secondary body, card descriptions
+     base-sm  compact body, form labels
+     base     primary body, most UI copy
+     lg       card titles, section labels
+     xl       modal titles, widget headings
+     2xl      page sub-headings, success titles
+     3xl      page headings, register header
+     4xl      display text, auth hero
+     ─────────────────────────────────────────────── */
+  --text-2xs:     0.68rem;
+  --text-xs:      0.75rem;
+  --text-sm:      0.82rem;
+  --text-base-sm: 0.88rem;
+  --text-base:    0.95rem;
+  --text-lg:      1.05rem;
+  --text-xl:      1.20rem;
+  --text-2xl:     1.60rem;
+  --text-3xl:     1.90rem;
+  --text-4xl:     2.00rem;
+
+  /* ── Typography — Font Weights ──────────────────*/
+  --fw-normal:    400;
+  --fw-medium:    500;
+  --fw-semibold:  600;
+  --fw-bold:      700;
+  --fw-extrabold: 800;
+  --fw-black:     900;
+
+  /* ── Typography — Line Heights ──────────────────*/
+  --lh-none:    1;
+  --lh-tight:   1.2;
+  --lh-snug:    1.4;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.6;
+  --lh-loose:   1.7;
+
+  /* ── Transitions ────────────────────────────────*/
+  --transition:      0.2s ease;
+  --transition-slow: 0.4s ease;
+
+  /* ── Semantic Color Tints — Success / Green ─────*/
+  --green-50:  #f0fdf4;
+  --green-100: #d1fae5;
+  --green-200: #bbf7d0;
+  --green-300: #6ee7b7;
+  --green-400: #4ade80;
+  --green-500: #10b981;
+  --green-800: #14532d;
+  --green-900: #065f46;
+
+  /* ── Semantic Color Tints — Error / Red ─────────*/
+  --red-50:         #fff0f0;
+  --red-100:        #fee2e2;
+  --red-200:        #fecaca;
+  --red-800:        #7f1d1d;
+  --red-900:        #991b1b;
+  --red-dark-hover: #5e1414;
+
+  /* ── Semantic Color Tints — Info / Blue ─────────*/
+  --blue-50:  #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-800: #1e40af;
+  --blue-900: #1e3a5f;
+
+  /* ── Semantic Color Tints — Warning / Amber ─────*/
+  --amber-50:  #fff8ed;
+  --amber-100: #fef3c7;
+  --amber-150: #ffedd5;
+  --amber-200: #fed7aa;
+  --amber-500: #f59e0b;
+  --amber-800: #854d0e;
+  --amber-900: #7c2d12;
+  --amber-950: #9a3412;
+
+  /* ── Semantic Color Tints — Yellow ──────────────*/
+  --yellow-50: #fef9c3;
+
+  /* ── Semantic Color Tints — Low-priority / Success*/
+  --success-100: #dcfce7;
+  --success-800: #166534;
+  --success-950: #064e3b;
+
+  /* ── Semantic Color Tints — Purple ──────────────*/
+  --purple-50:  #faf5ff;
+  --purple-600: #7c3aed;
+
+  /* ── Brand Alpha Tints — Green ──────────────────*/
+  --alpha-green-03: rgba(27, 75, 39, 0.03);
+  --alpha-green-04: rgba(27, 75, 39, 0.04);
+  --alpha-green-06: rgba(27, 75, 39, 0.06);
+  --alpha-green-08: rgba(27, 75, 39, 0.08);
+  --alpha-green-10: rgba(27, 75, 39, 0.10);
+  --alpha-green-12: rgba(27, 75, 39, 0.12);
+
+  /* ── Brand Alpha Tints — Glass ──────────────────*/
+  --alpha-glass-green: rgba(20, 56, 32, 0.72);
+
+  /* ── Brand Alpha Tints — Orange ─────────────────*/
+  --alpha-orange-14: rgba(255, 161, 53, 0.14);
+  --alpha-orange-15: rgba(255, 161, 53, 0.15);
+  --alpha-orange-35: rgba(255, 161, 53, 0.35);
+
+  /* ── Brand Alpha Tints — Amber ──────────────────*/
+  --alpha-amber-08: rgba(245, 158, 11, 0.08);
+  --alpha-amber-12: rgba(245, 158, 11, 0.12);
+  --alpha-amber-16: rgba(245, 158, 11, 0.16);
+
+  /* ── Brand Alpha Tints — Red ────────────────────*/
+  --alpha-red-08:       rgba(220, 38, 38, 0.08);
+  --alpha-red-10:       rgba(220, 38, 38, 0.10);
+  --alpha-red-16:       rgba(220, 38, 38, 0.16);
+  --alpha-red-dark-06:  rgba(122, 26, 26, 0.06);
+  --alpha-red-dark-08:  rgba(122, 26, 26, 0.08);
+  --alpha-red-dark-12:  rgba(122, 26, 26, 0.12);
+  --alpha-red-dark-15:  rgba(122, 26, 26, 0.15);
+
+  /* ── Brand Alpha Tints — Blue ───────────────────*/
+  --alpha-blue-10: rgba(59, 130, 246, 0.10);
+  --alpha-blue-12: rgba(37, 99, 235, 0.12);
+
+  /* ── Brand Alpha Tints — Success ────────────────*/
+  --alpha-success-10: rgba(16, 185, 129, 0.10);
+
+  /* ── Brand Alpha Tints — Ink ────────────────────*/
+  --alpha-ink-05: rgba(44, 40, 40, 0.05);
+  --alpha-ink-06: rgba(44, 40, 40, 0.06);
+  --alpha-ink-07: rgba(44, 40, 40, 0.07);
+  --alpha-ink-20: rgba(44, 40, 40, 0.20);
+
+  /* ── Overlay Tokens — White (on dark panels) ────*/
+  --overlay-white-04: rgba(255, 255, 255, 0.04);
+  --overlay-white-05: rgba(255, 255, 255, 0.05);
+  --overlay-white-06: rgba(255, 255, 255, 0.06);
+  --overlay-white-07: rgba(255, 255, 255, 0.07);
+  --overlay-white-10: rgba(255, 255, 255, 0.10);
+  --overlay-white-12: rgba(255, 255, 255, 0.12);
+  --overlay-white-15: rgba(255, 255, 255, 0.15);
+  --overlay-white-18: rgba(255, 255, 255, 0.18);
+  --overlay-white-20: rgba(255, 255, 255, 0.20);
+  --overlay-white-22: rgba(255, 255, 255, 0.22);
+  --overlay-white-25: rgba(255, 255, 255, 0.25);
+  --overlay-white-28: rgba(255, 255, 255, 0.28);
+  --overlay-white-55: rgba(255, 255, 255, 0.55);
+  --overlay-white-70: rgba(255, 255, 255, 0.70);
+  --overlay-white-75: rgba(255, 255, 255, 0.75);
+
+  /* ── Overlay Tokens — Black ─────────────────────*/
+  --overlay-black-06: rgba(0, 0, 0, 0.06);
+  --overlay-black-10: rgba(0, 0, 0, 0.10);
+  --overlay-black-18: rgba(0, 0, 0, 0.18);
+  --overlay-black-25: rgba(0, 0, 0, 0.25);
+  --overlay-black-45: rgba(0, 0, 0, 0.45);
+  --overlay-black-55: rgba(0, 0, 0, 0.55);
+}
+
+
+/* ================================================
+   ROLE INIT — Hide role-gated items until auth resolves
+   ================================================ */
+
+[data-role-init="pending"] .navbar__item--officer,
+[data-role-init="pending"] .navbar__item--admin {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+
+/* ================================================
+   RESET & BASE
+   ================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-dark);
+  background: var(--off-white);
+  line-height: var(--lh-relaxed);
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Default icon size for all Lucide icons */
+[data-lucide] {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+  flex-shrink: 0;
+}
+
+
+/* ================================================
+   UTILITIES
+   ================================================ */
+
+/* Visually hidden but accessible to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Horizontal rule divider */
+.divider {
+  height: 1px;
+  background: var(--gray-100);
+  margin: var(--space-lg) 0;
+}
+
+
+/* ================================================
+   SHARED CARD
+   ================================================ */
+
+.card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-100);
+}
+
+
+/* ================================================
+   TOAST
+   ================================================ */
+
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--white);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  animation: toastIn 0.25s ease both;
+}
+
+.toast [data-lucide],
+.toast svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.toast--success { background: #1a3a1a; }
+.toast--error   { background: var(--red); }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ================================================
+   FORM — Shared Components
+   ================================================ */
+
+/* ---- Group wrapper ---- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ---- Label ---- */
+.form-label {
+  font-size: var(--text-base);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-700);
+  font-family: var(--font-display);
+}
+
+/* ---- Text input ---- */
+.form-input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  background: var(--white);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+.form-input::placeholder { color: var(--gray-400); }
+
+.form-input:focus {
+  border-color: var(--green-light);
+  box-shadow: 0 0 0 3px rgba(74,140,92,0.12);
+}
+
+.form-input.is-error {
+  border-color: var(--priority-high);
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.10);
+}
+
+/* ---- Input with icon slot ---- */
+.form-input-wrap { position: relative; }
+
+.form-input-wrap--icon .form-input { padding-right: 48px; }
+
+/* Password visibility toggle */
+.form-input__eye {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
+  display: flex;
+  align-items: center;
+  transition: color var(--transition);
+  padding: 4px;
+}
+
+.form-input__eye:hover { color: var(--gray-700); }
+
+/* ---- Inline error message ---- */
+.form-error {
+  font-size: var(--text-sm);
+  color: var(--priority-high);
+  min-height: 18px;
+  font-weight: var(--fw-medium);
+}
+
+.form-error--center { text-align: center; }
+
+/* ---- Inline links ---- */
+.form-link {
+  color: var(--green-light);
+  font-weight: var(--fw-semibold);
+  transition: color var(--transition);
+}
+
+.form-link:hover {
+  color: var(--green-dark);
+  text-decoration: underline;
+}
+
+.form-link--bold { font-weight: var(--fw-extrabold); color: var(--orange); }
+.form-link--bold:hover { color: var(--orange-hover); }
+
+/* ---- Two-column form grid ---- */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+/* ---- Select input ---- */
+.form-select {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  color: var(--text-dark);
+  background: var(--white);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.form-select:focus {
+  border-color: var(--green-light);
+  box-shadow: 0 0 0 3px rgba(74,140,92,0.12);
+}
+
+
+/* ================================================
+   NOTE: .badge base + all status / priority / role
+   variants are defined in components.css — that is
+   the single authoritative source. Do NOT add badge
+   styles here.
+   ================================================ */
+
+
+/* ================================================
+   NAVBAR
+   ================================================================
+   Structure:
+
+   <header class="navbar" id="mainNavbar">
+     <div class="navbar__inner">
+
+       <a href="/" class="navbar__logo">
+         <img src="..." alt="BarangayConnect" class="navbar__logo-img" />
+         <span class="navbar__logo-text">BarangayConnect</span>
+       </a>
+
+       <nav class="navbar__nav" aria-label="Main navigation">
+         <a href="#" class="navbar__link is-active">Home</a>
+         <a href="#" class="navbar__link">Community</a>
+         <a href="#" class="navbar__link">Services</a>
+         <a href="#" class="navbar__link">My Barangay</a>
+         <a href="#" class="navbar__link navbar__link--officer navbar__item--officer">Officer Panel</a>
+         <a href="#" class="navbar__link navbar__link--admin navbar__item--admin">Admin Panel</a>
+       </nav>
+
+       <div class="navbar__actions">
+         <span class="navbar__role navbar__role--resident" id="navRole">Resident</span>
+         <button class="navbar__bell" aria-label="Notifications" id="bellBtn">
+           <i data-lucide="bell"></i>
+           <span class="navbar__bell-dot"></span>
+         </button>
+         <button class="navbar__avatar" aria-label="Open profile">
+           <img src="..." alt="Your avatar" />
+         </button>
+       </div>
+
+     </div>
+   </header>
+
+   ================================================================
+   Role visibility — add one class to <body>:
+     body.role-resident  →  officer + admin links hidden
+     body.role-officer   →  officer link shown (orange), admin hidden
+     body.role-admin     →  both shown; active one highlighted red
+
+   Role pill variants (navbar only):
+     .navbar__role--resident  →  green
+     .navbar__role--officer   →  orange
+     .navbar__role--admin     →  red
+     NOTE: For role badges inside content/tables,
+     use .badge--role-* from components.css instead.
+
+   Transparent hero mode:
+     .navbar--transparent  →  no bg, white text, for dark hero sections
+                              JS removes it on scroll past threshold
+   ================================================================ */
+
+/* ---- Sticky wrapper ---- */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 400;
+  height: var(--navbar-h);
+  background: var(--navbar-bg);
+  border-bottom: 1px solid var(--navbar-border);
+  box-shadow: var(--navbar-shadow);
+  transition:
+    background   0.30s ease,
+    border-color 0.30s ease,
+    box-shadow   0.30s ease;
+}
+
+/* Transparent hero variant — no bg, white text */
+.navbar--transparent {
+  background: var(--black);
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
+
+/* ---- Inner flex row ---- */
+.navbar__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 var(--space-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+/* ---- Logo ---- */
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.navbar__logo-img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  display: block;
+}
+
+.navbar__logo-text {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-lg);
+  color: var(--green-dark);
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+.navbar--transparent .navbar__logo-text { color: var(--white); }
+
+/* ---- Center nav ---- */
+.navbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+}
+
+/* ---- Nav links ---- */
+.navbar__link {
+  position: relative;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  font-size: var(--text-base);
+  color: var(--gray-700);
+  text-decoration: none;
+  transition: color var(--transition), background var(--transition);
+  white-space: nowrap;
+}
+
+.navbar__link:hover {
+  color: var(--green-dark);
+  background: var(--alpha-green-06);
+}
+
+/* Active link — orange dot indicator below */
+.navbar__link.is-active {
+  color: var(--green-dark);
+  font-weight: var(--fw-bold);
+}
+
+.navbar__link.is-active::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+/* ---- Officer-panel link ---- */
+.navbar__link--officer {
+  color: var(--orange-hover);
+  font-weight: var(--fw-bold);
+}
+
+.navbar__link--officer:hover {
+  background: rgba(255,161,53,0.08);
+  color: var(--orange-hover);
+}
+
+.navbar__link--officer.is-active::after { background: var(--orange); }
+
+/* ---- Admin-panel link ---- */
+.navbar__link--admin {
+  color: var(--red-dark);
+  font-weight: var(--fw-bold);
+}
+
+.navbar__link--admin:hover {
+  background: var(--alpha-red-dark-06);
+  color: var(--red-dark);
+}
+
+.navbar__link--admin.is-active::after { background: var(--red); }
+
+/* ---- Transparent mode — link overrides ---- */
+.navbar--transparent .navbar__link               { color: rgba(255,255,255,0.80); }
+.navbar--transparent .navbar__link:hover         { color: var(--white); background: var(--overlay-white-10); }
+.navbar--transparent .navbar__link.is-active     { color: var(--white); }
+
+
+/* ================================================
+   ROLE-BASED VISIBILITY
+   JS adds role-* class to <body> after auth resolves.
+   ================================================ */
+
+/* Hidden by default */
+.navbar__item--officer,
+.navbar__item--admin {
+  display: none;
+}
+
+/* Shown per role */
+body.role-officer .navbar__item--officer,
+body.role-admin   .navbar__item--officer,
+body.role-admin   .navbar__item--admin {
+  display: flex;
+}
+
+
+/* ---- Right actions cluster ---- */
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-shrink: 0;
+}
+
+/* ---- Role badge pill ---- */
+.navbar__role {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 16px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  border: 1.5px solid currentColor;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  transition: all var(--transition);
+}
+
+.navbar__role--resident {
+  color: var(--green-dark);
+  border-color: var(--green-dark);
+  background: transparent;
+}
+
+.navbar__role--officer {
+  color: var(--orange-hover);
+  border-color: var(--orange);
+  background: transparent;
+}
+
+.navbar__role--admin {
+  color: var(--red-dark);
+  border-color: var(--red-dark);
+  background: transparent;
+}
+
+/* ---- Bell button ---- */
+.navbar__bell {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-500);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.navbar__bell [data-lucide] {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.8;
+}
+
+.navbar__bell:hover {
+  background: var(--gray-100);
+  color: var(--text-dark);
+}
+
+/* Unread indicator dot — remove element when no notifications */
+.navbar__bell-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--orange);
+  border: 2px solid var(--navbar-bg);
+  pointer-events: none;
+}
+
+.navbar--transparent .navbar__bell            { color: var(--overlay-white-75); }
+.navbar--transparent .navbar__bell:hover      { background: var(--overlay-white-12); color: var(--white); }
+.navbar--transparent .navbar__bell-dot        { border-color: transparent; }
+
+/* ---- Avatar button ---- */
+.navbar__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2.5px solid var(--orange);
+  background: var(--orange);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    border-color var(--transition),
+    transform    var(--transition),
+    box-shadow   var(--transition);
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.navbar__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.navbar__avatar:hover {
+  border-color: var(--orange-hover);
+  transform: scale(1.06);
+  box-shadow: 0 0 0 3px rgba(255,161,53,0.22);
+}
+
+/* ---- Mobile hamburger ---- */
+.navbar__hamburger {
+  display: none;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-700);
+  border: 1.5px solid var(--gray-200);
+  cursor: pointer;
+  background: none;
+  transition: background var(--transition);
+}
+
+.navbar__hamburger:hover { background: var(--gray-100); }
+
+.navbar__hamburger [data-lucide] {
+  width: 20px;
+  height: 20px;
+}
+
+/* ---- Mobile drawer ---- */
+.navbar__mobile-drawer {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--white);
+  border-bottom: 1px solid var(--navbar-border);
+  padding: var(--space-md) var(--space-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.navbar__mobile-drawer .navbar__link {
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+}
+
+.navbar__mobile-drawer .navbar__link:hover { background: var(--gray-50); }
+
+/* Open state toggled by JS */
+.navbar__mobile-drawer.is-open { display: flex; }
+
+/* Transparent variant overrides */
+.navbar--transparent .navbar__mobile-drawer { background: var(--green-dark); }
+
+.navbar--transparent .navbar__mobile-drawer .navbar__link {
+  color: var(--overlay-white-70);
+}
+
+.navbar--transparent .navbar__mobile-drawer .navbar__link:hover,
+.navbar--transparent .navbar__mobile-drawer .navbar__link.is-active {
+  color: var(--white);
+  background: var(--overlay-white-10);
+}
+
+/* ---- Logo filter for non-transparent state ---- */
+.navbar:not(.navbar--transparent) .navbar__logo-text {
+  color: var(--green-dark);
+  transition: color 0.25s ease;
+}
+
+.navbar:not(.navbar--transparent) .navbar__logo-img {
+  filter: brightness(0) saturate(100%) invert(21%) sepia(28%) saturate(800%) hue-rotate(100deg) brightness(85%);
+  transition: filter 0.25s ease;
+}
+
+/* ---- Responsive — tablet ---- */
+@media (max-width: 900px) {
+  .navbar__nav       { display: none; }
+  .navbar__hamburger { display: flex; order: 99; }
+  .navbar__role      { display: none; }
+  .navbar__bell      { display: flex; }
+  .navbar__avatar    { display: flex; }
+  .navbar__actions   { margin-left: auto; }
+}
+
+/* ---- Responsive — mobile ---- */
+@media (max-width: 520px) {
+  .navbar__inner      { padding: 0 var(--space-md); gap: var(--space-sm); }
+  .navbar__logo-text  { display: none; }
+}
+
+
+/* ================================================
+   SITE FOOTER
+   ================================================================
+   Structure:
+
+   <footer class="site-footer">
+     <div class="site-footer__inner">
+
+       <div class="site-footer__brand">
+         <div class="site-footer__brand-logo">
+           <img src="assets/images/logo.svg" alt="BarangayConnect" class="site-footer__logo-img" />
+           <span class="site-footer__logo-text">BarangayConnect</span>
+         </div>
+         <p class="site-footer__tagline">
+           Barangay Bancod, Indang, Cavite &copy; 2026
+         </p>
+       </div>
+
+       <nav class="site-footer__links" aria-label="Footer navigation">
+         <a href="#" class="site-footer__link">Privacy Policy</a>
+         <a href="#" class="site-footer__link">Terms of Use</a>
+         <a href="#" class="site-footer__link">Contact Us</a>
+         <a href="#" class="site-footer__link">Sitemap</a>
+       </nav>
+
+     </div>
+   </footer>
+   ================================================================ */
+
+/* ---- Wrapper ---- */
+.site-footer {
+  background: #4a4a4a;
+  color: var(--overlay-white-75);
+  padding: var(--space-xl) 0;
+  margin-top: auto;
+  margin-bottom: 0;
+}
+
+/* ---- Inner grid ---- */
+.site-footer__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+/* ---- Brand block ---- */
+.site-footer__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.site-footer__brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Logo auto-inverted to white */
+.site-footer__logo-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: 0.85;
+  filter: brightness(0) invert(1);
+}
+
+.site-footer__logo-text {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-base);
+  color: var(--white);
+  letter-spacing: -0.1px;
+}
+
+.site-footer__tagline {
+  font-size: var(--text-sm);
+  color: rgba(255,255,255,0.50);
+  font-family: var(--font-body);
+  font-weight: var(--fw-normal);
+  line-height: var(--lh-normal);
+}
+
+/* ---- Links row ---- */
+.site-footer__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.site-footer__link {
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-medium);
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  transition: color var(--transition);
+  white-space: nowrap;
+  font-family: var(--font-body);
+}
+
+.site-footer__link:hover { color: var(--white); }
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .site-footer__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-lg);
+  }
+
+  .site-footer__links { gap: var(--space-md); }
+}

@@ -1,0 +1,834 @@
+/* ================================================
+   buttons.css — BarangayConnect
+   All interactive clickable elements.
+   Import AFTER main.css. CSS custom properties
+   live in main.css — do NOT redeclare :root here.
+
+   WHAT IS IN HERE:
+     · Base button (.btn) with shared states
+     · Size modifiers (sm, lg, full, rounded)
+     · Solid variants (green, orange, red)
+     · Outline variants (outline, outline-hero, white, dashed, ghost)
+     · Filter pills and category/tab pills
+     · Icon-only buttons (edit, delete, close, call)
+     · Toggle switch component
+     · FAB (floating action button)
+     · Selector cards
+     · Dashboard action buttons
+     · Loading spinner state
+     · Widget (glass tile) buttons
+
+   WHAT IS NOT IN HERE:
+     · Non-interactive labels/pills   → components.css
+     · Modal / drawer layout          → frames.css
+     · Form inputs                    → main.css
+
+   REQUIRED IMPORTS:
+     <link rel="stylesheet" href="css/shared/main.css" />
+     <link rel="stylesheet" href="css/shared/buttons.css" />
+
+   QUICK REFERENCE:
+     Base             → .btn
+     Sizes            → .btn--sm / .btn--lg / .btn--full / .btn--rounded
+     Solid            → .btn--green / .btn--orange / .btn--red
+     Outline/Ghost    → .btn--outline / .btn--outline-hero / .btn--white
+                        .btn--ghost / .btn--dashed
+     Pills            → .btn--filter / .btn--category (+ .is-active)
+     Tab bar wrap     → .btn-tab-bar
+     Icon-only        → .btn--icon (+ .btn--icon-edit / .btn--icon-delete)
+     Close            → .btn--close (+ .btn--sm)
+     Call             → .btn--call-circle / .btn--call
+     Toggle           → .toggle-wrap > .toggle-input + .toggle-track > .toggle-thumb
+     FAB              → .btn--fab
+     Selector card    → .btn--selector
+     Dashboard        → .btn--action-orange / .btn--action-green / .btn--status-resolved
+     Loading          → .is-loading + .btn__spinner
+     Widget tile      → .btn--widget
+================================================ */
+
+
+/* ================================================
+   1. BASE
+   All buttons extend from .btn. Layer modifiers
+   on top — never use a modifier without the base.
+
+   Usage:
+     class="btn btn--green"
+     class="btn btn--orange btn--sm"
+     class="btn btn--outline btn--full"
+     class="btn btn--orange is-loading"
+================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base);
+  line-height: var(--lh-none);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background     var(--transition),
+    color          var(--transition),
+    border-color   var(--transition),
+    box-shadow     var(--transition),
+    transform      var(--transition),
+    opacity        var(--transition);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* pointer-events: all is intentional — shows not-allowed cursor on hover */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.45;
+  pointer-events: all;
+}
+
+.btn [data-lucide],
+.btn svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  stroke-width: 2.2;
+}
+
+
+/* ================================================
+   2. SIZE MODIFIERS
+================================================ */
+
+.btn--sm {
+  padding: 8px 16px;
+  font-size: var(--text-sm);
+  gap: 6px;
+}
+
+.btn--sm [data-lucide],
+.btn--sm svg {
+  width: 14px;
+  height: 14px;
+}
+
+.btn--lg {
+  padding: 16px 32px;
+  font-size: var(--text-lg);
+  gap: 10px;
+}
+
+.btn--lg [data-lucide],
+.btn--lg svg {
+  width: 20px;
+  height: 20px;
+}
+
+.btn--full    { width: 100%; }
+.btn--rounded { border-radius: var(--radius-md); }
+
+
+/* ================================================
+   3. SOLID VARIANTS
+================================================ */
+
+/* Green — register, confirm, official actions */
+.btn--green {
+  background: var(--green-dark);
+  color: var(--white);
+  box-shadow: 0 2px 8px rgba(27,75,39,0.20);
+}
+
+.btn--green:hover:not(:disabled) {
+  background: var(--green-hover);
+  box-shadow: 0 4px 16px rgba(27,75,39,0.28);
+}
+
+.btn--green:active:not(:disabled) {
+  background: var(--green-active);
+}
+
+/* Orange — submit, RSVP, primary CTAs */
+.btn--orange {
+  background: var(--orange);
+  color: var(--black);
+  box-shadow: 0 2px 8px rgba(255,161,53,0.28);
+}
+
+.btn--orange:hover:not(:disabled) {
+  background: var(--orange-hover);
+  box-shadow: 0 4px 16px var(--alpha-orange-35);
+}
+
+.btn--orange:active:not(:disabled) {
+  background: var(--orange-active);
+  color: var(--black);
+}
+
+/* Red — destructive or urgent actions */
+.btn--red {
+  background: var(--red);
+  color: var(--white);
+  box-shadow: 0 2px 8px rgba(220,38,38,0.22);
+}
+
+.btn--red:hover:not(:disabled) {
+  background: var(--red-hover);
+  box-shadow: 0 4px 16px rgba(220,38,38,0.30);
+}
+
+
+/* ================================================
+   4. LOCATION REPORTED STATE  (.btn--located)
+   Non-interactive — indicates the action has been
+   completed. Always rendered as disabled.
+
+   Usage:
+     <button class="btn btn--located" disabled>
+       <i data-lucide="map-pin"></i> Location Reported
+     </button>
+================================================ */
+
+.btn--located {
+  background: var(--muted-bg);
+  color: var(--muted-text);
+  opacity: 1 !important;
+  pointer-events: none;
+  cursor: default;
+  box-shadow: none;
+}
+
+.btn--located [data-lucide],
+.btn--located svg {
+  color: var(--muted-icon);
+}
+
+
+/* ================================================
+   5. OUTLINE VARIANTS
+================================================ */
+
+/* Light bg — back, cancel */
+.btn--outline {
+  background: transparent;
+  color: var(--black);
+  border: 1.5px solid rgba(44,40,40,0.22);
+}
+
+.btn--outline:hover:not(:disabled) {
+  background: var(--alpha-ink-06);
+  border-color: rgba(44,40,40,0.40);
+}
+
+/* Dark hero bg — e.g. "Get Started →" */
+.btn--outline-hero {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid var(--overlay-white-70);
+}
+
+.btn--outline-hero:hover:not(:disabled) {
+  background: var(--white);
+  color: var(--black);
+  box-shadow: 0 2px 8px var(--overlay-black-10);
+}
+
+/* White solid — for use on dark backgrounds */
+.btn--white {
+  background: var(--white);
+  color: var(--black);
+  box-shadow: 0 2px 8px var(--overlay-black-10);
+}
+
+.btn--white:hover:not(:disabled) {
+  background: #f0f0f0;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+
+/* Dashed — invite / add actions */
+.btn--dashed {
+  background: transparent;
+  color: var(--green-dark);
+  border: 1.5px dashed rgba(27,75,39,0.45);
+  font-weight: var(--fw-semibold);
+}
+
+.btn--dashed:hover:not(:disabled) {
+  background: var(--alpha-green-06);
+  border-color: var(--green-dark);
+}
+
+/* Ghost — subtle secondary action */
+.btn--ghost {
+  background: transparent;
+  color: var(--black);
+  border: 1.5px solid rgba(44,40,40,0.15);
+  font-weight: var(--fw-semibold);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: var(--alpha-ink-05);
+}
+
+
+/* ================================================
+   6. FILTER PILLS  (.btn--filter)
+   Gray → green on active. For light backgrounds.
+================================================ */
+
+.btn--filter {
+  background: var(--alpha-ink-07);
+  color: rgba(44,40,40,0.60);
+  border: 1.5px solid transparent;
+  padding: 9px 18px;
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-semibold);
+  border-radius: var(--radius-full);
+  transition: all var(--transition);
+}
+
+.btn--filter:hover {
+  background: var(--alpha-green-10);
+  color: var(--green-dark);
+}
+
+.btn--filter.is-active {
+  background: var(--green-dark);
+  color: var(--white);
+}
+
+
+/* ================================================
+   7. CATEGORY / TAB PILLS  (.btn--category)
+   For dark-background tab strips (hero sections,
+   dashboards, community tabs). Active state accepts
+   .is-active, .is-selected, or [aria-pressed="true"].
+
+   Usage:
+     <div class="btn-tab-bar">
+       <button class="btn btn--category is-active">
+         <i data-lucide="flag"></i> Report a Concern
+       </button>
+       <button class="btn btn--category">
+         <i data-lucide="file-text"></i> Document Requests
+       </button>
+     </div>
+================================================ */
+
+.btn-tab-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn--category {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  background: var(--overlay-white-10);
+  color: rgba(255,255,255,0.68);
+  border: 1.5px solid rgba(255,255,255,0.14);
+  border-radius: var(--radius-full);
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-semibold);
+  transition: all var(--transition);
+}
+
+.btn--category [data-lucide],
+.btn--category svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.2;
+}
+
+.btn--category:hover:not(:disabled) {
+  background: var(--overlay-white-18);
+  color: var(--white);
+  border-color: var(--overlay-white-28);
+}
+
+.btn--category.is-active,
+.btn--category.is-selected,
+.btn--category[aria-pressed="true"] {
+  background: var(--orange);
+  color: var(--black);
+  border-color: transparent;
+  box-shadow: 0 3px 12px rgba(255,161,53,0.38);
+}
+
+
+/* ================================================
+   8. ICON-ONLY BUTTONS  (.btn--icon)
+================================================ */
+
+.btn--icon {
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.btn--icon [data-lucide],
+.btn--icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn--icon.btn--sm {
+  width: 32px;
+  height: 32px;
+}
+
+.btn--icon.btn--sm [data-lucide],
+.btn--icon.btn--sm svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* Edit — neutral bordered */
+.btn--icon-edit {
+  background: var(--white);
+  color: var(--black);
+  border: 1.5px solid rgba(44,40,40,0.15);
+}
+
+.btn--icon-edit:hover:not(:disabled) {
+  border-color: rgba(44,40,40,0.35);
+  background: #f5f5f5;
+}
+
+/* Delete — red tinted */
+.btn--icon-delete {
+  background: var(--alpha-red-08);
+  color: var(--red);
+  border: 1.5px solid rgba(220,38,38,0.15);
+}
+
+.btn--icon-delete:hover:not(:disabled) {
+  background: var(--alpha-red-16);
+  border-color: rgba(220,38,38,0.35);
+}
+
+
+/* ================================================
+   9. CALL BUTTONS
+================================================ */
+
+/* Circle icon — pet board, directory cards */
+.btn--call-circle {
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--black);
+  box-shadow: 0 3px 10px var(--alpha-orange-35);
+  flex-shrink: 0;
+  border: none;
+}
+
+.btn--call-circle [data-lucide],
+.btn--call-circle svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.2;
+}
+
+.btn--call-circle:hover:not(:disabled) {
+  background: var(--orange-hover);
+  box-shadow: 0 4px 14px rgba(255,161,53,0.45);
+  transform: scale(1.06);
+}
+
+/* Pill with label */
+.btn--call {
+  background: var(--orange);
+  color: var(--black);
+  box-shadow: 0 2px 8px rgba(255,161,53,0.25);
+  border-radius: var(--radius-full);
+}
+
+.btn--call:hover:not(:disabled) {
+  background: var(--orange-hover);
+}
+
+
+/* ================================================
+   10. CLOSE / DISMISS BUTTON  (.btn--close)
+
+   Usage:
+     <button class="btn btn--close" aria-label="Close">
+       <i data-lucide="x"></i>
+     </button>
+================================================ */
+
+.btn--close {
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--red-dark);
+  color: var(--white);
+  flex-shrink: 0;
+  border: none;
+}
+
+.btn--close [data-lucide],
+.btn--close svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.5;
+}
+
+.btn--close:hover:not(:disabled) {
+  background: var(--red-dark-hover);
+  transform: scale(1.06);
+}
+
+.btn--close:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.btn--close.btn--sm {
+  width: 28px;
+  height: 28px;
+}
+
+.btn--close.btn--sm [data-lucide],
+.btn--close.btn--sm svg {
+  width: 13px;
+  height: 13px;
+}
+
+
+/* ================================================
+   11. TOGGLE SWITCH
+
+   Usage:
+     <label class="toggle-wrap">
+       <input type="checkbox" class="toggle-input" />
+       <span class="toggle-track">
+         <span class="toggle-thumb"></span>
+       </span>
+       <span class="toggle-label">Active</span>
+     </label>
+================================================ */
+
+.toggle-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Visually hidden — keyboard/screen-reader accessible */
+.toggle-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toggle-track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 48px;
+  height: 27px;
+  border-radius: var(--radius-full);
+  background: var(--alpha-ink-20);
+  flex-shrink: 0;
+  transition: background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.toggle-thumb {
+  position: absolute;
+  left: 3px;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.20);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+/* Checked — default green */
+.toggle-input:checked + .toggle-track {
+  background: var(--green-dark);
+  box-shadow: 0 0 0 3px var(--alpha-green-12);
+}
+
+.toggle-input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(21px);
+  box-shadow: 0 2px 6px rgba(27,75,39,0.25);
+}
+
+.toggle-input:focus-visible + .toggle-track {
+  outline: 2px solid var(--green-dark);
+  outline-offset: 2px;
+}
+
+.toggle-wrap:has(.toggle-input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.toggle-label {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--fw-semibold);
+  color: var(--gray-700);
+}
+
+/* Orange variant */
+.toggle-input:checked + .toggle-track--orange {
+  background: var(--orange);
+  box-shadow: 0 0 0 3px var(--alpha-orange-15);
+}
+
+.toggle-input:checked + .toggle-track--orange .toggle-thumb {
+  box-shadow: 0 2px 6px rgba(255,161,53,0.30);
+}
+
+/* Dark/red variant */
+.toggle-track--dark {
+  background: var(--overlay-black-25);
+}
+
+.toggle-input:checked + .toggle-track--dark {
+  background: var(--red-dark);
+  box-shadow: 0 0 0 3px var(--alpha-red-dark-12);
+}
+
+
+/* ================================================
+   12. FAB  (Floating Action Button)
+   Fixed bottom-right. Always on top (z-index: 200).
+================================================ */
+
+.btn--fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--black);
+  box-shadow: 0 6px 20px rgba(255,161,53,0.40);
+  z-index: 200;
+  padding: 0;
+  border: none;
+}
+
+.btn--fab [data-lucide],
+.btn--fab svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.5;
+}
+
+.btn--fab:hover {
+  background: var(--orange-hover);
+  box-shadow: 0 8px 28px rgba(255,161,53,0.50);
+  transform: scale(1.06);
+}
+
+.btn--fab:active {
+  transform: scale(0.96);
+}
+
+
+/* ================================================
+   13. SELECTOR CARDS  (.btn--selector)
+   Multi-step form choice tiles. Icon on top,
+   label below. Active state via .is-selected or
+   [aria-pressed="true"].
+================================================ */
+
+.btn--selector {
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px 16px;
+  min-width: 120px;
+  background: var(--white);
+  color: var(--black);
+  border: 1.5px solid rgba(44,40,40,0.15);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  font-weight: var(--fw-semibold);
+  box-shadow: 0 1px 4px var(--overlay-black-06);
+}
+
+.btn--selector [data-lucide],
+.btn--selector svg {
+  width: 28px;
+  height: 28px;
+  color: var(--green-dark);
+}
+
+.btn--selector:hover {
+  border-color: var(--green-dark);
+  background: var(--alpha-green-04);
+}
+
+.btn--selector.is-selected,
+.btn--selector[aria-pressed="true"] {
+  background: var(--green-dark);
+  color: var(--white);
+  border-color: var(--green-dark);
+  box-shadow: 0 4px 14px rgba(27,75,39,0.28);
+}
+
+.btn--selector.is-selected [data-lucide],
+.btn--selector.is-selected svg {
+  color: var(--white);
+}
+
+
+/* ================================================
+   14. DASHBOARD ACTION BUTTONS
+================================================ */
+
+.btn--action-orange {
+  background: var(--orange);
+  color: var(--black);
+  padding: 10px 20px;
+  font-size: var(--text-base-sm);
+}
+
+.btn--action-orange:hover:not(:disabled) {
+  background: var(--orange-hover);
+}
+
+.btn--action-green {
+  background: var(--green-dark);
+  color: var(--white);
+  padding: 10px 20px;
+  font-size: var(--text-base-sm);
+}
+
+.btn--action-green:hover:not(:disabled) {
+  background: var(--green-hover);
+}
+
+/* Resolved status indicator — non-destructive, read-like affordance */
+.btn--status-resolved {
+  background: transparent;
+  color: #166534;
+  border: none;
+  padding: 8px 12px;
+  font-size: var(--text-base-sm);
+  font-weight: var(--fw-bold);
+  gap: 6px;
+}
+
+.btn--status-resolved [data-lucide],
+.btn--status-resolved svg {
+  width: 16px;
+  height: 16px;
+  color: #10b981;
+}
+
+.btn--status-resolved:hover {
+  background: var(--alpha-success-10);
+}
+
+
+/* ================================================
+   15. LOADING SPINNER STATE  (.is-loading)
+   Add .is-loading to any .btn. Place .btn__spinner
+   inside the button element.
+================================================ */
+
+.btn.is-loading {
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.btn__spinner {
+  display: none;
+  width: 17px;
+  height: 17px;
+  border: 2.5px solid rgba(255,255,255,0.35);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: btn-spin 0.8s linear infinite;
+}
+
+.btn.is-loading .btn__spinner {
+  display: inline-block;
+}
+
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* ================================================
+   16. WIDGET BUTTONS  (.btn--widget)
+   Glass-style square tiles with icon above label.
+   Designed for dark or photo backgrounds.
+
+   Usage:
+     <button class="btn btn--widget">
+       <i data-lucide="file-text"></i>
+       <span>Docs</span>
+     </button>
+================================================ */
+
+.btn--widget {
+  flex-direction: column;
+  gap: 7px;
+  padding: 16px 18px;
+  min-width: 72px;
+  background: var(--overlay-white-12);
+  color: var(--white);
+  border: 1px solid var(--overlay-white-18);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.btn--widget [data-lucide],
+.btn--widget svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.8;
+}
+
+.btn--widget span {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+}
+
+.btn--widget:hover:not(:disabled) {
+  background: var(--overlay-white-22);
+  border-color: rgba(255,255,255,0.30);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--overlay-black-18);
+}
+
+.btn--widget:active:not(:disabled) {
+  transform: translateY(0);
+}

@@ -3,173 +3,640 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BarangayConnect – Sign In</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-
-  <!-- Lucide Icons (lightweight icon set) -->
+  <title>BarangayConnect</title>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-
-  <link rel="stylesheet" href="css/main.css" />
-  <link rel="stylesheet" href="css/auth.css" />
+  <link rel="stylesheet" href="/css/shared/main.css" />
+  <link rel="stylesheet" href="/css/shared/buttons.css" />
+  <link rel="stylesheet" href="/css/shared/components.css" />
+  <link rel="stylesheet" href="/css/features/landing/landing.css" />
 </head>
-<body class="login-page">
+<body class="landing-page">
 
-  <!-- ===================== -->
-  <!--   LEFT PANEL (Green)  -->
-  <!-- ===================== -->
-  <div class="auth-left">
 
-    <!-- Logo -->
-    <div class="auth-logo">
-      <img src="assets/images/logo.png"
-      alt="BarangayConnect"
-      class="auth-logo__img" />
+  <!-- ═══════════════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════════════════ -->
+  <header class="landing-nav" id="landingNav">
+    <div class="landing-nav__inner">
+      <a href="/index.html" class="landing-nav__logo">
+        <img src="/assets/images/logo.svg" alt="BarangayConnect" class="landing-nav__logo-img" />
+        <span class="landing-nav__logo-text">BarangayConnect</span>
+      </a>
+      <nav class="landing-nav__links" aria-label="Main navigation">
+        <a href="#features"     class="landing-nav__link">Features</a>
+        <a href="#how-it-works" class="landing-nav__link">How It Works</a>
+        <a href="#officials"    class="landing-nav__link">Get Involved</a>
+      </nav>
+      <div class="landing-nav__actions">
+        <a href="/login.html"    class="btn btn--outline-hero btn--sm">Log In</a>
+        <a href="/register.html" class="btn btn--orange btn--sm">Create Account</a>
+      </div>
     </div>
+  </header>
 
-    <!-- Decorative Circles (pure CSS, no images needed) -->
-    <div class="auth-left__circle auth-left__circle--top"></div>
-    <div class="auth-left__circle auth-left__circle--bottom"></div>
 
-    <!-- Sign In pill badge -->
-    <div class="auth-left__badge">
-      <i data-lucide="circle-dot"></i>
-      <span>Sign In</span>
-    </div>
+  <!-- ═══════════════════════════════════════════════════
+       HERO — full-bleed background image, text centered
+  ══════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <!-- Background photo layer -->
+    <div class="hero__bg-img" aria-hidden="true"></div>
 
-    <!-- Hero Text -->
-    <div class="auth-left__hero">
-      <h1 class="auth-left__heading">
-        Welcome back to<br />your community
+    <div class="hero__dot-bg"  aria-hidden="true"></div>
+    <div class="hero__blob hero__blob--left"  aria-hidden="true"></div>
+    <div class="hero__blob hero__blob--right" aria-hidden="true"></div>
+
+    <div class="hero__inner">
+      <div class="hero__badge">
+        <span class="hero__badge-dot"></span>
+        Now live in 50+ barangays across the Philippines
+      </div>
+
+      <h1 class="hero__heading">
+        Your<br />
+        Barangay,<br />
+        <span class="hero__heading-accent">Connected.</span>
       </h1>
-      <p class="auth-left__subtext">
-        Access services, report concerns, and stay connected with your
-        barangay — all in one place.
+
+      <p class="hero__sub">
+        Access barangay services, report concerns, stay informed
+        on events, and connect with your neighbors — all in one place.
       </p>
-    </div>
 
-    <!-- Stats Row -->
-    <div class="auth-left__stats">
-      <div class="stat-item">
-        <span class="stat-item__number" data-target="2418">0</span>
-        <span class="stat-item__label">Residents</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-item__number" data-suffix="%">98</span>
-        <span class="stat-item__label">Satisfaction</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-item__number" data-suffix="h">24</span>
-        <span class="stat-item__label">Response Time</span>
+      <div class="hero__ctas">
+        <a href="/register.html" class="btn btn--orange btn--lg">
+          Get Started <i data-lucide="arrow-right"></i>
+        </a>
+        <a href="/login.html" class="btn btn--outline-hero btn--lg">
+          Log In
+        </a>
       </div>
     </div>
+  </section>
 
-  </div><!-- /auth-left -->
+
+  <!-- ═══════════════════════════════════════════════════
+       CITIES STRIP — trimmed, one line
+  ══════════════════════════════════════════════════════ -->
+  <section class="cities-strip">
+    <p class="cities-strip__label">Serving communities across the Philippines</p>
+    <div class="cities-strip__row">
+      <span class="city-item"><span class="city-item__dot"></span>Manila</span>
+      <span class="city-item"><span class="city-item__dot"></span>Quezon City</span>
+      <span class="city-item"><span class="city-item__dot"></span>Davao City</span>
+      <span class="city-item"><span class="city-item__dot"></span>Cebu City</span>
+      <span class="city-item"><span class="city-item__dot"></span>Makati</span>
+      <span class="city-item"><span class="city-item__dot"></span>Taguig</span>
+      <span class="city-item"><span class="city-item__dot"></span>Cagayan de Oro</span>
+    </div>
+  </section>
 
 
-  <!-- ===================== -->
-  <!--  RIGHT PANEL (White)  -->
-  <!-- ===================== -->
-  <div class="auth-right">
+  <!-- ═══════════════════════════════════════════════════
+       WHAT WE OFFER — Interactive Bento
+  ══════════════════════════════════════════════════════ -->
+  <section class="what-we-offer" id="features">
+    <div class="what-we-offer__inner">
 
-    <div class="auth-form-wrapper">
-
-      <h2 class="auth-form__title">Sign in</h2>
-
-      <!-- Demo Notice Banner -->
-      <div class="auth-notice" role="alert">
-        <p>
-          This is a demo. Fields are pre-filled. Use the role switcher in
-          the profile dropdown after logging in to test Officer and Admin views.
+      <div class="what-we-offer__header">
+        <p class="what-we-offer__eyebrow">What We Offer</p>
+        <h2 class="what-we-offer__title">
+          Everything your<br />
+          barangay needs,<br />
+          <span class="what-we-offer__title-accent">digitized.</span>
+        </h2>
+        <p class="what-we-offer__sub">
+          Powerful modules built for Filipino communities — simple enough for lola,
+          powerful enough for barangay officials. Click any card to explore.
         </p>
       </div>
 
-      <!-- Login Form -->
-      <form class="auth-form" id="loginForm" novalidate>
+      <div class="bento-grid">
 
-        <!-- Email -->
-        <div class="form-group">
-          <label class="form-label" for="loginEmail">Email address</label>
-          <div class="form-input-wrap">
-            <input
-              class="form-input"
-              type="email"
-              id="loginEmail"
-              name="email"
-              placeholder="juan@barangay.ph"
-              autocomplete="email"
-              value="juan@barangay.ph"
-            />
+        <!-- Main display card -->
+        <div class="bento-card bento-card--main bento-card--dark" id="bentoMain">
+          <div class="bento-card__icon-tile">
+            <i data-lucide="file-text" id="bentoMainIcon"></i>
           </div>
-          <!-- Validation error (hidden by default) -->
-          <span class="form-error" id="emailError" aria-live="polite"></span>
-        </div>
-
-        <!-- Password -->
-        <div class="form-group">
-          <label class="form-label" for="loginPassword">Password</label>
-          <div class="form-input-wrap form-input-wrap--icon">
-            <input
-              class="form-input"
-              type="password"
-              id="loginPassword"
-              name="password"
-              placeholder="password123"
-              autocomplete="current-password"
-              value="password123"
-            />
-            <!-- Toggle password visibility -->
-            <button
-              type="button"
-              class="form-input__eye"
-              id="togglePassword"
-              aria-label="Toggle password visibility"
-            >
-              <i data-lucide="eye"></i>
-            </button>
+          <h3 class="bento-card__title" id="bentoMainTitle">Document Requests</h3>
+          <p class="bento-card__desc" id="bentoMainDesc">
+            Request barangay clearance, residency certificates, indigency letters,
+            and more — digitally, in minutes. No more 6 AM queues.
+          </p>
+          <div class="bento-doc-list" id="bentoMainList">
+            <div class="bento-doc-item">
+              <span class="bento-doc-item__name">Barangay Clearance</span>
+              <span class="bento-doc-status bento-doc-status--approved">Approved</span>
+            </div>
+            <div class="bento-doc-item">
+              <span class="bento-doc-item__name">Certificate of Residency</span>
+              <span class="bento-doc-status bento-doc-status--processing">Processing</span>
+            </div>
+            <div class="bento-doc-item">
+              <span class="bento-doc-item__name">Indigency Letter</span>
+              <span class="bento-doc-status bento-doc-status--ready">Ready</span>
+            </div>
           </div>
-          <span class="form-error" id="passwordError" aria-live="polite"></span>
         </div>
 
-        <!-- Forgot password link -->
-        <div class="form-forgot">
-          <a href="#" class="form-link">Forgot password?</a>
+        <!-- Side selector cards -->
+        <div class="bento-side">
+
+          <button class="bento-card bento-side-card bento-card--pink" data-feature="alerts">
+            <div class="bento-card__icon-sm bento-card__icon-sm--red">
+              <i data-lucide="shield-alert"></i>
+            </div>
+            <h3 class="bento-card__title bento-card__title--dark">Emergency Alerts</h3>
+            <p class="bento-card__desc bento-card__desc--dark">
+              Real-time typhoon, flood, and safety alerts from local government.
+            </p>
+          </button>
+
+          <button class="bento-card bento-side-card bento-card--amber" data-feature="concerns">
+            <div class="bento-card__icon-sm bento-card__icon-sm--orange">
+              <i data-lucide="flag"></i>
+            </div>
+            <h3 class="bento-card__title bento-card__title--dark">Report a Concern</h3>
+            <p class="bento-card__desc bento-card__desc--dark">
+              Submit complaints with photos and track every resolution update.
+            </p>
+          </button>
+
+          <button class="bento-card bento-side-card bento-card--cream" data-feature="announcements">
+            <div class="bento-card__icon-sm bento-card__icon-sm--amber">
+              <i data-lucide="megaphone"></i>
+            </div>
+            <h3 class="bento-card__title bento-card__title--dark">Announcements</h3>
+            <p class="bento-card__desc bento-card__desc--dark">
+              Urgent advisories, scholarships, and community news in one feed.
+            </p>
+          </button>
+
+          <button class="bento-card bento-side-card bento-card--mint" data-feature="calendar">
+            <div class="bento-card__icon-sm bento-card__icon-sm--green">
+              <i data-lucide="calendar"></i>
+            </div>
+            <h3 class="bento-card__title bento-card__title--dark">Community Calendar</h3>
+            <p class="bento-card__desc bento-card__desc--dark">
+              View upcoming events, health missions, and assemblies with RSVP.
+            </p>
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       FILIPINO MARQUEE
+  ══════════════════════════════════════════════════════ -->
+  <div class="ph-marquee" aria-hidden="true">
+    <div class="ph-marquee__track">
+      <span class="ph-marquee__item ph-marquee__item--white">SERBISYO SA LAHAT</span>
+      <span class="ph-marquee__sep">·</span>
+      <span class="ph-marquee__item ph-marquee__item--orange">KOMUNIDAD NATIN ITO</span>
+      <span class="ph-marquee__sep">·</span>
+      <span class="ph-marquee__item ph-marquee__item--white">SAMA-SAMA</span>
+      <span class="ph-marquee__sep">·</span>
+      <span class="ph-marquee__item ph-marquee__item--orange">PARA SA LAHAT</span>
+      <span class="ph-marquee__sep">·</span>
+      <span class="ph-marquee__item ph-marquee__item--white">SERBISYO SA LAHAT</span>
+      <span class="ph-marquee__sep">·</span>
+      <span class="ph-marquee__item ph-marquee__item--orange">KOMUNIDAD NATIN ITO</span>
+      <span class="ph-marquee__sep">·</span>
+      <span class="ph-marquee__item ph-marquee__item--white">SAMA-SAMA</span>
+      <span class="ph-marquee__sep">·</span>
+      <span class="ph-marquee__item ph-marquee__item--orange">PARA SA LAHAT</span>
+      <span class="ph-marquee__sep">·</span>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       HOW IT WORKS
+  ══════════════════════════════════════════════════════ -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="how-it-works__inner">
+
+      <div class="how-it-works__header">
+        <p class="how-it-works__eyebrow">For Residents</p>
+        <h2 class="how-it-works__title">
+          Up and running in<br />
+          <span class="how-it-works__title-accent">3 easy steps.</span>
+        </h2>
+      </div>
+
+      <div class="how-it-works__steps">
+
+        <div class="step-card">
+          <div class="step-card__top">
+            <div class="step-card__icon">
+              <i data-lucide="user-round-pen"></i>
+            </div>
+            <span class="step-card__number">01</span>
+          </div>
+          <h3 class="step-card__title">Create Your Account</h3>
+          <p class="step-card__desc">
+            Fill in your personal details — name, address, household information,
+            and a valid government ID. Your account is submitted for admin review
+            before access is granted.
+          </p>
         </div>
 
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn--primary btn--full" id="loginBtn">
-          <i data-lucide="log-in"></i>
-          <span>Sign In</span>
-          <!-- Loading spinner (hidden by default) -->
-          <span class="btn__spinner" id="loginSpinner" hidden>
-            <i data-lucide="loader-circle"></i>
-          </span>
-        </button>
+        <div class="step-card step-card--divided">
+          <div class="step-card__top">
+            <div class="step-card__icon">
+              <i data-lucide="map-pin"></i>
+            </div>
+            <span class="step-card__number">02</span>
+          </div>
+          <h3 class="step-card__title">Join Your Barangay</h3>
+          <p class="step-card__desc">
+            Select your barangay from the communities already registered on the platform.
+            Your barangay must be onboarded first — check with your local officials if
+            yours isn't listed yet.
+          </p>
+        </div>
 
-        <!-- General error (e.g. wrong credentials) -->
-        <p class="form-error form-error--center" id="loginError" aria-live="polite"></p>
+        <div class="step-card step-card--divided">
+          <div class="step-card__top">
+            <div class="step-card__icon">
+              <i data-lucide="globe"></i>
+            </div>
+            <span class="step-card__number">03</span>
+          </div>
+          <h3 class="step-card__title">Stay Connected</h3>
+          <p class="step-card__desc">
+            Access services, receive alerts, and engage with your community —
+            all in one place.
+          </p>
+          <a href="/register.html" class="how-it-works__cta">
+            Get Started <i data-lucide="chevron-right"></i>
+          </a>
+        </div>
 
-      </form><!-- /auth-form -->
-
-      <!-- Register link -->
-      <p class="auth-switch">
-        Don't have an account?
-        <a href="register.html" class="form-link form-link--bold">Register here</a>
-      </p>
-
-    </div><!-- /auth-form-wrapper -->
-
-  </div><!-- /auth-right -->
+      </div>
+    </div>
+  </section>
 
 
-  <!-- Lucide icon init -->
+  <!-- ═══════════════════════════════════════════════════
+       TESTIMONIALS
+  ══════════════════════════════════════════════════════ -->
+  <section class="testimonials">
+    <div class="testimonials__inner">
+
+      <div class="testimonials__header">
+        <p class="testimonials__eyebrow">What People Say</p>
+        <h2 class="testimonials__title">
+          Loved by residents<br />
+          <span class="testimonials__title-accent">across the Philippines.</span>
+        </h2>
+      </div>
+
+      <div class="testimonial-featured">
+        <div class="testimonial-featured__quote-mark">&ldquo;&ldquo;</div>
+        <p class="testimonial-featured__text">
+          Finally, I can request my barangay clearance without lining up at 6 AM.
+          BarangayConnect changed everything for our community.
+        </p>
+        <div class="testimonial-featured__footer">
+          <img src="https://i.pravatar.cc/48?img=47" alt="Maria Santos" class="testimonial-featured__avatar" />
+          <div class="testimonial-featured__author">
+            <span class="testimonial-featured__name">Maria Santos</span>
+            <span class="testimonial-featured__role">Resident · Brgy. Payatas, QC</span>
+          </div>
+          <div class="testimonial-featured__stars">★★★★★</div>
+        </div>
+      </div>
+
+      <div class="testimonials__grid">
+        <div class="testimonial-card">
+          <div class="testimonial-card__stars">★★★★★</div>
+          <p class="testimonial-card__text">
+            "BarangayConnect transformed how we communicate with residents.
+            Truly a game changer for local governance."
+          </p>
+          <div class="testimonial-card__footer">
+            <img src="https://i.pravatar.cc/40?img=12" alt="Capt. Rodel Cruz" class="testimonial-card__avatar" />
+            <div>
+              <span class="testimonial-card__name">Capt. Rodel Cruz</span>
+              <span class="testimonial-card__role">Barangay Captain · Brgy. Sta. Mesa</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-card__stars">★★★★★</div>
+          <p class="testimonial-card__text">
+            "The emergency alerts saved us during Typhoon season. I told all my
+            neighbors to sign up immediately."
+          </p>
+          <div class="testimonial-card__footer">
+            <img src="https://i.pravatar.cc/40?img=32" alt="Ana Reyes" class="testimonial-card__avatar" />
+            <div>
+              <span class="testimonial-card__name">Ana Reyes</span>
+              <span class="testimonial-card__role">Resident · Brgy. Commonwealth</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       PLATFORM STATS — animated counters
+  ══════════════════════════════════════════════════════ -->
+  <section class="platform-stats">
+    <div class="platform-stats__inner">
+      <p class="platform-stats__eyebrow">Platform Impact</p>
+      <div class="platform-stats__grid">
+        <div class="platform-stat">
+          <span class="platform-stat__number"
+                data-target="50" data-suffix="+"
+          >50+</span>
+          <span class="platform-stat__label">Barangays Onboarded</span>
+        </div>
+        <div class="platform-stat platform-stat--divided">
+          <span class="platform-stat__number"
+                data-target="125000" data-suffix="+"
+          >125,000+</span>
+          <span class="platform-stat__label">Registered Residents</span>
+        </div>
+        <div class="platform-stat platform-stat--divided">
+          <span class="platform-stat__number"
+                data-target="98" data-suffix="%"
+          >98%</span>
+          <span class="platform-stat__label">Satisfaction Rate</span>
+        </div>
+        <div class="platform-stat platform-stat--divided">
+          <span class="platform-stat__number"
+                data-target="24" data-suffix="/7"
+          >24/7</span>
+          <span class="platform-stat__label">Support Uptime</span>
+        </div>
+      </div>
+      <p class="platform-stats__note">Numbers updated in real-time across the platform</p>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       CTA BANNER
+  ══════════════════════════════════════════════════════ -->
+  <section class="cta-banner">
+    <div class="cta-banner__inner">
+      <div class="cta-banner__text">
+        <h2 class="cta-banner__title">Ready to get started?</h2>
+        <p class="cta-banner__sub">
+          Create your account and join your barangay's digital community.
+          Approval is handled directly by your barangay.
+        </p>
+      </div>
+      <div class="cta-banner__actions">
+        <a href="/register.html" class="btn btn--orange btn--lg">
+          <i data-lucide="user-plus"></i>
+          Create Account
+        </a>
+        <a href="/login.html" class="btn btn--outline-hero">
+          Already a member? Sign In
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       ROLE CARDS — Resident · Officer · Captain
+  ══════════════════════════════════════════════════════ -->
+  <section class="role-section" id="officials">
+    <div class="role-section__inner">
+
+      <div class="role-section__header">
+        <p class="role-section__eyebrow">Who Is This For?</p>
+        <h2 class="role-section__title">
+          Built for every role<br />
+          <span class="role-section__title-accent">in your barangay.</span>
+        </h2>
+        <p class="role-section__sub">
+          Whether you're a resident, a barangay officer, or the captain —
+          BarangayConnect has a place for you. Hover over a role to learn more.
+        </p>
+      </div>
+
+      <div class="role-cards">
+
+        <!-- Resident -->
+        <div class="role-card role-card--resident">
+          <div class="role-card__header">
+            <div class="role-card__icon-wrap">
+              <i data-lucide="user-round"></i>
+            </div>
+            <span class="role-card__label">Resident</span>
+          </div>
+          <h3 class="role-card__title">Your barangay,<br />in your pocket.</h3>
+          <p class="role-card__desc">
+            Stay informed, access services, and participate in your community —
+            all without lining up at the barangay hall.
+          </p>
+          <ul class="role-card__list">
+            <li><i data-lucide="check"></i> Request documents online</li>
+            <li><i data-lucide="check"></i> Report concerns with photo proof</li>
+            <li><i data-lucide="check"></i> Receive real-time emergency alerts</li>
+            <li><i data-lucide="check"></i> Join community events &amp; polls</li>
+            <li><i data-lucide="check"></i> Browse the local services directory</li>
+          </ul>
+          <a href="/register.html" class="btn btn--green btn--full role-card__btn">
+            Create an Account <i data-lucide="arrow-right"></i>
+          </a>
+          <p class="role-card__note">
+            <i data-lucide="info"></i>
+            Account approval is handled by your barangay at their own pace.
+          </p>
+        </div>
+
+        <!-- Officer -->
+        <div class="role-card role-card--officer">
+          <div class="role-card__header">
+            <div class="role-card__icon-wrap">
+              <i data-lucide="shield"></i>
+            </div>
+            <span class="role-card__label">Officer</span>
+          </div>
+          <h3 class="role-card__title">Serve your community<br />more effectively.</h3>
+          <p class="role-card__desc">
+            Officers get dedicated tools to manage concerns, post announcements,
+            and coordinate with fellow officials.
+          </p>
+          <ul class="role-card__list">
+            <li><i data-lucide="check"></i> Manage and respond to resident concerns</li>
+            <li><i data-lucide="check"></i> Post announcements &amp; advisories</li>
+            <li><i data-lucide="check"></i> Access an officer-level dashboard</li>
+            <li><i data-lucide="check"></i> View resident reports and updates</li>
+            <li><i data-lucide="check"></i> Coordinate with the barangay captain</li>
+          </ul>
+          <a href="/register.html" class="btn btn--green btn--full role-card__btn">
+            Register as an Officer <i data-lucide="arrow-right"></i>
+          </a>
+          <p class="role-card__note">
+            <i data-lucide="info"></i>
+            Officer accounts require authorization from your barangay captain before access is granted.
+          </p>
+        </div>
+
+        <!-- Captain / Admin -->
+        <div class="role-card role-card--captain">
+          <div class="role-card__header">
+            <div class="role-card__icon-wrap">
+              <i data-lucide="crown"></i>
+            </div>
+            <div class="role-card__label-group">
+              <span class="role-card__label">Captain</span>
+              <span class="role-card__label-sub">Admin</span>
+            </div>
+          </div>
+          <h3 class="role-card__title">Run your barangay<br />on one platform.</h3>
+          <p class="role-card__desc">
+            Captains can register their barangay and unlock the full suite of
+            management tools — from resident verification to community analytics.
+          </p>
+          <ul class="role-card__list">
+            <li><i data-lucide="check"></i> Register and onboard your barangay</li>
+            <li><i data-lucide="check"></i> Full admin dashboard for all features</li>
+            <li><i data-lucide="check"></i> Verify residents and approve accounts</li>
+            <li><i data-lucide="check"></i> Manage officers and their access levels</li>
+            <li><i data-lucide="check"></i> Monitor reports &amp; community analytics</li>
+          </ul>
+          <a href="/register.html" class="btn btn--green btn--full role-card__btn">
+            Apply for Your Barangay <i data-lucide="arrow-right"></i>
+          </a>
+          <p class="role-card__note">
+            <i data-lucide="info"></i>
+            Admin accounts require barangay registration and are reviewed before approval.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__brand">
+        <div class="site-footer__brand-logo">
+          <img src="/assets/images/logo.svg" alt="BarangayConnect" class="site-footer__logo-img" />
+          <span class="site-footer__logo-text">BarangayConnect</span>
+        </div>
+        <p class="site-footer__tagline">Barangay Bancod, Indang, Cavite &copy; 2026</p>
+      </div>
+      <nav class="site-footer__links" aria-label="Footer navigation">
+        <a href="/privacy.html"  class="site-footer__link">Privacy Policy</a>
+        <a href="/login.html"    class="site-footer__link">Sign In</a>
+        <a href="/register.html" class="site-footer__link">Register</a>
+      </nav>
+    </div>
+  </footer>
+
+
+  <script src="/js/shared/stat-counter.js"></script>
   <script>lucide.createIcons();</script>
+  <script>
+    /* ── Nav scroll ─────────────────────────────── */
+    const nav = document.getElementById('landingNav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('is-scrolled', window.scrollY > 60);
+    }, { passive: true });
 
-  <!-- JS files (load order matters) -->
-  <script src="js/firebase-config.js"></script>
-  <script src="js/auth.js"></script>
+    /* ── Bento interactive — instant, no flash ──── */
+    const defaultContent = {
+      icon: 'file-text',
+      title: 'Document Requests',
+      desc: 'Request barangay clearance, residency certificates, indigency letters, and more — digitally, in minutes. No more 6 AM queues.',
+      items: [
+        { name: 'Barangay Clearance',       status: 'Approved',   cls: 'approved'   },
+        { name: 'Certificate of Residency', status: 'Processing', cls: 'processing' },
+        { name: 'Indigency Letter',         status: 'Ready',      cls: 'ready'      }
+      ]
+    };
+
+    const features = {
+      alerts: {
+        icon: 'shield-alert',
+        title: 'Emergency Alerts',
+        desc: 'Real-time typhoon, flood, fire, and safety alerts broadcast instantly to every registered resident in your barangay.',
+        items: [
+          { name: 'Typhoon Signal No. 1',   status: 'Active',  cls: 'alert'      },
+          { name: 'Flash Flood Advisory',   status: 'Issued',  cls: 'processing' },
+          { name: 'Curfew – 10 PM Tonight', status: 'Notice',  cls: 'ready'      }
+        ]
+      },
+      concerns: {
+        icon: 'flag',
+        title: 'Report a Concern',
+        desc: 'Submit complaints about flooding, garbage, broken streetlights, and more. Attach photos and track every resolution update.',
+        items: [
+          { name: 'Flooded Road – Sitio 3', status: 'Under Review', cls: 'processing' },
+          { name: 'Broken Street Light',    status: 'Resolved',     cls: 'approved'   },
+          { name: 'Illegal Dumping Report', status: 'In Progress',  cls: 'processing' }
+        ]
+      },
+      announcements: {
+        icon: 'megaphone',
+        title: 'Announcements Board',
+        desc: 'Stay updated with urgent advisories, community news, scholarship opportunities, and government assistance programs.',
+        items: [
+          { name: 'Free Medical Mission',      status: 'This Sat', cls: 'ready'      },
+          { name: 'College Scholarship Grant', status: 'Open Now', cls: 'approved'   },
+          { name: 'Barangay Assembly',         status: 'Jun 15',   cls: 'processing' }
+        ]
+      },
+      calendar: {
+        icon: 'calendar',
+        title: 'Community Calendar',
+        desc: 'Never miss a barangay event. View upcoming activities, health missions, town halls, and assemblies — with RSVP built in.',
+        items: [
+          { name: 'Medical Mission',   status: 'Jun 12', cls: 'approved'   },
+          { name: 'Barangay Assembly', status: 'Jun 15', cls: 'processing' },
+          { name: 'Youth Sports Day',  status: 'Jun 22', cls: 'ready'      }
+        ]
+      }
+    };
+
+    function renderItems(items) {
+      return items.map(i => `
+        <div class="bento-doc-item">
+          <span class="bento-doc-item__name">${i.name}</span>
+          <span class="bento-doc-status bento-doc-status--${i.cls}">${i.status}</span>
+        </div>`).join('');
+    }
+
+    /* Instant update — no fade, no timeout */
+    function updateMainCard(data) {
+      document.getElementById('bentoMainIcon').setAttribute('data-lucide', data.icon);
+      document.getElementById('bentoMainTitle').textContent = data.title;
+      document.getElementById('bentoMainDesc').textContent  = data.desc;
+      document.getElementById('bentoMainList').innerHTML    = renderItems(data.items);
+      lucide.createIcons();
+    }
+
+    document.querySelectorAll('.bento-side-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const wasSelected = card.classList.contains('is-selected');
+        document.querySelectorAll('.bento-side-card').forEach(c => c.classList.remove('is-selected'));
+        if (!wasSelected) {
+          card.classList.add('is-selected');
+          updateMainCard(features[card.dataset.feature]);
+        } else {
+          updateMainCard(defaultContent);
+        }
+      });
+    });
+
+  </script>
+
 </body>
 </html>

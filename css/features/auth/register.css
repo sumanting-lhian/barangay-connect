@@ -1,0 +1,645 @@
+/* ================================================
+   register.css — BarangayConnect
+
+   TODO
+   ─────────
+   Fill in every TODO.
+
+   RULES
+   ─────
+   · No hardcoded colors — use variables from main.css
+   · No hardcoded spacing — use the spacing scale variables
+   · Don't rename any selector
+
+   VARIABLE CHEATSHEET  (all defined in main.css)
+   ────────────────────────────────────────────────
+   Colors:
+     --green-dark        the main dark green, left panel background
+     --green-mid         mid-tone green
+     --green-light       lighter green, good for hover states
+     --orange            the accent — highlights, CTAs
+     --off-white         warm off-white, right panel background
+     --white             pure white
+     --text-dark         near-black, used for headings
+     --gray-50 thru --gray-500
+     --overlay-white-04 thru --overlay-white-70
+
+   Spacing:
+     --space-xs  --space-sm  --space-md  --space-lg  --space-xl  --space-2xl
+
+   Type:
+     --font-display      heading font (Nunito)
+     --font-body         body font
+     --text-2xs thru --text-3xl
+     --fw-medium  --fw-semibold  --fw-bold  --fw-extrabold  --fw-black
+     --lh-none  --lh-tight  --lh-snug  --lh-relaxed  --lh-loose
+
+   Misc:
+     --radius-sm  --radius-md  --radius-lg  --radius-full
+     --shadow-sm  --shadow-md  --shadow-lg
+     --transition  --transition-slow
+
+================================================ */
+
+
+/* ================================================
+   1. PAGE LAYOUT
+================================================ */
+
+.register-page {
+  /*
+    Same as the login page — two panels side by side,
+    both as tall as the screen.
+    TODO
+  */
+}
+
+
+/* ================================================
+   2. LEFT PANEL
+================================================ */
+
+.reg-left {
+  /*
+    Same structure as the login left panel — dark green,
+    a little less than halfway across the screen, children
+    stacking vertically top to bottom.
+
+    Same blob situation too — absolutely positioned ::before
+    and ::after that bleed off the edges, so handle that.
+
+    TODO
+  */
+}
+
+/* ── Blob — top-right corner ─────────────────── */
+/*
+  Big soft circle peeking in from the top-right corner,
+  roughly half cut off. Size and color already set.
+  TODO: position it.
+*/
+.reg-left::before {
+  content: '';
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: var(--overlay-white-05);
+  pointer-events: none;
+}
+
+/* ── Blob — bottom-left corner ───────────────── */
+/*
+  Bigger circle, bottom-left corner, same bleed treatment.
+  TODO: position it.
+*/
+.reg-left::after {
+  content: '';
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  background: var(--overlay-white-04);
+  pointer-events: none;
+}
+
+/* ── Logo ─────────────────────────────────────── */
+/*
+  Icon + wordmark in a row. Top of the left panel.
+  Needs bottom margin before the hero section.
+  TODO
+*/
+.reg-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  z-index: 2;
+  text-decoration: none;
+}
+
+.reg-logo__img {
+  /* TODO: size */
+}
+
+.reg-logo__text {
+  /* TODO: font, weight, size, color, letter-spacing */
+}
+
+/* ── Badge pill ───────────────────────────────── */
+/*
+  Frosted pill label — "Join Your Community" with a map pin.
+  Only as wide as its content. Needs bottom margin before the heading.
+  TODO
+*/
+.reg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+}
+
+/* ── Hero section ─────────────────────────────── */
+/*
+  Wraps the badge, heading, subtext, feature list, and signups widget.
+  Should stretch to fill the vertical space left over after the logo.
+  Children stack vertically. Needs some top padding.
+  TODO
+*/
+.reg-hero {
+}
+
+.reg-hero__heading {
+  /* TODO: font, weight, size (clamp), color, line-height, letter-spacing, bottom margin */
+}
+
+.reg-hero__accent {
+  /* The second line of the heading renders in orange. TODO */
+}
+
+.reg-hero__sub {
+  /* TODO: max-width, font-size, color, line-height, bottom margin */
+}
+
+/* ── Feature list ─────────────────────────────── */
+/*
+  Four features stacked vertically — each is an icon + title + description in a row.
+  Consistent gap between each feature. Needs bottom margin before the signups widget.
+  TODO
+*/
+.reg-features {
+}
+
+.reg-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.reg-feature__icon {
+  /* TODO: size, background (semi-transparent white), rounded corners, centered icon, orange color, don't shrink */
+}
+
+.reg-feature__icon [data-lucide] {
+  /* TODO: size */
+}
+
+.reg-feature__title {
+  /* TODO: font, weight, size, color, bottom margin */
+}
+
+.reg-feature__sub {
+  /* TODO: font-size, color, line-height */
+}
+
+/* ── Live signups widget ──────────────────────── */
+/*
+  Frosted card at the bottom of the left panel.
+  Everything below this comment in this section is already written
+  and tied to the animation — don't change it.
+*/
+.reg-signups {
+  /* TODO: background (semi-transparent white), border, rounded corners, padding, z-index */
+}
+
+.reg-signups__header {
+  /* TODO: row layout, gap, font, size, weight, color, uppercase, letter-spacing, bottom margin */
+}
+
+/* Pulsing green dot — already written, don't touch */
+.reg-signups__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(74,222,128,0.22);
+  animation: location-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes location-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(74,222,128,0.22); }
+  50%       { box-shadow: 0 0 0 6px rgba(74,222,128,0.08); }
+}
+
+.reg-signup-item {
+  /* TODO: row layout, gap, padding top/bottom, border-bottom divider */
+}
+
+.reg-signup-item:last-of-type {
+  border-bottom: none;
+}
+
+.reg-signup-item__avatar {
+  /* TODO: size, circle, centered content, font, weight, size, color, don't shrink */
+}
+
+.reg-signup-item__name {
+  /* TODO: font, weight, size, color */
+}
+
+.reg-signup-item__sub {
+  /* TODO: font-size, color */
+}
+
+.reg-signup-item__check {
+  /* TODO: push it to the far right, green color */
+}
+
+.reg-signup-item__check [data-lucide] {
+  /* TODO: size */
+}
+
+.reg-signups__footer {
+  /* TODO: row layout, gap, top margin, top border, font, size, color */
+}
+
+.reg-signups__avatars {
+  /* TODO: stack avatars so they overlap slightly */
+}
+
+.reg-signups__ava {
+  /* TODO: small circle, overlapping border, background, font, size, weight, color, centered */
+}
+
+.reg-signups__ava:first-child {
+  margin-left: 0;
+}
+
+
+/* ================================================
+   3. RIGHT PANEL
+================================================ */
+
+.reg-right {
+  /*
+    The form side. Fills whatever space the left panel didn't take.
+    Off-white background. If the multi-step form gets long,
+    this panel scrolls on its own — not the whole page.
+    TODO
+  */
+}
+
+.reg-right__inner {
+  /*
+    Cap the width so the form stays readable.
+    Centered horizontally. Comfortable padding.
+    Children stack vertically.
+    TODO
+  */
+}
+
+/*
+  "Already have an account? Sign in" — small muted text with an orange link.
+  Pushed to the right end of the inner column.
+  Needs bottom margin before the heading below.
+  TODO
+*/
+.reg-signin {
+}
+
+.reg-signin a {
+  /* TODO: color (orange), weight */
+}
+
+/*
+  "Create your account" — big heading above the step indicator.
+  Left-aligned. Needs bottom margin.
+  TODO
+*/
+.reg-title {
+}
+
+
+/* ================================================
+   4. STEP INDICATOR
+   ──────────────────
+   Three numbered circles connected by horizontal lines.
+   JS toggles .active / .pending / .completed on each
+   .step-item and .active on each .step-connector.
+   The color rules below that are already written are tied
+   to those JS-toggled classes — don't change them.
+   Fill in only the TODOs.
+================================================ */
+
+.step-indicator {
+  /*
+    Circles and connectors in one horizontal row.
+    Should span the full width of the inner column.
+    Needs bottom margin before the first form card.
+    TODO
+  */
+}
+
+.step-item {
+  /*
+    Circle on top, label centered below it.
+    Needs a z-index so it sits above the connector line.
+    TODO
+  */
+}
+
+.step-item__circle {
+  /* TODO: size, circle shape, centered content, font, weight, size, transition */
+}
+
+/* DO NOT CHANGE — JS toggles these classes */
+.step-item.pending   .step-item__circle { background: var(--gray-200); color: var(--gray-400); }
+.step-item.active    .step-item__circle,
+.step-item.completed .step-item__circle { background: var(--green-dark); color: var(--white); }
+
+.step-item__label {
+  /* TODO: font, weight, size, white-space: nowrap */
+}
+
+/* DO NOT CHANGE — JS toggles these classes */
+.step-item.pending   .step-item__label { color: var(--gray-400); }
+.step-item.active    .step-item__label { color: var(--green-dark); font-weight: var(--fw-bold); }
+.step-item.completed .step-item__label { color: var(--green-dark); }
+
+/*
+  The horizontal line between circles.
+  Grows to fill the space between them.
+  Default is gray, turns green when JS adds .active.
+
+  Needs to be pulled up so it sits level with the circle
+  centers — not at the label level. Think about which
+  margin direction does that.
+  TODO
+*/
+.step-connector {
+  flex: 1;
+  height: 2px;
+  transition: background var(--transition-slow);
+}
+
+/* DO NOT CHANGE — JS toggles this class */
+.step-connector.active {
+  background: var(--green-dark);
+}
+
+
+/* ================================================
+   5. FORM CARDS + FORMS
+================================================ */
+
+/*
+  Each step lives inside a white card.
+  White background, subtle border, rounded corners, soft shadow.
+  Needs padding so the form inside doesn't hug the edges.
+  TODO
+*/
+.register-card {
+  width: 100%;
+}
+
+.register-card__section-title {
+  /* TODO: font, weight, size, color, bottom margin */
+}
+
+.register-form {
+  /* TODO: stack fields vertically, consistent gap */
+}
+
+/*
+  Row of action buttons at the bottom of each card.
+  Usually Back on the left, Continue on the right.
+  They should sit at opposite ends of the row, vertically aligned,
+  with some top margin above the row.
+  TODO
+*/
+.register-actions {
+}
+
+/*
+  Step 1 only has a Continue button — no Back.
+  That single button should be pushed to the right.
+  TODO
+*/
+.register-actions--end {
+}
+
+
+/* ================================================
+   6. FILE UPLOAD
+   ───────────────
+   Dashed-border drop zone for ID photos.
+   Everything below is already written — don't touch.
+================================================ */
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-2xl) var(--space-xl);
+  border: 2px dashed var(--gray-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.upload-area:hover {
+  border-color: var(--green-light);
+  background: #f0faf4;
+}
+
+.upload-area [data-lucide] {
+  width: 28px;
+  height: 28px;
+  color: var(--gray-400);
+}
+
+.upload-area__label {
+  font-size: var(--text-base);
+  font-weight: var(--fw-medium);
+  color: var(--gray-500);
+  text-align: center;
+}
+
+.upload-area__hint {
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+}
+
+.upload-area input[type="file"] {
+  display: none;
+}
+
+.upload-preview {
+  display: none;
+  max-width: 100%;
+  max-height: 160px;
+  border-radius: var(--radius-sm);
+  object-fit: contain;
+}
+
+
+/* ================================================
+   7. TOS BLOCK
+   ─────────────
+   Already written — don't touch.
+================================================ */
+
+.tos-block {
+  padding: var(--space-md);
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-100);
+}
+
+.tos-label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  line-height: var(--lh-relaxed);
+  cursor: pointer;
+}
+
+.tos-label input[type="checkbox"] {
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: var(--green-dark);
+}
+
+.tos-label a {
+  color: var(--green-dark);
+  font-weight: var(--fw-semibold);
+}
+
+.tos-label a:hover {
+  text-decoration: underline;
+}
+
+
+/* ================================================
+   8. SUCCESS SCREEN
+   ──────────────────
+   Hidden by default. JS adds .show after submission.
+   Already written — don't touch.
+================================================ */
+
+/* DO NOT CHANGE — JS adds .show to reveal this */
+.register-success {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  text-align: center;
+  padding: var(--space-2xl);
+  flex: 1;
+}
+
+/* DO NOT CHANGE — JS toggles this */
+.register-success.show {
+  display: flex;
+}
+
+.register-success__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2.5px solid var(--green-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green-dark);
+}
+
+.register-success__icon [data-lucide] {
+  width: 30px;
+  height: 30px;
+}
+
+.register-success__title {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-2xl);
+  color: var(--text-dark);
+}
+
+.register-success__sub {
+  max-width: 360px;
+  font-size: var(--text-base);
+  color: var(--gray-500);
+  line-height: var(--lh-loose);
+}
+
+
+/* ================================================
+   9. PAGE TRANSITION
+   ───────────────────
+   JS applies .page-transition to each step card when
+   swapping them in. Already written — don't touch.
+================================================ */
+
+/* DO NOT CHANGE — JS applies this class */
+.page-transition {
+  animation: fadeUp 0.4s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ================================================
+  10. RESPONSIVE
+   ──────────────
+   ≤ 900px — panels stack, features and signups hide
+   ≤ 520px — single column grids, buttons stack
+================================================ */
+
+@media (max-width: 900px) {
+  .register-page {
+    /* TODO: stack panels vertically */
+  }
+
+  .reg-left {
+    /* Now full width. Height fits content. Tighten padding. TODO */
+  }
+
+  .reg-features,
+  .reg-signups {
+    display: none;
+  }
+
+  .reg-right__inner {
+    /* TODO: reduce padding */
+  }
+
+  .reg-signin {
+    /* TODO: reduce bottom margin */
+  }
+}
+
+@media (max-width: 520px) {
+  .register-card {
+    /* TODO: reduce padding */
+  }
+
+  .step-item__label {
+    font-size: 0.65rem;
+  }
+
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .register-actions {
+    /*
+      Back and Continue can't sit side by side on a small screen.
+      Stack them vertically, reverse the order so Back ends up at the bottom.
+      TODO
+    */
+  }
+
+  .register-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

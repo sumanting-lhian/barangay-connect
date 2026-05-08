@@ -15,5 +15,83 @@
         "npm --prefix \"$RESOURCE_DIR\" run lint"
       ]
     }
-  ]
+  ],
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+      "source": "**/*.html",
+        "destination": "/public/index.html"
+      },
+      
+      {
+        "source": "/",
+        "destination": "/index.html"
+      },
+
+      {
+        "source": "/home",
+        "destination": "/pages/features/home.html"
+      },
+      {
+        "source": "/community",
+        "destination": "/pages/features/community.html"
+      },
+      {
+        "source": "/profile",
+        "destination": "/pages/features/profile.html"
+      },
+      {
+        "source": "/service",
+        "destination": "/pages/features/services.html"
+      },
+
+      {
+        "source": "/register",
+        "destination": "/register.html"
+      },
+      {
+        "source": "/admin",
+        "destination": "/admin.html"
+      },
+
+      {
+        "source": "/ui-library/button-library",
+        "destination": "/ui-library/button-library.html"
+      },
+      {
+        "source": "/ui-library/components-library",
+        "destination": "/ui-library/components-library.html"
+      },
+      {
+        "source": "/ui-library/frames-library",
+        "destination": "/ui-library/frames-library.html"
+      },
+      {
+        "source": "/ui-library/main-library",
+        "destination": "/ui-library/main-library.html"
+      },
+      {
+        "source": "/library/button-library",
+        "destination": "/ui-library/button-library.html"
+      },
+      {
+        "source": "/library/components-library",
+        "destination": "/ui-library/components-library.html"
+      },
+      {
+        "source": "/library/frames-library",
+        "destination": "/ui-library/frames-library.html"
+      },
+      {
+        "source": "/library/main-library",
+        "destination": "/ui-library/main-library.html"
+      }
+    ]
+  }
 }

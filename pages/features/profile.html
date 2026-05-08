@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Barangay · BarangayConnect</title>
+
+  <!--
+    ═══════════════════════════════════════════════
+    profile.html — BarangayConnect
+    Resident profile page. Displays the user's
+    digital ID, active reports, announcements,
+    document requests, and community stats.
+
+    CSS IMPORT ORDER — DO NOT CHANGE THIS ORDER
+    ═══════════════════════════════════════════════
+    main.css        → design tokens, reset, navbar, footer, form inputs
+    buttons.css     → all clickable elements (.btn and variants)
+    components.css  → badges, tags, banners, stat components
+    frames.css      → post cards, modals, calendar, pet cards, drawers
+    id-card.css     → flip-card scene, face layouts, role themes,
+                      .id-card-modal-overlay (fullscreen preview)
+    profile.css     → THIS PAGE ONLY — hero layout, two-column main,
+                      report items, document rows
+  -->
+  <link rel="stylesheet" href="../../css/shared/main.css" />
+  <link rel="stylesheet" href="../../css/shared/buttons.css" />
+  <link rel="stylesheet" href="../../css/shared/components.css" />
+  <link rel="stylesheet" href="../../css/shared/frames.css" />
+  <link rel="stylesheet" href="../../css/features/profile/id-card.css" />
+  <link rel="stylesheet" href="../../css/features/profile/profile.css" />
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script type="module" src="../../js/features/profile/alerts.js"></script>
+
+  <!--
+    ─────────────────────────────────────────────
+    PAGE-SPECIFIC OVERRIDES
+    Move into profile.css once stable.
+    ─────────────────────────────────────────────
+  -->
+  <style>
+
+    /* ── Unified hero glass widget (replaces split .alert-widget) ── */
+    .hero-glass-widget {
+      background: var(--alpha-glass-green);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--overlay-white-10);
+      border-radius: var(--radius-xl);
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: var(--white);
+      min-width: 220px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    /* Decorative blob */
+    .hero-glass-widget::before {
+      content: '';
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: var(--overlay-white-05);
+      right: -40px;
+      top: -50px;
+      pointer-events: none;
+    }
+
+    .hero-glass-widget__location {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-display);
+      font-size: var(--text-2xs);
+      font-weight: var(--fw-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--overlay-white-55);
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-glass-widget__location [data-lucide],
+    .hero-glass-widget__location svg {
+      width: 11px;
+      height: 11px;
+      color: var(--orange);
+      flex-shrink: 0;
+    }
+
+    .hero-glass-widget__body {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-glass-widget__clock {
+      font-family: var(--font-display);
+      font-size: var(--text-4xl);
+      font-weight: var(--fw-black);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-glass-widget__divider {
+      width: 1px;
+      height: 40px;
+      background: var(--overlay-white-10);
+      flex-shrink: 0;
+    }
+
+    .hero-glass-widget__weather-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .hero-glass-widget__temp {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: var(--fw-black);
+      line-height: 1;
+      color: var(--orange);
+    }
+
+    .hero-glass-widget__desc {
+      font-size: var(--text-xs);
+      color: var(--overlay-white-55);
+      font-weight: var(--fw-medium);
+    }
+
+    .hero-glass-widget__date {
+      font-size: var(--text-sm);
+      color: rgba(255, 255, 255, 0.40);
+      font-family: var(--font-body);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── ID card modal — z-index + enlarged card ── */
+    .id-card-modal-overlay {
+      z-index: 9999;
+      isolation: isolate;
+    }
+
+    .id-card-modal-card {
+      max-width: 1000px;
+    }
+
+    #idCardModalContainer {
+      width: 100%;
+    }
+
+    #idCardModalContainer .id-card-scene {
+      zoom: 2.00;
+      width: 100%;
+    }
+
+  </style>
+</head>
+
+<!--
+  ─────────────────────────────────────────────
+  ROLE CLASS on <body> controls which navbar
+  items are visible. JS sets this after auth.
+  Values: role-resident | role-officer | role-admin
+  Default for this page: role-guest
+  ─────────────────────────────────────────────
+-->
+<body class="role-guest" data-role-init="pending">
+  <script>!function(){var r=localStorage.getItem('bc_role');if(r){document.body.className='role-'+r;document.body.removeAttribute('data-role-init');}}();</script>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       NAVBAR
+       ───────────────────────────────────────────────────────────────
+       Shared navbar across all pages.
+       .navbar--transparent: transparent bg with white text, layered
+       over the hero image. JS removes this class on scroll > 60px.
+       Full class reference in main.css.
+  ══════════════════════════════════════════════════════════════════ -->
+  <nav class="navbar navbar--transparent" id="mainNavbar">
+    <div class="navbar__inner">
+
+      <!-- Logo -->
+      <a href="home.html" class="navbar__logo">
+        <img src="../../assets/images/logo.svg" alt="BarangayConnect logo" class="navbar__logo-img" />
+        <span class="navbar__logo-text">BarangayConnect</span>
+      </a>
+
+      <!--
+        Desktop nav links.
+        Active page gets .is-active. Role-gated items use
+        .navbar__item--officer or .navbar__item--admin and
+        auto-show/hide based on the <body> role class.
+      -->
+      <ul class="navbar__nav" style="list-style: none;">
+        <li><a href="home.html"      class="navbar__link">Home</a></li>
+        <li><a href="community.html" class="navbar__link">Community</a></li>
+        <li><a href="services.html"  class="navbar__link">Services</a></li>
+        <li><a href="profile.html"   class="navbar__link is-active">My Barangay</a></li>
+        <li class="navbar__item--officer">
+          <a class="navbar__link navbar__link--officer">Officer Panel</a>
+        </li>
+        <li class="navbar__item--admin">
+          <a href="../../admin.html" class="navbar__link navbar__link--admin">Admin Panel</a>
+        </li>
+      </ul>
+
+      <!-- Right-side actions -->
+      <div class="navbar__actions">
+
+        <!--
+          Role pill — modifier reflects logged-in user role:
+            .navbar__role--resident (green outline)
+            .navbar__role--officer  (orange outline)
+            .navbar__role--admin    (red outline)
+        -->
+        <span class="navbar__role navbar__role--resident" id="navRole">Resident</span>
+
+        <!-- Bell — remove .navbar__bell-dot when no notifications -->
+        <button class="navbar__bell" aria-label="Notifications" id="bellBtn">
+          <i data-lucide="bell"></i>
+          <span class="navbar__bell-dot" id="bellDot"></span>
+        </button>
+
+        <!-- Avatar — replace icon with <img> when user has a photo -->
+        <button class="navbar__avatar" aria-label="Open profile" id="avatarBtn">
+          <i data-lucide="user"></i>
+        </button>
+
+        <!-- Mobile hamburger (auto-shows on small screens via CSS) -->
+        <button class="navbar__hamburger" aria-label="Open menu" id="hamburgerBtn">
+          <i data-lucide="menu"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile drawer (toggled by JS adding .is-open) -->
+    <div class="navbar__mobile-drawer" id="mobileDrawer">
+      <a href="home.html"      class="navbar__link">Home</a>
+      <a href="community.html" class="navbar__link">Community</a>
+      <a href="services.html"  class="navbar__link">Services</a>
+      <a href="profile.html"   class="navbar__link is-active">My Barangay</a>
+    </div>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 1 — PROFILE HERO
+       ───────────────────────────────────────────────────────────────
+       Full-width dark hero with user greeting and a glass widget.
+
+       Layout:
+         Left  → date label, time-based greeting, barangay location
+         Right → glass card with live clock, weather, and date
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="profile-hero" id="profileHero">
+    <div class="profile-hero__inner">
+
+      <!-- Left — greeting block -->
+      <div class="profile-hero__greeting">
+        <p class="profile-hero__date" id="heroDate"></p>
+        <h1 class="profile-hero__headline">
+          <span id="heroGreet">Good Morning, </span><span class="profile-hero__name" id="heroName">…</span>
+        </h1>
+        <p class="profile-hero__sub">
+          <i data-lucide="map-pin"></i>
+          <span id="heroBarangay">Loading…</span>
+          &nbsp;·&nbsp; Resident since <span id="heroSince">—</span>
+        </p>
+      </div>
+
+      <!-- Right — unified glass card: live clock + weather -->
+      <div class="hero-glass-widget">
+        <span class="hero-glass-widget__location">
+          <i data-lucide="map-pin"></i>
+          <span id="widgetLocation">Loading…</span>
+        </span>
+        <div class="hero-glass-widget__body">
+          <div class="hero-glass-widget__clock-block">
+            <span class="hero-glass-widget__clock" id="widgetClock">--:--</span>
+          </div>
+          <div class="hero-glass-widget__divider"></div>
+          <div class="hero-glass-widget__weather-block">
+            <span class="hero-glass-widget__temp" id="weatherTemp">—°</span>
+            <span class="hero-glass-widget__desc" id="weatherDesc">Weather</span>
+          </div>
+        </div>
+        <span class="hero-glass-widget__date" id="widgetDate">Loading…</span>
+      </div>
+
+    </div>
+  </section><!-- /profile-hero -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 2 — STAT CARDS
+       ───────────────────────────────────────────────────────────────
+       Horizontal row of three summary stat cards below the hero.
+       Each card shows a count, label, and supporting sub-text.
+
+       .stat-card--orange → Active Reports
+       .stat-card--green  → Upcoming Events
+       .stat-card--red    → New Announcements
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="profile-stats">
+    <div class="profile-stats__inner">
+
+      <div class="stat-card stat-card--orange">
+        <div class="stat-card__body">
+          <div class="stat-card__value" id="statReports">—</div>
+          <div class="stat-card__label">Active Reports</div>
+          <p class="profile-stat-sub" id="statReportsSub">Loading…</p>
+        </div>
+        <div class="stat-card__icon"><i data-lucide="flag"></i></div>
+      </div>
+
+      <div class="stat-card stat-card--green">
+        <div class="stat-card__body">
+          <div class="stat-card__value" id="statEvents">—</div>
+          <div class="stat-card__label">Upcoming Events</div>
+          <p class="profile-stat-sub" id="statEventsSub">—</p>
+        </div>
+        <div class="stat-card__icon"><i data-lucide="calendar"></i></div>
+      </div>
+
+      <div class="stat-card stat-card--red">
+        <div class="stat-card__body">
+          <div class="stat-card__value" id="statAnnouncements">—</div>
+          <div class="stat-card__label">New Announcements</div>
+          <p class="profile-stat-sub" id="statAnnouncementsSub">Loading…</p>
+        </div>
+        <div class="stat-card__icon"><i data-lucide="megaphone"></i></div>
+      </div>
+
+    </div>
+  </section><!-- /profile-stats -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 3 — MAIN CONTENT
+       ───────────────────────────────────────────────────────────────
+       Two-column layout:
+         Left  → Active Reports, Announcements
+         Right → Digital Resident ID, My Documents
+
+       .profile-col--left  → scrollable content feed
+       .profile-col--right → ID card + document request list
+  ══════════════════════════════════════════════════════════════════ -->
+  <main class="profile-main">
+    <div class="profile-main__inner">
+
+      <!-- ── LEFT COLUMN ────────────────────────────────────────── -->
+      <div class="profile-col profile-col--left">
+
+        <!-- Active Reports -->
+        <section class="profile-section" id="sectionReports">
+          <h2 class="profile-section__title">
+            <i data-lucide="flag"></i> Active Reports
+          </h2>
+          <div id="reportsList"></div>
+          <div class="profile-empty" id="reportsEmpty" hidden>
+            <div class="icon-badge icon-badge--gray icon-badge--lg">
+              <i data-lucide="flag-off"></i>
+            </div>
+            <p>No active reports right now.</p>
+            <a href="services.html" class="btn btn--green btn--sm">
+              <i data-lucide="plus"></i> Submit a Report
+            </a>
+          </div>
+        </section>
+
+        <!-- Announcements -->
+        <section class="profile-section" id="sectionAnnouncements">
+          <h2 class="profile-section__title">
+            <i data-lucide="bell"></i> Announcements
+          </h2>
+          <div class="profile-announcements-wrap" id="announcementList"></div>
+          <a href="community.html" class="btn btn--ghost btn--sm profile-section__see-all">
+            See all announcements <i data-lucide="arrow-right"></i>
+          </a>
+        </section>
+
+      </div><!-- /profile-col--left -->
+
+
+      <!-- ── RIGHT COLUMN ──────────────────────────────────────── -->
+      <div class="profile-col profile-col--right">
+
+        <!--
+          Digital Resident ID
+          Rendered by renderIDCard() in the inline script below.
+          Tap the card to flip it; "View Full Size" opens the modal.
+        -->
+        <section class="profile-section" id="sectionId">
+          <h2 class="profile-section__title">
+            <i data-lucide="id-card"></i> Digital Resident ID
+          </h2>
+          <p class="profile-section__hint">Tap the card to flip · or view full size.</p>
+          <div class="profile-id-card-wrap">
+            <div id="idCardContainer">
+              <div id="idCardSkeleton" style="
+                width: 100%;
+                aspect-ratio: 1.586;
+                border-radius: 14px;
+                background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: rgba(255,255,255,.25);
+                font-family: var(--font-display);
+                font-size: var(--text-sm);
+                letter-spacing: 0.05em;">
+                Loading ID…
+              </div>
+            </div>
+            <button class="btn btn--ghost btn--sm" id="viewFullIdBtn"
+                    style="align-self: center; margin-top: var(--space-sm);" hidden>
+              <i data-lucide="expand"></i> View Full Size
+            </button>
+          </div>
+        </section>
+
+        <!-- My Documents -->
+        <section class="profile-section" id="sectionDocuments">
+          <h2 class="profile-section__title">
+            <i data-lucide="file-text"></i> My Documents
+          </h2>
+          <div class="profile-docs-list" id="docsList"></div>
+          <a href="services.html" class="btn btn--dashed btn--full" style="margin-top: 4px;">
+            <i data-lucide="file-plus"></i> Request New Document
+          </a>
+        </section>
+
+      </div><!-- /profile-col--right -->
+
+    </div>
+  </main><!-- /profile-main -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       ID CARD MODAL
+       ───────────────────────────────────────────────────────────────
+       Full-screen overlay showing the ID card at 2× zoom.
+       Toggled by .is-open. Close via button or clicking the backdrop.
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="id-card-modal-overlay" id="idCardModal">
+    <div class="id-card-modal-card">
+      <button class="id-card-modal-card__close" id="idCardModalClose">
+        <i data-lucide="x"></i> Close
+      </button>
+      <div id="idCardModalContainer"></div>
+      <p class="id-card-modal-card__hint">Tap the card to flip it over</p>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PROFILE DRAWER
+       ───────────────────────────────────────────────────────────────
+       Slide-in panel opened by the avatar button in the navbar.
+       Toggled via .is-open on #profileDrawer and #drawerBackdrop.
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="profile-drawer" id="profileDrawer">
+    <div class="profile-drawer__header">
+      <button class="btn btn--close btn--sm profile-drawer__close" id="drawerCloseBtn" aria-label="Close">
+        <i data-lucide="x"></i>
+      </button>
+      <div class="profile-drawer__avatar" id="drawerAvatar">…</div>
+      <p  class="profile-drawer__name"  id="drawerName">Loading…</p>
+      <p  class="profile-drawer__role"  id="drawerRole">—</p>
+      <span class="profile-drawer__id" id="drawerIdNumber">
+        <i data-lucide="id-card"></i> —
+      </span>
+    </div>
+    <nav class="profile-drawer__menu">
+      <a href="profile.html" class="profile-drawer__item">
+        <div class="profile-drawer__item-icon"><i data-lucide="user-pen"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">Edit Profile</span>
+          <span class="profile-drawer__item-sub">Update your personal info</span>
+        </div>
+      </a>
+      <a href="services.html" class="profile-drawer__item">
+        <div class="profile-drawer__item-icon"><i data-lucide="file-text"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">My Documents</span>
+          <span class="profile-drawer__item-sub">Request or track documents</span>
+        </div>
+      </a>
+      <a href="community.html" class="profile-drawer__item">
+        <div class="profile-drawer__item-icon"><i data-lucide="users"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">Community</span>
+          <span class="profile-drawer__item-sub">Bulletin, polls, pet board</span>
+        </div>
+      </a>
+      <button class="profile-drawer__item profile-drawer__item--signout" id="signOutBtn">
+        <div class="profile-drawer__item-icon"><i data-lucide="log-out"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">Sign Out</span>
+        </div>
+      </button>
+    </nav>
+  </div>
+
+  <div class="profile-drawer-backdrop" id="drawerBackdrop"></div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SIGN-OUT CONFIRM MODAL
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="signoutModal" onclick="closeOnBackdrop(event)">
+    <div class="modal modal--confirm">
+      <div class="modal-confirm__icon"><i data-lucide="log-out"></i></div>
+      <h2 class="modal-confirm__title">Sign out?</h2>
+      <p class="modal-confirm__body">You'll be signed out of your BarangayConnect account on this device.</p>
+      <div class="modal-confirm__footer">
+        <button class="btn btn--outline" onclick="closeModal('signoutModal')">Cancel</button>
+        <button class="btn btn--red btn--full" id="confirmSignOutBtn">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       FOOTER
+       ───────────────────────────────────────────────────────────────
+       .site-footer from main.css — shared across all pages.
+  ══════════════════════════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__brand">
+        <div class="site-footer__brand-logo">
+          <img src="../../assets/images/logo.svg" alt="BarangayConnect" class="site-footer__logo-img" />
+          <span class="site-footer__logo-text">BarangayConnect</span>
+        </div>
+        <p class="site-footer__tagline">Barangay Bancod, Indang, Cavite &copy; 2026</p>
+      </div>
+      <nav class="site-footer__links" aria-label="Footer navigation">
+        <a href="#" class="site-footer__link">Privacy Policy</a>
+        <a href="#" class="site-footer__link">Terms of Use</a>
+        <a href="#" class="site-footer__link">Contact Us</a>
+        <a href="#" class="site-footer__link">Sitemap</a>
+      </nav>
+    </div>
+  </footer>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SCRIPTS
+       ───────────────────────────────────────────────────────────────
+       1. lucide.createIcons()   — renders all data-lucide icons
+       2. Navbar scroll          — removes .navbar--transparent past 60px scroll
+       3. Hamburger              — toggles mobile drawer
+       4. Profile drawer         — avatar button toggles slide-in drawer
+       5. Sign-out modal         — opens confirm dialog from drawer
+       6. ID card modal          — full-size overlay for the digital ID
+       7. Modal helpers          — openModal / closeModal / closeOnBackdrop
+       8. Live clock             — updates #widgetClock every second
+       9. Time-based greeting    — sets #heroGreet text on page load
+      10. Date strings           — populates #heroDate and #widgetDate
+      11. renderIDCard()         — builds the flip-card HTML from userData
+      12. Demo fallback          — populates page when running via file://
+      13. Live weather           — fetches Open-Meteo API for current temp
+  ══════════════════════════════════════════════════════════════════ -->
+  <script type="module" src="../../js/core/firebase-config.js"></script>
+  <script type="module" src="../../js/features/profile/profile.js"></script>
+
+  <script>
+
+    /* 1. Render Lucide icons */
+    lucide.createIcons();
+
+
+    /* 2. Navbar transparent-on-scroll */
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('navbar--transparent', window.scrollY < 60);
+    });
+
+
+    /* 3. Hamburger — toggles mobile drawer */
+    document.getElementById('hamburgerBtn').addEventListener('click', () => {
+      document.getElementById('mobileDrawer').classList.toggle('is-open');
+    });
+
+
+    /* 4. Profile drawer */
+    const drawer   = document.getElementById('profileDrawer');
+    const backdrop = document.getElementById('drawerBackdrop');
+
+    function openDrawer()  { drawer.classList.add('is-open');    backdrop.classList.add('is-open'); }
+    function closeDrawer() { drawer.classList.remove('is-open'); backdrop.classList.remove('is-open'); }
+
+    document.getElementById('avatarBtn').addEventListener('click', openDrawer);
+    document.getElementById('drawerCloseBtn').addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+
+
+    /* 5. Sign-out → confirm modal */
+    document.getElementById('signOutBtn').addEventListener('click', () => {
+      closeDrawer();
+      openModal('signoutModal');
+    });
+
+
+    /* 6. ID card full-size modal */
+    const idCardModal      = document.getElementById('idCardModal');
+    const idCardModalClose = document.getElementById('idCardModalClose');
+    const viewFullIdBtn    = document.getElementById('viewFullIdBtn');
+
+    function openIdCardModal()  { idCardModal.classList.add('is-open'); }
+    function closeIdCardModal() { idCardModal.classList.remove('is-open'); }
+
+    if (viewFullIdBtn)    viewFullIdBtn.addEventListener('click', openIdCardModal);
+    if (idCardModalClose) idCardModalClose.addEventListener('click', closeIdCardModal);
+    if (idCardModal)      idCardModal.addEventListener('click', function (e) {
+      if (e.target === this) closeIdCardModal();
+    });
+
+
+    /* 7. Modal helpers */
+    function openModal(id)  { document.getElementById(id)?.classList.add('is-open'); }
+    function closeModal(id) { document.getElementById(id)?.classList.remove('is-open'); }
+    function closeOnBackdrop(e) {
+      if (e.target === e.currentTarget) e.currentTarget.classList.remove('is-open');
+    }
+
+
+    /* 8. Live clock — updates every second */
+    function updateClock() {
+      const now = new Date();
+      const el  = document.getElementById('widgetClock');
+      if (el) el.textContent =
+        String(now.getHours()).padStart(2, '0') + ':' +
+        String(now.getMinutes()).padStart(2, '0');
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+
+    /* 9. Time-based greeting */
+    (function () {
+      const h  = new Date().getHours();
+      const g  = h < 12 ? 'Good Morning, ' : h < 18 ? 'Good Afternoon, ' : 'Good Evening, ';
+      const el = document.getElementById('heroGreet');
+      if (el) el.textContent = g;
+    })();
+
+
+    /* 10. Date strings — hero and widget */
+    (function () {
+      const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const str  = new Date().toLocaleDateString('en-PH', opts);
+      const hd   = document.getElementById('heroDate');
+      const wd   = document.getElementById('widgetDate');
+      if (hd) hd.textContent = str;
+      if (wd) wd.textContent = str;
+    })();
+
+
+    /* 11. renderIDCard(userData, containerId?)
+          Builds the flip-card HTML from a userData object and appends
+          it to the target container. Exposes window.renderIDCard for
+          use by profile.js and the demo fallback below. */
+    function renderIDCard(userData, containerId) {
+      containerId = containerId || 'idCardContainer';
+      var container = document.getElementById(containerId);
+      if (!container) return;
+
+      var role = userData.role || 'resident';
+      var name = userData.fullName ||
+        ((userData.firstName || '') + ' ' + (userData.lastName || '')).trim() || 'Unknown';
+      var init = name.split(' ').slice(0, 2).map(function (n) { return n[0] || ''; }).join('').toUpperCase();
+      var rl   = { resident: 'Resident ID', officer: 'Officer ID', admin: 'Admin ID' }[role] || 'Resident ID';
+
+      function fmt(v, isIso) {
+        if (!v) return '—';
+        var d = isIso ? new Date(v) : (v && v.toDate ? v.toDate() : new Date(v));
+        return isNaN(d) ? '—' : d.toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' });
+      }
+
+      var vu = userData.validUntil ? fmt(userData.validUntil) : (function () {
+        var d = userData.createdAt && userData.createdAt.toDate
+          ? userData.createdAt.toDate()
+          : new Date(userData.createdAt || Date.now());
+        var f = new Date(d);
+        f.setFullYear(f.getFullYear() + 3);
+        return f.toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' });
+      })();
+
+      var id   = userData.residentIdNumber ||
+        'BRY-' + new Date().getFullYear() + '-' + (userData.uid || 'XXXXXX').slice(-6).toUpperCase();
+      var addr = [userData.streetAddress, userData.barangay, userData.municipality, userData.province]
+        .filter(Boolean).join(', ');
+      var brgy = userData.barangay   || 'Barangay';
+      var muni = userData.municipality || '';
+
+      function esc(s) {
+        return String(s || '')
+          .replace(/&/g,  '&amp;')
+          .replace(/</g,  '&lt;')
+          .replace(/>/g,  '&gt;')
+          .replace(/"/g,  '&quot;');
+      }
+
+      var av = userData.photoURL
+        ? '<div class="card-avatar card-avatar--loading">' + esc(init) +
+            '<img src="' + esc(userData.photoURL) + '" alt="' + esc(name) + '"' +
+            ' onload="this.classList.add(\'loaded\');this.parentElement.classList.remove(\'card-avatar--loading\')"' +
+            ' onerror="this.remove();this.parentElement.classList.remove(\'card-avatar--loading\')"></div>'
+        : '<div class="card-avatar">' + esc(init) + '</div>';
+
+      var scene = document.createElement('div');
+      scene.className = 'id-card-scene';
+      scene.innerHTML =
+        '<div class="id-card-inner card--' + esc(role) + '">' +
+          '<div class="card-face card-front">' +
+            '<div class="card-header">' +
+              '<div class="card-seal">BC</div>' +
+              '<div class="card-header-text">' +
+                '<div class="card-republic">Republic of the Philippines</div>' +
+                '<div class="card-barangay-name">' + esc(brgy) + (muni ? ', ' + esc(muni) : '') + '</div>' +
+              '</div>' +
+              '<div class="card-role-pill">' + esc(rl) + '</div>' +
+            '</div>' +
+            '<div class="card-body">' +
+              av +
+              '<div class="card-name-block">' +
+                '<div class="card-micro-label">Full Name</div>' +
+                '<div class="card-name">' + esc(name) + '</div>' +
+                '<div class="card-address"><span class="card-address-dot"></span>' + esc(addr) + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="card-footer">' +
+              '<div class="card-footer-fields">' +
+                '<div><div class="card-field-label">ID Number</div><div class="card-id-number">' + esc(id) + '</div></div>' +
+                '<div><div class="card-field-label">Valid Until</div><div class="card-field-value">' + esc(vu) + '</div></div>' +
+              '</div>' +
+              '<div class="card-flip-hint">Tap to flip ↻</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="card-face card-face--back card-back">' +
+            '<div class="back-strip">' +
+              '<div class="back-strip-title">Resident Information</div>' +
+              '<div class="back-strip-id">' + esc(id) + '</div>' +
+            '</div>' +
+            '<div class="back-fields">' +
+              '<div class="back-field"><div class="back-field-label">Email</div><div class="back-field-value">' + esc(userData.email || '—') + '</div></div>' +
+              '<div class="back-field"><div class="back-field-label">Phone</div><div class="back-field-value">' + esc(userData.phone || '—') + '</div></div>' +
+              '<div class="back-field"><div class="back-field-label">Date of Birth</div><div class="back-field-value">' + esc(fmt(userData.dob, true)) + '</div></div>' +
+              '<div class="back-field"><div class="back-field-label">Years Resident</div><div class="back-field-value">' + (userData.yearsResident != null ? userData.yearsResident + ' yrs' : '—') + '</div></div>' +
+              '<div class="back-field back-field--full"><div class="back-field-label">Member Since</div><div class="back-field-value">' + esc(fmt(userData.createdAt)) + '</div></div>' +
+            '</div>' +
+            '<div class="back-footer">' +
+              '<div class="back-legal">This ID is the property of ' + esc(brgy) + '. If found, return to the Barangay Hall. RA 11032.</div>' +
+              '<div class="back-logo">BarangayConnect</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      scene.addEventListener('click', function () { scene.classList.toggle('flipped'); });
+
+      var sk = document.getElementById('idCardSkeleton');
+      if (sk) sk.remove();
+      container.appendChild(scene);
+
+      /* Reveal "View Full Size" button once the inline card is rendered */
+      if (containerId === 'idCardContainer') {
+        var btn = document.getElementById('viewFullIdBtn');
+        if (btn) btn.hidden = false;
+        lucide.createIcons({ el: btn });
+      }
+
+      return scene;
+    }
+
+    window.renderIDCard = renderIDCard;
+
+
+    /* 12. Demo fallback — populates the page when running via file://
+          or when localStorage.guestMode === 'true'. */
+    (function () {
+      const isGuest = localStorage.getItem('guestMode') === 'true';
+      if (window.location.protocol !== 'file:' && !isGuest) return;
+
+      var DEMO = {
+        uid:              'demo-uid-000001',
+        fullName:         'Juan dela Cruz',
+        email:            'juan@gmail.com',
+        phone:            '09171234567',
+        dob:              '1990-05-12',
+        province:         'Cavite',
+        municipality:     'Indang',
+        barangay:         'Bancod',
+        yearsResident:    7,
+        role:             'resident',
+        createdAt:        new Date('2018-03-15'),
+        residentIdNumber: 'BRY-BAN-2018-00001',
+        validUntil:       new Date('2027-03-15'),
+        photoURL:         null,
+      };
+
+      var firstName = DEMO.fullName.split(' ')[0];
+      var el;
+
+      function s(id, v) { el = document.getElementById(id); if (el) el.textContent = v; }
+      function h(id, v) { el = document.getElementById(id); if (el) el.innerHTML  = v; }
+
+      /* Hero */
+      s('heroName',       firstName + '.');
+      s('heroBarangay',   'Barangay ' + DEMO.barangay + ', ' + DEMO.municipality + ', ' + DEMO.province);
+      s('heroSince',      '2018');
+      s('widgetLocation', 'Brgy. ' + DEMO.barangay + ', ' + DEMO.municipality);
+      s('weatherTemp',    '32°');
+      s('weatherDesc',    'Partly Cloudy');
+
+      /* Profile drawer */
+      s('drawerAvatar',   'JD');
+      s('drawerName',     DEMO.fullName);
+      s('drawerRole',     'Resident · Barangay ' + DEMO.barangay);
+      h('drawerIdNumber', '<i data-lucide="id-card"></i> ' + DEMO.residentIdNumber);
+      lucide.createIcons({ el: document.getElementById('profileDrawer') });
+
+      /* Stat cards */
+      s('statReports',         '2');
+      s('statReportsSub',      '1 under review · 1 in progress');
+      s('statEvents',          '4');
+      s('statEventsSub',       'Next: June 12, Medical Mission');
+      s('statAnnouncements',   '7');
+      s('statAnnouncementsSub','3 marked urgent');
+
+      /* ID cards — inline and modal */
+      renderIDCard(DEMO, 'idCardContainer');
+      renderIDCard(DEMO, 'idCardModalContainer');
+
+      /* Active reports list */
+      var reportsList = document.getElementById('reportsList');
+      if (reportsList) {
+        reportsList.innerHTML = [
+          { id: 'CON-2025-0498', cat: 'Flooded Road', color: 'blue',  loc: 'Rizal St. near Elem. School',   status: 'inprogress', date: 'June 1, 2025'  },
+          { id: 'CON-2025-0471', cat: 'Garbage',      color: 'amber', loc: 'Corner Bonifacio & Mabini St.', status: 'reviewing',  date: 'May 28, 2025'  },
+        ].map(function (r) {
+          var steps  = ['pending', 'reviewing', 'inprogress', 'resolved'];
+          var labels = ['Submitted', 'Under Review', 'In Progress', 'Resolved'];
+          var si = steps.indexOf(r.status);
+          var stepHtml = labels.map(function (l, i) {
+            var cls = i < si ? 'is-done' : i === si ? 'is-active' : '';
+            return '<div class="step-progress__item ' + cls + '">' +
+              '<div class="step-progress__circle">' + (i < si ? '<i data-lucide="check"></i>' : '') + '</div>' +
+              '<span class="step-progress__label">' + l + '</span>' +
+            '</div>';
+          }).join('');
+          return '<div class="report-item card">' +
+            '<div class="report-item__header">' +
+              '<span class="tag tag--' + r.color + '">' + r.cat + '</span>' +
+              '<span class="report-item__id">' + r.id + ' · ' + r.date + '</span>' +
+            '</div>' +
+            '<p class="report-item__location"><i data-lucide="map-pin"></i> ' + r.loc + '</p>' +
+            '<div class="step-progress report-item__progress">' + stepHtml + '</div>' +
+          '</div>';
+        }).join('');
+        lucide.createIcons({ el: reportsList });
+      }
+
+      /* Documents list */
+      var docsList = document.getElementById('docsList');
+      if (docsList) {
+        var docCfg = {
+          ready:      ['badge--resolved',       'green-muted',  'Ready'     ],
+          processing: ['badge--doc-processing', 'orange-muted', 'Processing'],
+          completed:  ['badge--draft',          'gray',         'Completed' ],
+        };
+        docsList.innerHTML = [
+          { id: 'REQ-2025-0412', name: 'Barangay Clearance',       status: 'ready',      date: 'June 5, 2025'  },
+          { id: 'REQ-2025-0388', name: 'Certificate of Residency', status: 'processing', date: 'June 3, 2025'  },
+          { id: 'REQ-2025-0341', name: 'Indigency Letter',          status: 'completed',  date: 'May 22, 2025'  },
+        ].map(function (d) {
+          var c = docCfg[d.status];
+          return '<div class="profile-doc-row">' +
+            '<div class="post-icon post-icon--' + c[1] + ' post-icon--sm"><i data-lucide="file-text"></i></div>' +
+            '<div class="profile-doc-row__body">' +
+              '<span class="profile-doc-row__name">' + d.name + '</span>' +
+              '<span class="profile-doc-row__meta">' + d.id + ' · ' + d.date + '</span>' +
+            '</div>' +
+            '<div class="profile-doc-row__status"><span class="badge ' + c[0] + '">' + c[2] + '</span></div>' +
+          '</div>';
+        }).join('');
+        lucide.createIcons({ el: docsList });
+      }
+
+      /* Announcements feed */
+      var annList = document.getElementById('announcementList');
+      if (annList) {
+        annList.innerHTML = [
+          { cat: 'Safety',         color: 'red',    icon: 'alert-triangle', title: 'Weather Advisory: Signal No. 1 in effect',  excerpt: 'Residents are advised to stay indoors. Monitor PAGASA for updates.',      time: '2 hours ago'  },
+          { cat: 'Health',         color: 'red',    icon: 'heart-pulse',    title: 'Dengue Alert — Clear stagnant water NOW',    excerpt: 'Rising dengue cases reported. Fogging operations begin Tuesday.',          time: 'Yesterday'    },
+          { cat: 'Events',         color: 'green',  icon: 'calendar',       title: 'Free Medical Mission — June 12',             excerpt: 'Free check-ups, dental services, and medicine at Brgy. Hall.',            time: 'June 5, 2025' },
+          { cat: 'Infrastructure', color: 'orange', icon: 'hard-hat',       title: 'Rizal Street road repair begins Monday',     excerpt: 'Expect lane closures from 7AM–5PM. Use alternate routes.',                time: 'June 3, 2025' },
+        ].map(function (a) {
+          var tc = a.color === 'orange' ? 'amber' : a.color;
+          return '<div class="post-row post-row--accented post-row--' + a.color + '">' +
+            '<div class="post-row__tags">' +
+              '<span class="tag tag--' + tc + '"><i data-lucide="' + a.icon + '"></i> ' + a.cat + '</span>' +
+              '<span class="post-row__time">' + a.time + '</span>' +
+            '</div>' +
+            '<h3 class="post-row__title">' + a.title + '</h3>' +
+            '<p class="post-row__excerpt">' + a.excerpt + '</p>' +
+          '</div>';
+        }).join('');
+        lucide.createIcons({ el: annList });
+      }
+
+      /* Demo mode toast */
+      var banner = document.createElement('div');
+      banner.style.cssText =
+        'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);' +
+        'background:#1a1a1a;color:#fff;padding:8px 20px;border-radius:999px;' +
+        'font-size:13px;font-family:var(--font-body);z-index:9999;' +
+        'box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:.88;' +
+        'pointer-events:none;white-space:nowrap;';
+      banner.textContent = '👀 Demo mode — serve via a local server to connect Firebase';
+      document.body.appendChild(banner);
+    })();
+
+
+    /* 13. Live weather — fetches current temp from Open-Meteo API */
+    (function fetchWeather() {
+      const LAT = 14.1958, LON = 120.8752;
+
+      function wmoDesc(code) {
+        if (code === 0)                   return 'Clear Sky';
+        if (code === 1)                   return 'Mostly Clear';
+        if (code === 2)                   return 'Partly Cloudy';
+        if (code === 3)                   return 'Overcast';
+        if (code === 45 || code === 48)   return 'Foggy';
+        if (code >= 51 && code <= 55)     return 'Drizzle';
+        if (code >= 61 && code <= 65)     return 'Rainy';
+        if (code >= 71 && code <= 75)     return 'Snowy';
+        if (code >= 80 && code <= 82)     return 'Rain Showers';
+        if (code >= 95)                   return 'Thunderstorm';
+        return 'Unknown';
+      }
+
+      fetch(
+        `https://api.open-meteo.com/v1/forecast` +
+        `?latitude=${LAT}&longitude=${LON}` +
+        `&current=temperature_2m,weathercode` +
+        `&temperature_unit=celsius&timezone=Asia%2FManila`
+      )
+        .then(r => r.json())
+        .then(data => {
+          const temp = Math.round(data.current.temperature_2m);
+          const desc = wmoDesc(data.current.weathercode);
+          const tEl  = document.getElementById('weatherTemp');
+          const dEl  = document.getElementById('weatherDesc');
+          if (tEl) tEl.textContent = temp + '°';
+          if (dEl) dEl.textContent = desc;
+        })
+        .catch(() => {});
+    })();
+
+  </script>
+
+</body>
+</html>

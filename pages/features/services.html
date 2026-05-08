@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+  ═══════════════════════════════════════════════
+  services.html — BarangayConnect
+  Barangay services hub for Barangay Bancod.
+  Handles all resident-facing service interactions
+  across four tab panels.
+
+  CSS IMPORT ORDER — DO NOT CHANGE THIS ORDER
+  ═══════════════════════════════════════════════
+  main.css        → design tokens, reset, navbar, footer, form inputs
+  buttons.css     → all clickable elements (.btn and variants)
+  components.css  → badges, tags, banners, stat grid, alert widgets
+  frames.css      → post cards, marquee, modals, drawers
+  services.css    → THIS PAGE ONLY — hero, tab panels, doc cards,
+                    stepper, appointment slots, directory layout
+
+  WHAT IS IN HERE:
+    · Navbar (shared layout, role-gated items)
+    · Services hero with 4 tab buttons
+    · Tab panel: Report a Concern (4-step stepper)
+    · Tab panel: Document Requests (doc cards + status tracker)
+    · Tab panel: Book Appointment (promo card + slot grid)
+    · Tab panel: Emergency & Directory (contacts + filter list)
+    · Modal: Bullying Report (anonymous toggle, confidential form)
+    · Modal: Book Appointment (4-step multi-panel)
+    · Modal: Document Request Form (dynamic doc type dropdown)
+    · Profile drawer + sign-out confirm modal
+    · Footer (shared)
+
+  WHAT IS NOT IN HERE:
+    · Auth logic              → js/shared/nav-auth.js
+    · Profile data population → js/features/profile/profile.js
+    · Global CSS design tokens → main.css
+
+  REQUIRED IMPORTS:
+    · Lucide Icons (CDN)
+    · js/shared/nav-auth.js (module)
+    · js/features/profile/profile.js  (module)
+
+  QUICK REFERENCE:
+    · Tab switching      → [data-tab] buttons + .tab-panel.is-active
+    · Report stepper     → goToStep(n)
+    · Appointment modal  → goToApptStep(n)
+    · Doc request modal  → openDocRequest(value), updateDocInfo()
+    · Modal open/close   → openModal(id), closeModal(id)
+    · Anon toggle        → toggleAnonFields()
+  ═══════════════════════════════════════════════
+-->
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Services</title>
+
+  <link rel="stylesheet" href="../../css/shared/main.css" />
+  <link rel="stylesheet" href="../../css/shared/buttons.css" />
+  <link rel="stylesheet" href="../../css/shared/components.css" />
+  <link rel="stylesheet" href="../../css/shared/frames.css" />
+  <link rel="stylesheet" href="../../css/features/services/services.css" />
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script type="module" src="../../js/shared/nav-auth.js"></script>
+  <script type="module" src="../../js/features/profile/alerts.js"></script>
+</head>
+
+<!--
+  ─────────────────────────────────────────────
+  ROLE CLASS on <body> controls which navbar
+  items are visible. JS sets this after auth.
+  Values: role-resident | role-officer | role-admin
+  Default for this page: role-guest
+  ─────────────────────────────────────────────
+-->
+<body class="role-guest" data-role-init="pending">
+  <script>!function(){var r=localStorage.getItem('bc_role');if(r){document.body.className='role-'+r;document.body.removeAttribute('data-role-init');}}();</script>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       NAVBAR
+       ───────────────────────────────────────────────────────────────
+       .navbar--transparent: transparent bg with white text, layered
+       over the hero. JS removes this class on scroll > 60px.
+       Role-gated items use .navbar__item--officer / --admin and
+       auto-show/hide based on the <body> role class.
+  ══════════════════════════════════════════════════════════════════ -->
+  <nav class="navbar navbar--transparent" id="mainNavbar">
+    <div class="navbar__inner">
+
+      <a href="home.html" class="navbar__logo">
+        <img src="../../assets/images/logo.svg" alt="BarangayConnect logo" class="navbar__logo-img" />
+        <span class="navbar__logo-text">BarangayConnect</span>
+      </a>
+
+      <ul class="navbar__nav" style="list-style-type: none;">
+        <li><a href="home.html"      class="navbar__link">Home</a></li>
+        <li><a href="community.html" class="navbar__link">Community</a></li>
+        <li><a href="services.html"  class="navbar__link is-active">Services</a></li>
+        <li><a href="profile.html"   class="navbar__link">My Barangay</a></li>
+        <li class="navbar__item--officer">
+          <a class="navbar__link navbar__link--officer">Officer Panel</a>
+        </li>
+        <li class="navbar__item--admin">
+          <a href="../../admin.html" class="navbar__link navbar__link--admin">Admin Panel</a>
+        </li>
+      </ul>
+
+      <div class="navbar__actions">
+        <!-- Role pill — modifier reflects logged-in user role -->
+        <span class="navbar__role navbar__role--resident" id="navRole">Resident</span>
+
+        <!-- Bell — remove .navbar__bell-dot when no notifications -->
+        <button class="navbar__bell" aria-label="Notifications" id="bellBtn">
+          <i data-lucide="bell"></i>
+          <span class="navbar__bell-dot"></span>
+        </button>
+
+        <!-- Avatar — replace icon with <img> when user has a photo -->
+        <button class="navbar__avatar" aria-label="Open profile" id="avatarBtn">
+          <i data-lucide="user"></i>
+        </button>
+
+        <!-- Mobile hamburger (auto-shows on small screens via CSS) -->
+        <button class="navbar__hamburger" aria-label="Open menu" id="hamburgerBtn">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+
+    </div><!-- /navbar__inner -->
+
+    <!-- Mobile drawer (toggled by JS adding .is-open) -->
+    <div class="navbar__mobile-drawer" id="mobileDrawer">
+      <a href="home.html"      class="navbar__link">Home</a>
+      <a href="community.html" class="navbar__link">Community</a>
+      <a href="services.html"  class="navbar__link is-active">Services</a>
+      <a href="profile.html"   class="navbar__link">My Barangay</a>
+    </div>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       HERO — Barangay Services Header
+       ───────────────────────────────────────────────────────────────
+       Contains the page eyebrow, title, and 4-tab navigation bar
+       that controls which service panel is active below.
+
+       .btn--category  → tab trigger buttons (buttons.css)
+       .btn-tab-bar    → tab group wrapper
+       Active tab:     [data-tab].is-active + aria-selected="true"
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="services-hero">
+    <div class="services-hero__inner">
+
+      <p class="services-hero__eyebrow">BARANGAY BANCOD</p>
+      <h1 class="services-hero__title">Barangay Services</h1>
+
+      <div class="services-tabs btn-tab-bar" role="tablist">
+        <button class="btn btn--category is-active" data-tab="report" role="tab" aria-selected="true">
+          <i data-lucide="flag"></i> Report a Concern
+        </button>
+        <button class="btn btn--category" data-tab="documents" role="tab" aria-selected="false">
+          <i data-lucide="file-text"></i> Document Requests
+        </button>
+        <button class="btn btn--category" data-tab="appointment" role="tab" aria-selected="false">
+          <i data-lucide="calendar"></i> Book Appointment
+        </button>
+        <button class="btn btn--category" data-tab="emergency" role="tab" aria-selected="false">
+          <i data-lucide="phone"></i> Emergency &amp; Directory
+        </button>
+      </div>
+
+    </div>
+  </section><!-- /services-hero -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       MAIN CONTENT — Tab Panels
+       ───────────────────────────────────────────────────────────────
+       Each .tab-panel corresponds to one tab button via [data-tab].
+       Only the panel with .is-active is visible at a time.
+       JS manages active state — see tab switching script below.
+  ══════════════════════════════════════════════════════════════════ -->
+  <main class="services-main">
+
+
+    <!-- ─────────────────────────────────────────────────────────────
+         TAB PANEL: REPORT A CONCERN
+         ─────────────────────────────────────────────────────────────
+         4-step stepper flow:
+           Step 1 → Category selection (.concern-grid)
+           Step 2 → Description textarea with char counter
+           Step 3 → Optional photo upload dropzone
+           Step 4 → Review table + submit action
+
+         .stepper         → step indicator bar (services.css)
+         .report-step     → individual step panel; .is-active shows it
+         goToStep(n)      → JS function that advances/retreats steps
+
+         Also contains the bullying notice banner that opens
+         the #bullyingModal on click.
+    ──────────────────────────────────────────────────────────────── -->
+    <section class="tab-panel tab-panel--report is-active" id="tab-report" role="tabpanel">
+      <div class="services-panel-inner">
+
+        <!-- Stepper — 4 steps -->
+        <div class="stepper">
+          <div class="stepper__step is-active" id="stepper-1">
+            <div class="stepper__circle">1</div>
+            <span class="stepper__label">Category</span>
+          </div>
+          <div class="stepper__step" id="stepper-2">
+            <div class="stepper__circle">2</div>
+            <span class="stepper__label">Description</span>
+          </div>
+          <div class="stepper__step" id="stepper-3">
+            <div class="stepper__circle">3</div>
+            <span class="stepper__label">Photos</span>
+          </div>
+          <div class="stepper__step" id="stepper-4">
+            <div class="stepper__circle">4</div>
+            <span class="stepper__label">Review &amp; Submit</span>
+          </div>
+        </div>
+
+        <!-- ─── Step 1: Category ─── -->
+        <div class="report-step is-active" id="report-step-1">
+          <h2 class="report-step__title">What type of concern is this?</h2>
+          <p class="report-step__sub">Select the category that best describes your concern.</p>
+
+          <div class="concern-grid">
+            <button class="btn btn--selector">
+              <i data-lucide="flame"></i>
+              Flooded Road
+            </button>
+            <button class="btn btn--selector">
+              <i data-lucide="trash-2"></i>
+              Garbage
+            </button>
+            <button class="btn btn--selector">
+              <i data-lucide="volume-2"></i>
+              Noise Complaint
+            </button>
+            <button class="btn btn--selector">
+              <i data-lucide="wrench"></i>
+              Infrastructure
+            </button>
+            <button class="btn btn--selector">
+              <i data-lucide="shield-alert"></i>
+              Safety Hazard
+            </button>
+            <button class="btn btn--selector is-selected">
+              <i data-lucide="help-circle"></i>
+              Other
+            </button>
+          </div>
+
+          <div class="report-step__actions">
+            <button class="btn btn--orange" onclick="goToStep(2)">
+              Next <i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+        </div><!-- /report-step-1 -->
+
+        <!-- ─── Step 2: Description ─── -->
+        <div class="report-step" id="report-step-2">
+          <h2 class="report-step__title">Describe the concern</h2>
+          <p class="report-step__sub">Be as specific as possible — include location and time of occurrence.</p>
+
+          <div class="form-group">
+            <textarea
+              class="form-input report-step__textarea"
+              rows="7"
+              placeholder="e.g. There's a large pothole on Rizal Street near the elementary school gate. It's been there since last week and vehicles keep swerving to avoid it..."
+              maxlength="500"
+            ></textarea>
+            <span class="char-count">0/500 characters</span>
+          </div>
+
+          <div class="report-step__actions">
+            <button class="btn btn--outline" onclick="goToStep(1)">
+              <i data-lucide="chevron-left"></i> Back
+            </button>
+            <button class="btn btn--orange" onclick="goToStep(3)">
+              Continue <i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+        </div><!-- /report-step-2 -->
+
+        <!-- ─── Step 3: Photos ─── -->
+        <div class="report-step" id="report-step-3">
+          <h2 class="report-step__title">Add supporting photos</h2>
+          <p class="report-step__sub">Photos help our team better understand and prioritize the issue. (Optional)</p>
+
+          <div class="photo-dropzone">
+            <input type="file" accept="image/jpeg,image/png" multiple hidden id="photoInput" />
+            <p class="photo-dropzone__title">Drop photos here</p>
+            <p class="photo-dropzone__sub">or click to browse — JPG, PNG up to 10MB each</p>
+          </div>
+
+          <div class="report-step__actions">
+            <button class="btn btn--outline" onclick="goToStep(2)">
+              <i data-lucide="chevron-left"></i> Back
+            </button>
+            <button class="btn btn--orange" onclick="goToStep(4)">
+              Continue <i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+        </div><!-- /report-step-3 -->
+
+        <!-- ─── Step 4: Review & Submit ─── -->
+        <div class="report-step" id="report-step-4">
+          <h2 class="report-step__title">Review your concern</h2>
+          <p class="report-step__sub">Please review before submitting. This will be sent to the barangay office.</p>
+
+          <div class="review-table">
+            <div class="review-table__row">
+              <span class="review-table__label">CATEGORY</span>
+              <span class="review-table__value">Garbage</span>
+            </div>
+            <div class="review-table__row">
+              <span class="review-table__label">DESCRIPTION</span>
+              <span class="review-table__value">There's a large pothole on Rizal Street near the elementary school gate. It's been there since last week and vehicles keep swerving to avoid it...</span>
+            </div>
+            <div class="review-table__row">
+              <span class="review-table__label">PHOTOS</span>
+              <span class="review-table__value">No photos attached</span>
+            </div>
+            <div class="review-table__row">
+              <span class="review-table__label">REPORTER</span>
+              <span class="review-table__value">Juan dela Cruz (verified resident)</span>
+            </div>
+          </div>
+
+          <div class="report-step__actions">
+            <button class="btn btn--outline" onclick="goToStep(3)">
+              <i data-lucide="chevron-left"></i> Back
+            </button>
+            <button class="btn btn--orange">
+              Submit Concern <i data-lucide="upload"></i>
+            </button>
+          </div>
+        </div><!-- /report-step-4 -->
+
+        <!-- Bullying notice — opens #bullyingModal -->
+        <div class="notice-banner notice-banner--red">
+          <div class="notice-banner__icon">
+            <i data-lucide="alert-circle"></i>
+          </div>
+          <div class="notice-banner__body">
+            <p class="notice-banner__title">Experiencing bullying? You're not alone.</p>
+            <p class="notice-banner__sub">Report incidents confidentially to our Youth Protection Officer.</p>
+          </div>
+          <button class="btn btn--red btn--sm" onclick="openModal('bullyingModal')">Report Now</button>
+        </div>
+
+      </div><!-- /services-panel-inner -->
+    </section><!-- /tab-report -->
+
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         MODAL — Bullying Report
+         ───────────────────────────────────────────────────────────────
+         Confidential report form. Anonymous by default; toggling the
+         switch reveals identity fields (#bullyingIdentityFields).
+
+         Header:         .modal__header--red
+         Anonymous row:  .anon-toggle-row + .toggle-wrap (toggle switch)
+         Identity fields: hidden when #anonToggle is checked
+         toggleAnonFields() → JS handler for the checkbox
+    ══════════════════════════════════════════════════════════════════ -->
+    <div class="modal-overlay" id="bullyingModal" onclick="closeOnBackdrop(event)">
+      <div class="modal">
+
+        <div class="modal__header modal__header--red">
+          <div class="modal__header-icon">
+            <i data-lucide="shield-alert"></i>
+          </div>
+          <div class="modal__header-content">
+            <p class="modal__header-label">YOUTH PROTECTION</p>
+            <h2 class="modal__header-title">Report a Bullying Incident</h2>
+            <p class="modal__header-sub">This report is confidential and will only be seen by the Youth Protection Officer.</p>
+          </div>
+          <button class="btn btn--close btn--sm modal__close" aria-label="Close" onclick="closeModal('bullyingModal')">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+
+        <!-- Anonymous toggle — sits just below the red header -->
+        <div class="anon-toggle-row">
+          <div class="anon-toggle-row__icon">
+            <i data-lucide="eye-off"></i>
+          </div>
+          <div class="anon-toggle-row__body">
+            <p class="anon-toggle-row__title">Submitting Anonymously</p>
+            <p class="anon-toggle-row__sub">Your identity will not be shared. Tap to add contact.</p>
+          </div>
+          <label class="toggle-wrap">
+            <input
+              type="checkbox"
+              class="toggle-input"
+              id="anonToggle"
+              checked
+              onchange="toggleAnonFields()"
+            />
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </label>
+        </div>
+
+        <div class="modal__body">
+
+          <!-- Identity fields — hidden by default since anonymous is on -->
+          <div id="bullyingIdentityFields" style="display:none; display:flex; flex-direction:column; gap:var(--space-md);">
+            <div class="form-group">
+              <label class="form-label">Your Name</label>
+              <input type="text" class="form-input" placeholder="e.g. Juan dela Cruz" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact Number</label>
+              <input type="tel" class="form-input" placeholder="e.g. 0917-123-4567" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Who was involved?</label>
+            <input type="text" class="form-input" placeholder="Name(s) of the person(s) involved" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Where did it happen?</label>
+            <input type="text" class="form-input" placeholder="e.g. School, barangay hall, online..." />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Describe what happened</label>
+            <textarea
+              class="form-input"
+              rows="4"
+              placeholder="Please describe the incident in as much detail as you're comfortable sharing..."
+              maxlength="500"
+              oninput="this.closest('.form-group').querySelector('.char-count').textContent = this.value.length + ' / 500'"
+            ></textarea>
+            <span class="char-count">0 / 500</span>
+          </div>
+
+        </div><!-- /modal__body -->
+
+        <div class="modal__footer">
+          <button class="btn btn--outline" onclick="closeModal('bullyingModal')">Cancel</button>
+          <button class="btn btn--red btn--full">
+            <i data-lucide="send"></i> Submit Report
+          </button>
+        </div>
+
+      </div>
+    </div><!-- /bullyingModal -->
+
+
+    <!-- ─────────────────────────────────────────────────────────────
+         TAB PANEL: DOCUMENT REQUESTS
+         ─────────────────────────────────────────────────────────────
+         Two sections:
+           1. Doc cards grid — 4 document types with fee/turnaround
+              badges. Each card's Request button calls
+              openDocRequest(value), pre-selecting the doc type
+              in the #docRequestModal dropdown.
+           2. My Request Status — progress tracker for in-flight
+              requests. Uses .step-progress + .badge--doc-* variants.
+
+         .doc-card         → individual document card (services.css)
+         .request-status-card → request tracker card
+         .step-progress    → 4-stage horizontal progress indicator
+    ──────────────────────────────────────────────────────────────── -->
+    <section class="tab-panel tab-panel--documents" id="tab-documents" role="tabpanel">
+      <div class="services-panel-inner">
+
+        <!-- Document type cards -->
+        <div class="doc-cards-grid">
+
+          <div class="doc-card">
+            <div class="doc-card__icon"><i data-lucide="file-text"></i></div>
+            <h3 class="doc-card__name">Barangay Clearance</h3>
+            <p class="doc-card__desc">General purpose clearance for employment and other transactions.</p>
+            <div class="doc-card__badges">
+              <span class="badge badge--pending">1–2 business days</span>
+              <span class="doc-card__fee">₱50.00</span>
+            </div>
+            <button class="btn btn--green btn--full btn--sm" onclick="openDocRequest('clearance')">Request</button>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card__icon"><i data-lucide="home"></i></div>
+            <h3 class="doc-card__name">Certificate of Residency</h3>
+            <p class="doc-card__desc">Proof of residency in the barangay for official use.</p>
+            <div class="doc-card__badges">
+              <span class="badge badge--pending">1 business day</span>
+              <span class="doc-card__fee">₱50.00</span>
+            </div>
+            <button class="btn btn--green btn--full btn--sm" onclick="openDocRequest('residency')">Request</button>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card__icon"><i data-lucide="heart"></i></div>
+            <h3 class="doc-card__name">Indigency Letter</h3>
+            <p class="doc-card__desc">For residents seeking financial assistance from government agencies.</p>
+            <div class="doc-card__badges">
+              <span class="badge badge--resolved">Same day</span>
+              <span class="doc-card__free">Free</span>
+            </div>
+            <button class="btn btn--green btn--full btn--sm" onclick="openDocRequest('indigency')">Request</button>
+          </div>
+
+          <div class="doc-card">
+            <div class="doc-card__icon"><i data-lucide="award"></i></div>
+            <h3 class="doc-card__name">Good Moral Certificate</h3>
+            <p class="doc-card__desc">Character reference for school enrollment or employment.</p>
+            <div class="doc-card__badges">
+              <span class="badge badge--pending">1–2 business days</span>
+              <span class="doc-card__fee">₱50.00</span>
+            </div>
+            <button class="btn btn--green btn--full btn--sm" onclick="openDocRequest('goodmoral')">Request</button>
+          </div>
+
+        </div><!-- /doc-cards-grid -->
+
+        <h2 class="services-section-title">My Request Status</h2>
+
+        <!-- In-flight request tracker cards -->
+        <div class="request-status-list">
+
+          <!-- Request 1 — Ready for pickup -->
+          <div class="card request-status-card">
+            <div class="request-status-card__header">
+              <div>
+                <h3 class="request-status-card__name">Barangay Clearance</h3>
+                <p class="request-status-card__meta">REQ-2025-0412 · Requested June 5, 2025</p>
+              </div>
+              <span class="badge badge--doc-ready">Ready</span>
+            </div>
+            <div class="step-progress">
+              <div class="step-progress__item is-done">
+                <div class="step-progress__circle"><i data-lucide="check"></i></div>
+                <span class="step-progress__label">Submitted</span>
+              </div>
+              <div class="step-progress__item is-done">
+                <div class="step-progress__circle"><i data-lucide="check"></i></div>
+                <span class="step-progress__label">Processing</span>
+              </div>
+              <div class="step-progress__item is-active">
+                <div class="step-progress__circle"><i data-lucide="check"></i></div>
+                <span class="step-progress__label">Ready</span>
+              </div>
+              <div class="step-progress__item">
+                <div class="step-progress__circle"><i data-lucide="check"></i></div>
+                <span class="step-progress__label">Claimed</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Request 2 — In processing -->
+          <div class="card request-status-card">
+            <div class="request-status-card__header">
+              <div>
+                <h3 class="request-status-card__name">Certificate of Residency</h3>
+                <p class="request-status-card__meta">REQ-2025-0388 · Requested June 3, 2025</p>
+              </div>
+              <span class="badge badge--doc-processing">Processing</span>
+            </div>
+            <div class="step-progress">
+              <div class="step-progress__item is-done">
+                <div class="step-progress__circle"><i data-lucide="check"></i></div>
+                <span class="step-progress__label">Submitted</span>
+              </div>
+              <div class="step-progress__item is-active">
+                <div class="step-progress__circle"><i data-lucide="check"></i></div>
+                <span class="step-progress__label">Processing</span>
+              </div>
+              <div class="step-progress__item">
+                <div class="step-progress__circle"><i data-lucide="check"></i></div>
+                <span class="step-progress__label">Ready</span>
+              </div>
+              <div class="step-progress__item">
+                <div class="step-progress__circle"><i data-lucide="check"></i></div>
+                <span class="step-progress__label">Claimed</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /request-status-list -->
+
+      </div><!-- /services-panel-inner -->
+    </section><!-- /tab-documents -->
+
+
+    <!-- ─────────────────────────────────────────────────────────────
+         TAB PANEL: BOOK APPOINTMENT
+         ─────────────────────────────────────────────────────────────
+         Three sub-sections:
+           1. Promo card — context card with "Book Now" CTA
+              that opens the #bookApptModal 4-step wizard.
+           2. Available Services — slot cards with live availability.
+           3. Next Available Dates — selectable date cards that
+              highlight on click.
+
+         .appt-promo       → featured promo card (services.css)
+         .slot-card        → individual service slot row
+         .date-slot-card   → selectable date button
+    ──────────────────────────────────────────────────────────────── -->
+    <section class="tab-panel tab-panel--appointment" id="tab-appointment" role="tabpanel">
+      <div class="services-panel-inner">
+
+        <!-- Promo card — CTA to open the booking modal -->
+        <div class="appt-promo">
+          <div class="appt-promo__body">
+            <div class="appt-promo__icon-row">
+              <div class="appt-promo__icon">
+                <i data-lucide="calendar"></i>
+              </div>
+              <span class="appt-promo__eyebrow">BARANGAY HALL WALK-INS</span>
+            </div>
+            <h2 class="appt-promo__title">Book an Appointment</h2>
+            <p class="appt-promo__desc">Skip the queue — schedule your visit in advance. Choose a service, pick a date, and select a time slot that works for you.</p>
+            <div class="appt-promo__meta-row">
+              <span class="appt-promo__meta-pill">
+                <i data-lucide="clock"></i> Mon–Fri, 8AM–5PM
+              </span>
+              <span class="appt-promo__meta-pill">
+                <i data-lucide="users"></i> Limited daily slots
+              </span>
+            </div>
+          </div>
+          <div class="appt-promo__cta">
+            <button class="btn btn--orange btn--lg btn--rounded" onclick="openModal('bookApptModal')">
+              <i data-lucide="calendar"></i> Book Now →
+            </button>
+          </div>
+        </div><!-- /appt-promo -->
+
+        <!-- Available service slots -->
+        <h2 class="services-section-title">Available Services</h2>
+        <p class="services-section-sub">Walk-in appointments available for the following:</p>
+
+        <div class="slot-cards-grid">
+          <div class="slot-card">
+            <div class="slot-card__icon"><i data-lucide="file-text"></i></div>
+            <div class="slot-card__body">
+              <span class="slot-card__name">Barangay Clearance</span>
+              <span class="slot-card__sub">Walk-in assistance for clearance documents</span>
+              <span class="slot-card__avail">● 8 slots available today</span>
+            </div>
+          </div>
+          <div class="slot-card">
+            <div class="slot-card__icon"><i data-lucide="activity"></i></div>
+            <div class="slot-card__body">
+              <span class="slot-card__name">Health Consultation</span>
+              <span class="slot-card__sub">Meet with the barangay health officer</span>
+              <span class="slot-card__avail">● 3 slots available today</span>
+            </div>
+          </div>
+          <div class="slot-card">
+            <div class="slot-card__icon"><i data-lucide="bar-chart-2"></i></div>
+            <div class="slot-card__body">
+              <span class="slot-card__name">Business Permit Guidance</span>
+              <span class="slot-card__sub">Step-by-step permit application help</span>
+              <span class="slot-card__avail">● 5 slots available today</span>
+            </div>
+          </div>
+          <div class="slot-card">
+            <div class="slot-card__icon"><i data-lucide="home"></i></div>
+            <div class="slot-card__body">
+              <span class="slot-card__name">Certificate of Residency</span>
+              <span class="slot-card__sub">Verification and issuance of residency proof</span>
+              <span class="slot-card__avail">● 6 slots available today</span>
+            </div>
+          </div>
+          <div class="slot-card">
+            <div class="slot-card__icon"><i data-lucide="heart"></i></div>
+            <div class="slot-card__body">
+              <span class="slot-card__name">Indigency Letter</span>
+              <span class="slot-card__sub">Social welfare document assistance</span>
+              <span class="slot-card__avail">● 4 slots available today</span>
+            </div>
+          </div>
+          <div class="slot-card">
+            <div class="slot-card__icon"><i data-lucide="message-square"></i></div>
+            <div class="slot-card__body">
+              <span class="slot-card__name">General Inquiry</span>
+              <span class="slot-card__sub">Speak with a barangay officer</span>
+              <span class="slot-card__avail">● Open walk-in</span>
+            </div>
+          </div>
+        </div><!-- /slot-cards-grid -->
+
+        <!-- Selectable upcoming date cards -->
+        <h2 class="services-section-title">Next Available Dates</h2>
+
+        <div class="date-slot-cards-row">
+          <button class="date-slot-card">
+            <i class="date-slot-card__icon" data-lucide="calendar"></i>
+            <div class="date-slot-card__body">
+              <span class="date-slot-card__date">June 13, Friday</span>
+              <span class="date-slot-card__slots">● 12 slots available</span>
+            </div>
+          </button>
+          <button class="date-slot-card">
+            <i class="date-slot-card__icon" data-lucide="calendar"></i>
+            <div class="date-slot-card__body">
+              <span class="date-slot-card__date">June 16, Monday</span>
+              <span class="date-slot-card__slots">● 8 slots available</span>
+            </div>
+          </button>
+          <button class="date-slot-card">
+            <i class="date-slot-card__icon" data-lucide="calendar"></i>
+            <div class="date-slot-card__body">
+              <span class="date-slot-card__date">June 17, Tuesday</span>
+              <span class="date-slot-card__slots">● 15 slots available</span>
+            </div>
+          </button>
+        </div><!-- /date-slot-cards-row -->
+
+      </div><!-- /services-panel-inner -->
+    </section><!-- /tab-appointment -->
+
+
+    <!-- ─────────────────────────────────────────────────────────────
+         TAB PANEL: EMERGENCY & DIRECTORY
+         ─────────────────────────────────────────────────────────────
+         Two sub-sections:
+           1. Emergency Contacts — 4 rows with call buttons.
+              Icon color modifier: .contact-row__icon--orange / --red
+           2. Local Services Directory — filterable list of local
+              service providers with ratings and call buttons.
+              Filter pills use .btn--filter + .is-active toggled by JS.
+    ──────────────────────────────────────────────────────────────── -->
+    <section class="tab-panel tab-panel--emergency" id="tab-emergency" role="tabpanel">
+      <div class="services-panel-inner">
+
+        <!-- Emergency contact rows -->
+        <h2 class="services-section-title">Emergency Contacts</h2>
+
+        <div class="emergency-grid">
+          <div class="contact-row">
+            <div class="contact-row__icon contact-row__icon--orange">
+              <i data-lucide="shield"></i>
+            </div>
+            <div class="contact-row__body">
+              <span class="contact-row__name">Brgy. Tanod Command Post</span>
+              <span class="contact-row__sub">Peace &amp; Order</span>
+              <a href="tel:028123456" class="contact-row__phone">(02) 8123-4567</a>
+            </div>
+            <button class="btn btn--call btn--sm">
+              <i data-lucide="phone-call"></i> Call
+            </button>
+          </div>
+          <div class="contact-row">
+            <div class="contact-row__icon contact-row__icon--red">
+              <i data-lucide="heart-pulse"></i>
+            </div>
+            <div class="contact-row__body">
+              <span class="contact-row__name">Brgy. Health Center</span>
+              <span class="contact-row__sub">Medical Emergencies</span>
+              <a href="tel:028234567" class="contact-row__phone">(02) 8234-5678</a>
+            </div>
+            <button class="btn btn--call btn--sm">
+              <i data-lucide="phone-call"></i> Call
+            </button>
+          </div>
+          <div class="contact-row">
+            <div class="contact-row__icon contact-row__icon--orange">
+              <i data-lucide="flame"></i>
+            </div>
+            <div class="contact-row__body">
+              <span class="contact-row__name">Fire Station — Unit 4</span>
+              <span class="contact-row__sub">Fire Emergencies</span>
+              <a href="tel:028345678" class="contact-row__phone">(02) 8345-6789</a>
+            </div>
+            <button class="btn btn--call btn--sm">
+              <i data-lucide="phone-call"></i> Call
+            </button>
+          </div>
+          <div class="contact-row">
+            <div class="contact-row__icon contact-row__icon--orange">
+              <i data-lucide="shield"></i>
+            </div>
+            <div class="contact-row__body">
+              <span class="contact-row__name">Local Police Station</span>
+              <span class="contact-row__sub">Police Assistance</span>
+              <a href="tel:911" class="contact-row__phone">911 / 117</a>
+            </div>
+            <button class="btn btn--call btn--sm">
+              <i data-lucide="phone-call"></i> Call
+            </button>
+          </div>
+        </div><!-- /emergency-grid -->
+
+        <!-- Local services directory -->
+        <h2 class="services-section-title">Local Services Directory</h2>
+
+        <!-- Category filter pills -->
+        <div class="directory-filters">
+          <button class="btn btn--filter is-active">All</button>
+          <button class="btn btn--filter">Plumbing</button>
+          <button class="btn btn--filter">Electrical</button>
+          <button class="btn btn--filter">Store</button>
+          <button class="btn btn--filter">Repair</button>
+        </div>
+
+        <div class="directory-grid">
+          <div class="contact-row">
+            <div class="contact-row__icon contact-row__icon--green">
+              <i data-lucide="droplets"></i>
+            </div>
+            <div class="contact-row__body">
+              <span class="contact-row__name">Mang Tony's Plumbing</span>
+              <a href="tel:09171234567" class="contact-row__phone">0917-123-4567</a>
+              <span class="contact-row__rating">★ 4.8</span>
+            </div>
+            <button class="btn btn--call-circle" aria-label="Call">
+              <i data-lucide="phone"></i>
+            </button>
+          </div>
+          <div class="contact-row">
+            <div class="contact-row__icon contact-row__icon--green">
+              <i data-lucide="zap"></i>
+            </div>
+            <div class="contact-row__body">
+              <span class="contact-row__name">Rey's Electrical Services</span>
+              <a href="tel:09182345678" class="contact-row__phone">0918-234-5678</a>
+              <span class="contact-row__rating">★ 4.9</span>
+            </div>
+            <button class="btn btn--call-circle" aria-label="Call">
+              <i data-lucide="phone"></i>
+            </button>
+          </div>
+          <div class="contact-row">
+            <div class="contact-row__icon contact-row__icon--green">
+              <i data-lucide="shopping-bag"></i>
+            </div>
+            <div class="contact-row__body">
+              <span class="contact-row__name">Nanay Rosa's Sari-sari Store</span>
+              <a href="tel:09193456789" class="contact-row__phone">0919-345-6789</a>
+              <span class="contact-row__rating">★ 5.0</span>
+            </div>
+            <button class="btn btn--call-circle" aria-label="Call">
+              <i data-lucide="phone"></i>
+            </button>
+          </div>
+          <div class="contact-row">
+            <div class="contact-row__icon contact-row__icon--green">
+              <i data-lucide="wrench"></i>
+            </div>
+            <div class="contact-row__body">
+              <span class="contact-row__name">Kuya Boy's Repair Shop</span>
+              <a href="tel:09204567890" class="contact-row__phone">0920-456-7890</a>
+              <span class="contact-row__rating">★ 4.7</span>
+            </div>
+            <button class="btn btn--call-circle" aria-label="Call">
+              <i data-lucide="phone"></i>
+            </button>
+          </div>
+          <div class="contact-row">
+            <div class="contact-row__icon contact-row__icon--green">
+              <i data-lucide="droplets"></i>
+            </div>
+            <div class="contact-row__body">
+              <span class="contact-row__name">JR Plumbing &amp; Waterworks</span>
+              <a href="tel:09226789012" class="contact-row__phone">0922-678-9012</a>
+              <span class="contact-row__rating">★ 4.5</span>
+            </div>
+            <button class="btn btn--call-circle" aria-label="Call">
+              <i data-lucide="phone"></i>
+            </button>
+          </div>
+        </div><!-- /directory-grid -->
+
+      </div><!-- /services-panel-inner -->
+    </section><!-- /tab-emergency -->
+
+
+  </main><!-- /services-main -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       MODAL — Book Appointment (4-step wizard)
+       ───────────────────────────────────────────────────────────────
+       Step 1 → Service selection (.appt-service-grid)
+       Step 2 → Date picker (.cal calendar widget)
+       Step 3 → Time slot grid (.appt-time-grid)
+       Step 4 → Details confirmation form + submit
+
+       goToApptStep(n) manages panel visibility and step label states.
+       Each step has its own .modal__body panel (#appt-step-N) and
+       footer (#appt-footer-N). Footers hidden/shown by JS.
+
+       Header step labels: .appt-modal-steps__item (.is-active / .is-done)
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="bookApptModal" onclick="closeOnBackdrop(event)">
+    <div class="modal">
+
+      <div class="modal__header modal__header--green">
+        <div class="modal__header-icon">
+          <i data-lucide="calendar"></i>
+        </div>
+        <div class="modal__header-content">
+          <h2 class="modal__header-title">Book an Appointment</h2>
+          <div class="appt-modal-steps">
+            <span class="appt-modal-steps__item is-active" id="appt-step-label-1">Service</span>
+            <span class="appt-modal-steps__item"            id="appt-step-label-2">Date</span>
+            <span class="appt-modal-steps__item"            id="appt-step-label-3">Time</span>
+            <span class="appt-modal-steps__item"            id="appt-step-label-4">Details</span>
+          </div>
+        </div>
+        <button class="btn btn--close btn--sm modal__close" aria-label="Close" onclick="closeModal('bookApptModal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <!-- ─── Step 1: Service ─── -->
+      <div class="modal__body appt-step is-active" id="appt-step-1">
+        <h3 class="appt-step__title">What service do you need?</h3>
+        <div class="appt-service-grid">
+          <button class="btn btn--selector is-selected">
+            <i data-lucide="file-text"></i>
+            <div>
+              <strong>Barangay Clearance</strong>
+              <small>Walk-in clearance assistance</small>
+            </div>
+          </button>
+          <button class="btn btn--selector">
+            <i data-lucide="home"></i>
+            <div>
+              <strong>Certificate of Residency</strong>
+              <small>Proof of residence verification</small>
+            </div>
+          </button>
+          <button class="btn btn--selector">
+            <i data-lucide="activity"></i>
+            <div>
+              <strong>Health Consultation</strong>
+              <small>At the Barangay Health Center</small>
+            </div>
+          </button>
+          <button class="btn btn--selector">
+            <i data-lucide="bar-chart-2"></i>
+            <div>
+              <strong>Business Permit</strong>
+              <small>Guidance for business permits</small>
+            </div>
+          </button>
+          <button class="btn btn--selector">
+            <i data-lucide="heart"></i>
+            <div>
+              <strong>Indigency Letter</strong>
+              <small>Social welfare assistance</small>
+            </div>
+          </button>
+          <button class="btn btn--selector">
+            <i data-lucide="message-square"></i>
+            <div>
+              <strong>Other Concern</strong>
+              <small>General inquiry or assistance</small>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal__footer" id="appt-footer-1">
+        <button class="btn btn--green btn--full" onclick="goToApptStep(2)">Continue →</button>
+      </div>
+
+      <!-- ─── Step 2: Date ─── -->
+      <div class="modal__body appt-step" id="appt-step-2">
+        <h3 class="appt-step__title">Pick a date</h3>
+        <div class="cal">
+          <div class="cal__header">
+            <span class="cal__month">June 2025</span>
+            <div class="cal__nav">
+              <button class="cal__nav-btn"><i data-lucide="chevron-left"></i></button>
+              <button class="cal__nav-btn"><i data-lucide="chevron-right"></i></button>
+            </div>
+          </div>
+          <div class="cal__weekdays">
+            <span>Su</span><span>Mo</span><span>Tu</span>
+            <span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+          </div>
+          <div class="cal__grid">
+            <button class="cal__day cal__day--empty"></button>
+            <button class="cal__day cal__day--empty"></button>
+            <button class="cal__day cal__day--empty"></button>
+            <button class="cal__day cal__day--empty"></button>
+            <button class="cal__day cal__day--empty"></button>
+            <button class="cal__day">1</button>
+            <button class="cal__day">2</button>
+            <button class="cal__day">3</button>
+            <button class="cal__day">4</button>
+            <button class="cal__day">5</button>
+            <button class="cal__day">6</button>
+            <button class="cal__day">7</button>
+            <button class="cal__day">8</button>
+            <button class="cal__day">9</button>
+            <button class="cal__day">10</button>
+            <button class="cal__day">11</button>
+            <button class="cal__day">12</button>
+            <button class="cal__day">13</button>
+            <button class="cal__day">14</button>
+            <button class="cal__day">15</button>
+            <button class="cal__day">16</button>
+            <button class="cal__day cal__day--selected">17</button>
+            <button class="cal__day">18</button>
+            <button class="cal__day">19</button>
+            <button class="cal__day">20</button>
+            <button class="cal__day">21</button>
+            <button class="cal__day">22</button>
+            <button class="cal__day">23</button>
+            <button class="cal__day">24</button>
+            <button class="cal__day">25</button>
+            <button class="cal__day">26</button>
+            <button class="cal__day">27</button>
+            <button class="cal__day">28</button>
+            <button class="cal__day">29</button>
+            <button class="cal__day">30</button>
+          </div>
+        </div>
+        <p class="appt-date-hint">✓ June 17, 2025 selected</p>
+      </div>
+
+      <div class="modal__footer" id="appt-footer-2">
+        <button class="btn btn--outline" onclick="goToApptStep(1)">
+          <i data-lucide="chevron-left"></i> Back
+        </button>
+        <button class="btn btn--green btn--full" onclick="goToApptStep(3)">Continue →</button>
+      </div>
+
+      <!-- ─── Step 3: Time ─── -->
+      <div class="modal__body appt-step" id="appt-step-3">
+        <h3 class="appt-step__title">Choose a time slot</h3>
+        <p class="appt-step__sub">June 17, 2025 · Barangay Hall</p>
+        <div class="appt-time-grid">
+          <button class="time-slot-btn"><i data-lucide="clock"></i> 8:00 AM</button>
+          <button class="time-slot-btn"><i data-lucide="clock"></i> 9:00 AM</button>
+          <button class="time-slot-btn time-slot-btn--empty"></button>
+          <button class="time-slot-btn is-selected">
+            <i data-lucide="clock"></i> 11:00 AM
+            <i data-lucide="check-circle" class="time-slot-btn__check"></i>
+          </button>
+          <button class="time-slot-btn"><i data-lucide="clock"></i> 1:00 PM</button>
+          <button class="time-slot-btn time-slot-btn--empty"></button>
+          <button class="time-slot-btn"><i data-lucide="clock"></i> 3:00 PM</button>
+          <button class="time-slot-btn"><i data-lucide="clock"></i> 4:00 PM</button>
+        </div>
+      </div>
+
+      <div class="modal__footer" id="appt-footer-3">
+        <button class="btn btn--outline" onclick="goToApptStep(2)">
+          <i data-lucide="chevron-left"></i> Back
+        </button>
+        <button class="btn btn--green btn--full" onclick="goToApptStep(4)">Continue →</button>
+      </div>
+
+      <!-- ─── Step 4: Details ─── -->
+      <div class="modal__body appt-step" id="appt-step-4">
+        <h3 class="appt-step__title">Confirm your details</h3>
+        <div class="appt-summary-strip">
+          <div class="appt-summary-strip__col">
+            <span class="appt-summary-strip__label">SERVICE</span>
+            <span class="appt-summary-strip__value">Barangay Clearance</span>
+          </div>
+          <div class="appt-summary-strip__col">
+            <span class="appt-summary-strip__label">DATE</span>
+            <span class="appt-summary-strip__value">June 17, 2025</span>
+          </div>
+          <div class="appt-summary-strip__col">
+            <span class="appt-summary-strip__label">TIME</span>
+            <span class="appt-summary-strip__value">11:00 AM</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <div class="form-input-wrap form-input-wrap--icon">
+            <input type="text" class="form-input" placeholder="Juan dela Cruz" />
+            <span class="form-input__eye"><i data-lucide="user"></i></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <div class="form-input-wrap form-input-wrap--icon">
+            <input type="tel" class="form-input" placeholder="09XX-XXX-XXXX" />
+            <span class="form-input__eye"><i data-lucide="phone"></i></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal__footer" id="appt-footer-4">
+        <button class="btn btn--outline" onclick="goToApptStep(3)">
+          <i data-lucide="chevron-left"></i> Back
+        </button>
+        <button class="btn btn--green btn--full">
+          <i data-lucide="check"></i> Confirm Appointment
+        </button>
+      </div>
+
+    </div><!-- /modal -->
+  </div><!-- /bookApptModal -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       MODAL — Document Request Form
+       ───────────────────────────────────────────────────────────────
+       Single-page form with a dynamic document type dropdown.
+       Selecting a doc type reveals the #docInfoStrip with fee and
+       turnaround time pulled from the option's data attributes.
+
+       openDocRequest(value) → pre-selects dropdown + opens modal
+       updateDocInfo()       → syncs info strip to selected option
+
+       Header: .modal__header--green
+       Info strip: #docInfoStrip (hidden until a type is selected)
+       Copies counter: .doc-copies-counter (decrement / increment)
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="docRequestModal" onclick="closeOnBackdrop(event)">
+    <div class="modal">
+
+      <div class="modal__header modal__header--green">
+        <div class="modal__header-icon">
+          <i data-lucide="file-text"></i>
+        </div>
+        <div class="modal__header-content">
+          <p class="modal__header-label">NEW REQUEST</p>
+          <h2 class="modal__header-title">Request a Document</h2>
+        </div>
+        <button class="btn btn--close btn--sm modal__close" aria-label="Close" onclick="closeModal('docRequestModal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div class="modal__body">
+
+        <!-- Document type dropdown — drives the info strip below -->
+        <div class="form-group">
+          <label class="form-label">Type of Document</label>
+          <select class="form-select" id="docTypeSelect" onchange="updateDocInfo()">
+            <option value="" disabled selected>Select a document type...</option>
+            <option value="clearance" data-fee="₱50.00" data-days="1–2 business days">Barangay Clearance</option>
+            <option value="residency" data-fee="₱50.00" data-days="1 business day">Certificate of Residency</option>
+            <option value="indigency" data-fee="Free"   data-days="Same day">Indigency Letter</option>
+            <option value="goodmoral" data-fee="₱50.00" data-days="1–2 business days">Good Moral Certificate</option>
+          </select>
+        </div>
+
+        <!-- Info strip — revealed after selecting a doc type -->
+        <div class="modal__info-strip" id="docInfoStrip" style="display:none;">
+          <span class="badge badge--pending" id="docInfoDays"></span>
+          <span class="doc-card__fee" id="docInfoFee"></span>
+          <span style="font-size: var(--text-sm); color: var(--gray-500); margin-left: auto;">
+            Valid government ID required upon pickup
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <div class="form-input-wrap form-input-wrap--icon">
+            <input type="text" class="form-input" placeholder="e.g. Juan dela Cruz" />
+            <span class="form-input__eye"><i data-lucide="user"></i></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Purpose / Reason for Request</label>
+          <select class="form-select">
+            <option value="" disabled selected></option>
+            <option>Employment</option>
+            <option>School Enrollment</option>
+            <option>Government Transaction</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Number of Copies</label>
+            <div class="doc-copies-counter">
+              <button class="doc-copies-counter__btn" type="button">−</button>
+              <span class="doc-copies-counter__value">1</span>
+              <button class="doc-copies-counter__btn" type="button">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              <i data-lucide="calendar" style="width:14px;height:14px;vertical-align:middle;"></i>
+              Preferred Pickup Date
+            </label>
+            <input type="date" class="form-input" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Contact Number</label>
+          <div class="form-input-wrap form-input-wrap--icon">
+            <input type="tel" class="form-input" placeholder="e.g. 0917-123-4567" />
+            <span class="form-input__eye"><i data-lucide="phone"></i></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Additional Notes
+            <span style="font-weight:400; color:var(--gray-400)">(optional)</span>
+          </label>
+          <textarea class="form-input" rows="3" placeholder="Any special instructions or details..."></textarea>
+        </div>
+
+      </div><!-- /modal__body -->
+
+      <div class="modal__footer">
+        <button class="btn btn--outline" onclick="closeModal('docRequestModal')">Cancel</button>
+        <button class="btn btn--orange btn--full">
+          <i data-lucide="file-text"></i> Submit Request
+        </button>
+      </div>
+
+    </div><!-- /modal -->
+  </div><!-- /docRequestModal -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PROFILE DRAWER
+       ───────────────────────────────────────────────────────────────
+       Slide-in panel opened by the avatar button in the navbar.
+       Toggled via .is-open on #profileDrawer and #drawerBackdrop.
+       Populated dynamically by js/features/profile/profile.js.
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="profile-drawer" id="profileDrawer">
+    <div class="profile-drawer__header">
+      <button class="btn btn--close btn--sm profile-drawer__close" id="drawerCloseBtn" aria-label="Close">
+        <i data-lucide="x"></i>
+      </button>
+      <div class="profile-drawer__avatar" id="drawerAvatar">…</div>
+      <p class="profile-drawer__name" id="drawerName">Loading…</p>
+      <p class="profile-drawer__role" id="drawerRole">—</p>
+      <span class="profile-drawer__id" id="drawerIdNumber">
+        <i data-lucide="id-card"></i> —
+      </span>
+    </div>
+    <nav class="profile-drawer__menu">
+      <a href="profile.html" class="profile-drawer__item">
+        <div class="profile-drawer__item-icon"><i data-lucide="user-pen"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">My Barangay</span>
+          <span class="profile-drawer__item-sub">View your profile and ID</span>
+        </div>
+      </a>
+      <a href="services.html" class="profile-drawer__item">
+        <div class="profile-drawer__item-icon"><i data-lucide="file-text"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">My Documents</span>
+          <span class="profile-drawer__item-sub">Request or track documents</span>
+        </div>
+      </a>
+      <a href="community.html" class="profile-drawer__item">
+        <div class="profile-drawer__item-icon"><i data-lucide="users"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">Community</span>
+          <span class="profile-drawer__item-sub">Bulletin, polls, pet board</span>
+        </div>
+      </a>
+      <button class="profile-drawer__item profile-drawer__item--signout" id="signOutBtn">
+        <div class="profile-drawer__item-icon"><i data-lucide="log-out"></i></div>
+        <div class="profile-drawer__item-body">
+          <span class="profile-drawer__item-title">Sign Out</span>
+        </div>
+      </button>
+    </nav>
+  </div>
+  <div class="profile-drawer-backdrop" id="drawerBackdrop"></div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SIGN-OUT CONFIRM MODAL
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="signoutModal" onclick="this.classList.remove('is-open')">
+    <div class="modal modal--confirm">
+      <div class="modal-confirm__icon"><i data-lucide="log-out"></i></div>
+      <h2 class="modal-confirm__title">Sign out?</h2>
+      <p class="modal-confirm__body">You'll be signed out of your BarangayConnect account on this device.</p>
+      <div class="modal-confirm__footer">
+        <button class="btn btn--outline" onclick="document.getElementById('signoutModal').classList.remove('is-open')">
+          Cancel
+        </button>
+        <button class="btn btn--red btn--full" id="confirmSignOutBtn">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__brand">
+        <div class="site-footer__brand-logo">
+          <img src="../../assets/images/logo.svg" alt="BarangayConnect" class="site-footer__logo-img" />
+          <span class="site-footer__logo-text">BarangayConnect</span>
+        </div>
+        <p class="site-footer__tagline">Barangay Bancod, Indang, Cavite &copy; 2026</p>
+      </div>
+      <nav class="site-footer__links" aria-label="Footer navigation">
+        <a href="#" class="site-footer__link">Privacy Policy</a>
+        <a href="#" class="site-footer__link">Terms of Use</a>
+        <a href="#" class="site-footer__link">Contact Us</a>
+        <a href="#" class="site-footer__link">Sitemap</a>
+      </nav>
+    </div>
+  </footer>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SCRIPTS
+       ───────────────────────────────────────────────────────────────
+       1.  lucide.createIcons()    — renders all data-lucide icons
+       2.  Tab switching           — [data-tab] buttons ↔ .tab-panel
+       3.  Navbar scroll           — removes .navbar--transparent > 60px
+       4.  Modal helpers           — openModal / closeModal / closeOnBackdrop
+       5.  Report stepper          — goToStep(n) advances/retreats steps
+       6.  Appointment stepper     — goToApptStep(n) + footer visibility
+       7a. openDocRequest(value)   — pre-selects dropdown then opens modal
+       7b. updateDocInfo()         — syncs info strip to selected doc type
+       8.  Concern category tiles  — single-select within .concern-grid
+       9.  Appointment services    — single-select within .appt-service-grid
+       10. Date slot cards         — single-select in .date-slot-cards-row
+       11. Time slot buttons       — single-select in .appt-time-grid
+       12. Directory filter pills  — active state in .directory-filters
+       13. Copies counter          — decrement/increment .doc-copies-counter
+       14. Textarea char counter   — live count on .report-step__textarea
+       15. Appt footer init        — hide footers 2–4 on page load
+       16. Bullying anon toggle    — toggleAnonFields() shows/hides identity
+       17. Profile drawer          — avatar button opens slide-in panel
+  ══════════════════════════════════════════════════════════════════ -->
+  <script>
+
+    /* 1. Render Lucide icons */
+    lucide.createIcons();
+
+
+    /* 2. Tab switching */
+    const tabBtns   = document.querySelectorAll('[data-tab]');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+        tabBtns.forEach(b => { b.classList.remove('is-active'); b.setAttribute('aria-selected', 'false'); });
+        tabPanels.forEach(p => p.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-selected', 'true');
+        document.getElementById('tab-' + target)?.classList.add('is-active');
+      });
+    });
+
+
+    /* 3. Navbar transparent-on-scroll */
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('navbar--transparent', window.scrollY < 60);
+    });
+
+
+    /* 4. Modal helpers */
+    function openModal(id)  { document.getElementById(id)?.classList.add('is-open'); }
+    function closeModal(id) { document.getElementById(id)?.classList.remove('is-open'); }
+    function closeOnBackdrop(e) {
+      if (e.target === e.currentTarget) e.currentTarget.classList.remove('is-open');
+    }
+
+
+    /* 5. Report concern — step navigation */
+    function goToStep(n) {
+      document.querySelectorAll('.report-step').forEach(s => s.classList.remove('is-active'));
+      document.getElementById('report-step-' + n)?.classList.add('is-active');
+      document.querySelectorAll('.stepper__step').forEach((s, i) => {
+        s.classList.remove('is-active', 'is-done');
+        if (i + 1 < n) s.classList.add('is-done');
+        if (i + 1 === n) s.classList.add('is-active');
+      });
+    }
+
+
+    /* 6. Book appointment — step navigation */
+    function goToApptStep(n) {
+      document.querySelectorAll('.appt-step').forEach(s => s.classList.remove('is-active'));
+      document.querySelectorAll('[id^="appt-footer-"]').forEach(f => f.style.display = 'none');
+      document.getElementById('appt-step-' + n)?.classList.add('is-active');
+      document.getElementById('appt-footer-' + n).style.display = 'flex';
+      document.querySelectorAll('.appt-modal-steps__item').forEach((item, i) => {
+        item.classList.remove('is-active', 'is-done');
+        if (i + 1 < n) item.classList.add('is-done');
+        if (i + 1 === n) item.classList.add('is-active');
+      });
+    }
+
+
+    /* 7a. Open doc request modal with a pre-selected document type */
+    function openDocRequest(value) {
+      const select = document.getElementById('docTypeSelect');
+      select.value = value;
+      updateDocInfo();
+      openModal('docRequestModal');
+    }
+
+    /* 7b. Doc type dropdown — update info strip */
+    function updateDocInfo() {
+      const select   = document.getElementById('docTypeSelect');
+      const strip    = document.getElementById('docInfoStrip');
+      const selected = select.options[select.selectedIndex];
+      if (selected && selected.value) {
+        document.getElementById('docInfoDays').textContent = selected.dataset.days;
+        document.getElementById('docInfoFee').textContent  = selected.dataset.fee;
+        strip.style.display = 'flex';
+      } else {
+        strip.style.display = 'none';
+      }
+    }
+
+
+    /* 8. Concern category selector — single-select within grid */
+    document.querySelectorAll('.concern-grid .btn--selector').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.concern-grid .btn--selector').forEach(b => b.classList.remove('is-selected'));
+        btn.classList.add('is-selected');
+      });
+    });
+
+
+    /* 9. Appointment service selector — single-select within grid */
+    document.querySelectorAll('.appt-service-grid .btn--selector').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.appt-service-grid .btn--selector').forEach(b => b.classList.remove('is-selected'));
+        btn.classList.add('is-selected');
+      });
+    });
+
+
+    /* 10. Date slot cards — single-select */
+    document.querySelectorAll('.date-slot-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.date-slot-card').forEach(c => c.classList.remove('is-selected'));
+        card.classList.add('is-selected');
+      });
+    });
+
+
+    /* 11. Time slot buttons — single-select (skips empty slots) */
+    document.querySelectorAll('.time-slot-btn:not(.time-slot-btn--empty)').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('is-selected'));
+        btn.classList.add('is-selected');
+      });
+    });
+
+
+    /* 12. Directory filter pills — active state */
+    document.querySelector('.directory-filters')?.querySelectorAll('.btn--filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.directory-filters .btn--filter').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+      });
+    });
+
+
+    /* 13. Copies counter — decrement / increment */
+    document.querySelectorAll('.doc-copies-counter').forEach(counter => {
+      const valueEl = counter.querySelector('.doc-copies-counter__value');
+      counter.querySelector('.doc-copies-counter__btn:first-child').addEventListener('click', () => {
+        const v = parseInt(valueEl.textContent);
+        if (v > 1) valueEl.textContent = v - 1;
+      });
+      counter.querySelector('.doc-copies-counter__btn:last-child').addEventListener('click', () => {
+        valueEl.textContent = parseInt(valueEl.textContent) + 1;
+      });
+    });
+
+
+    /* 14. Textarea char counter — live update */
+    document.querySelector('.report-step__textarea')?.addEventListener('input', function () {
+      this.closest('.form-group').querySelector('.char-count').textContent =
+        this.value.length + '/500 characters';
+    });
+
+
+    /* 15. Initialize — hide appointment footers 2–4 on load */
+    document.querySelectorAll('[id^="appt-footer-"]').forEach((f, i) => {
+      f.style.display = i === 0 ? 'flex' : 'none';
+    });
+
+
+    /* 16. Bullying anonymous toggle — show/hide identity fields */
+    function toggleAnonFields() {
+      const isAnon = document.getElementById('anonToggle').checked;
+      document.getElementById('bullyingIdentityFields').style.display = isAnon ? 'none' : 'flex';
+    }
+
+
+    /* 17. Profile drawer */
+    const drawer   = document.getElementById('profileDrawer');
+    const backdrop = document.getElementById('drawerBackdrop');
+
+    function openDrawer()  { drawer.classList.add('is-open');    backdrop.classList.add('is-open'); }
+    function closeDrawer() { drawer.classList.remove('is-open'); backdrop.classList.remove('is-open'); }
+
+    document.getElementById('avatarBtn').addEventListener('click', openDrawer);
+    document.getElementById('drawerCloseBtn').addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+
+    document.getElementById('signOutBtn').addEventListener('click', () => {
+      closeDrawer();
+      document.getElementById('signoutModal').classList.add('is-open');
+    });
+
+  </script>
+
+  <script type="module" src="../../js/features/profile/profile.js"></script>
+
+  <script>
+    const _SK = 'servicesTab';
+    document.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem(_SK);
+      if (saved) {
+        const btn = document.querySelector(`.services-tabs [data-tab="${saved}"]`);
+        if (btn) btn.click();
+      }
+      document.querySelectorAll('.services-tabs [data-tab]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          try { localStorage.setItem(_SK, btn.dataset.tab); } catch(e) {}
+        });
+      });
+    });
+  </script>
+</body>
+</html>

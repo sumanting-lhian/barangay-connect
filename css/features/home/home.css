@@ -1,0 +1,954 @@
+/* ================================================================
+   home.css — BarangayConnect
+   Page-specific styles for the home / landing page.
+   Covers the full-bleed hero, quick actions, updates feed,
+   stats, marquee, dark footer wrap, and CTA section.
+   GSAP handles scroll-driven animations (border-radius morphing,
+   entrance transforms, scroll indicator fade); CSS only defines
+   the initial states and non-animated transitions.
+
+   WHAT IS IN HERE:
+     · Shared section helpers (eyebrow, heading, view-all link)
+     · Hero — full-bleed sticky, overlays, headline, CTA, widgets,
+       scroll indicator, location pill, clock card, alert card
+     · Navbar transparent override (home-only)
+     · Navbar scrolled state (logo color / filter transitions)
+     · Quick Actions section
+     · Recent Updates section (post rows + featured post)
+     · Stats section
+     · Marquee banner overrides
+     · Dark footer wrap
+     · CTA section
+     · Responsive breakpoints
+
+   WHAT IS NOT IN HERE:
+     · Navbar base styles            → main.css
+     · Post row / featured post      → frames.css
+     · Marquee base structure        → frames.css
+     · Button base styles            → buttons.css
+     · Stat grid base styles         → components.css
+     · GSAP scroll animations        → home.js
+
+   REQUIRED IMPORTS:
+     <link rel="stylesheet" href="css/shared/main.css" />
+     <link rel="stylesheet" href="css/shared/buttons.css" />
+     <link rel="stylesheet" href="css/shared/components.css" />
+     <link rel="stylesheet" href="css/shared/frames.css" />
+     <link rel="stylesheet" href="css/features/home/home.css" />
+
+   QUICK REFERENCE:
+     Hero             → .hero / .hero__content / .hero__left / .hero__right
+     Hero widgets     → .hero__clock-card / .hero__alert-card / .hero__widget-btn
+     Scroll indicator → .hero__scroll-indicator
+     Sections         → .section-quick-actions / .section-updates / .section-stats
+     Dark wrap        → .dark-footer-wrap
+     CTA              → .section-cta
+================================================================ */
+
+
+/* ================================================================
+   GLOBAL RESETS — home page only
+================================================================ */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+html { scroll-behavior: smooth; }
+
+body { background: var(--white); }
+
+
+/* ================================================================
+   SHARED SECTION HELPERS
+   Reusable eyebrow labels, headings, and "view all" links
+   used across multiple sections on this page.
+================================================================ */
+
+.section-eyebrow {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--gray-400);
+  margin-bottom: var(--space-sm);
+}
+
+.section-eyebrow--center { text-align: center; }
+
+.section-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: var(--fw-black);
+  color: var(--text-dark);
+  letter-spacing: -0.03em;
+  line-height: var(--lh-tight);
+}
+
+.section-heading--center { text-align: center; }
+
+.section-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  color: var(--gray-500);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--transition);
+}
+
+.section-view-all [data-lucide] { width: 14px; height: 14px; }
+.section-view-all:hover { color: var(--orange); }
+
+
+/* ================================================================
+   HERO
+   Full-bleed sticky section on load. GSAP morphs the
+   border-radius to 0 0 64px 64px as the user scrolls down.
+================================================================ */
+
+.hero {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 100vh;
+  min-height: 600px;
+  margin-top: 0;
+  padding-top: 0;
+  background-image: url('../../../assets/images/bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center top;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 0;           /* GSAP animates this on scroll */
+  overflow: hidden;
+}
+
+/* Dark directional overlay */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(8,  24, 12, 0.92) 0%,
+    rgba(18, 52, 28, 0.85) 40%,
+    rgba(12, 34, 18, 0.60) 70%,
+    rgba(12, 34, 18, 0.00) 100%
+  );
+}
+
+/* Radial green bloom — left-side atmospheric glow */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 62% 58% at 8% 38%,
+    rgba(27, 75, 39, 0.30) 0%,
+    transparent 68%
+  );
+}
+
+/* All direct children sit above the overlays */
+.hero > * { position: relative; z-index: 3; }
+
+/* ── Content Row ──────────────────────────────────────────────── */
+
+.hero__content {
+  max-width: 1280px;
+  width: 100%;
+  margin-inline: auto;
+  padding: 140px var(--space-xl) 80px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3xl);
+  flex: 1;
+}
+
+/* ── Left Column ──────────────────────────────────────────────── */
+
+/* GSAP owns entrance transforms — CSS animation is disabled */
+.hero__left {
+  flex: 1;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  animation: none !important;
+}
+
+/* Location pill — glassy badge above the headline */
+.hero .location-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.85);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.hero .location-pill:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.30);
+}
+
+/* Pulsing green dot inside the location pill */
+.hero .location-pill .location-pill__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #4ade80;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.22);
+  animation: locationPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes locationPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.22); }
+  50%       { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0.06); }
+}
+
+/* Headline */
+.hero__headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.8rem, 8vw, 6.2rem);
+  font-weight: var(--fw-black);
+  color: var(--white);
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+}
+
+.hero__headline--accent {
+  display: block;
+  color: var(--orange);
+  margin-top: 2px;
+}
+
+/* Descriptor paragraph */
+.hero__desc {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--lh-relaxed);
+  color: rgba(255, 255, 255, 0.52);
+  max-width: 440px;
+}
+
+/* CTA button row */
+.hero__cta {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+/* Outlined hero button — GSAP handles padding and icon nudge */
+.hero__cta .btn--outline-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding: 14px 28px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid rgba(255, 255, 255, 0.58);
+  background: transparent;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-base);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  /* Only CSS-transition bg and border; GSAP handles transform */
+  transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+}
+
+/* Inner text span — GSAP nudges this on hover */
+.hero__cta .btn--outline-hero .btn-text {
+  display: inline-block;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hero__cta .btn--outline-hero:hover {
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--text-dark);
+  border-color: transparent;
+}
+
+/* Shimmer sweep on hover */
+.hero__cta .btn--outline-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.18) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.hero__cta .btn--outline-hero:hover::after { transform: translateX(100%); }
+
+.hero__cta .btn--outline-hero [data-lucide],
+.hero__cta .btn--outline-hero svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Right Column — Widget Panel ──────────────────────────────── */
+
+/* GSAP owns entrance transforms — CSS animation is disabled */
+.hero__right {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: center;
+  animation: none !important;
+}
+
+/* Clock card */
+.hero__clock-card {
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  padding: 20px 22px;
+}
+
+.hero__clock-label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.50);
+  margin-bottom: 8px;
+}
+
+.hero__clock-time {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: var(--fw-black);
+  color: var(--white);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.hero__clock-date {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.50);
+}
+
+/* Alert card */
+.hero__alert-card {
+  background: var(--orange);
+  border-radius: 20px;
+  padding: 18px 22px;
+  box-shadow: 0 6px 28px rgba(255, 161, 53, 0.40);
+}
+
+.hero__alert-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Pulsing status dot inside the alert card */
+.hero__alert-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: rgba(40, 30, 10, 0.50);
+  animation: alertDot 2s ease-in-out infinite;
+}
+
+@keyframes alertDot {
+  0%, 100% { transform: scale(1);   opacity: 0.50; }
+  50%       { transform: scale(1.5); opacity: 1;    }
+}
+
+.hero__alert-label {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  color: rgba(44, 30, 10, 0.70);
+}
+
+.hero__alert-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--fw-black);
+  color: rgba(30, 22, 8, 0.92);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.hero__alert-sub {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: rgba(44, 30, 10, 0.62);
+}
+
+/* Quick-access widget buttons row */
+.hero__widget-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.hero__widget-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 10px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: rgba(255, 255, 255, 0.82);
+  font-family: var(--font-display);
+  cursor: pointer;
+  transition: background 0.20s ease, border-color 0.20s ease, transform 0.22s ease;
+}
+
+.hero__widget-btn [data-lucide],
+.hero__widget-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.8;
+}
+
+.hero__widget-btn span {
+  font-size: 12px;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.02em;
+}
+
+.hero__widget-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.30);
+  transform: translateY(-2px);
+}
+
+/* ── Scroll Indicator ─────────────────────────────────────────── */
+
+/* GSAP fades this out as the user scrolls */
+.hero__scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero__scroll-text {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.30);
+  animation: scrollTextBlink 3s ease-in-out infinite;
+}
+
+@keyframes scrollTextBlink {
+  0%, 100% { opacity: 0.30; }
+  50%       { opacity: 0.65; }
+}
+
+.hero__scroll-line {
+  display: block;
+  width: 1.5px;
+  height: 52px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.50), transparent);
+  border-radius: 2px;
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%   { transform: scaleY(0.6) translateY(-10px); opacity: 0.30; }
+  50%  { transform: scaleY(1.0) translateY(0);     opacity: 1;    }
+  100% { transform: scaleY(0.6) translateY(10px);  opacity: 0.30; }
+}
+
+
+/* ================================================================
+   NAVBAR TRANSPARENT — home page override
+   Applied while the hero is in view; JS removes it on scroll.
+================================================================ */
+
+.navbar--transparent {
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+  /* Smooth transition back to the solid navbar state */
+  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.navbar--transparent .navbar__logo-text {
+  color: var(--white);
+  transition: color 0.25s ease;
+}
+
+.navbar--transparent .navbar__link       { color: rgba(255, 255, 255, 0.78); }
+.navbar--transparent .navbar__link:hover {
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.navbar--transparent .navbar__link.is-active {
+  color: var(--white);
+  font-weight: var(--fw-bold);
+}
+
+.navbar--transparent .navbar__link.is-active::after { background: var(--orange); }
+
+.navbar--transparent .navbar__role--resident {
+  color: rgba(255, 255, 255, 0.82);
+  border-color: rgba(255, 255, 255, 0.38);
+}
+
+.navbar--transparent .navbar__bell       { color: rgba(255, 255, 255, 0.76); }
+.navbar--transparent .navbar__bell:hover { background: rgba(255, 255, 255, 0.12); color: var(--white); }
+.navbar--transparent .navbar__bell-dot   { border-color: transparent; }
+
+.navbar--transparent .navbar__hamburger {
+  color: rgba(255, 255, 255, 0.78);
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+
+/* ================================================================
+   NAVBAR SCROLLED STATE
+   Logo becomes visible against the solid white background.
+   The image filter converts a light logo to dark green.
+   Remove .navbar__logo-img rule if the logo is already colored.
+================================================================ */
+
+.navbar:not(.navbar--transparent) .navbar__logo-text {
+  color: var(--green-dark);
+  transition: color 0.25s ease;
+}
+
+/* Converts a white/light logo image to dark green on solid navbar */
+.navbar:not(.navbar--transparent) .navbar__logo-img {
+  filter: brightness(0) saturate(100%) invert(21%) sepia(28%) saturate(800%) hue-rotate(100deg) brightness(85%);
+  transition: filter 0.25s ease;
+}
+
+
+/* ================================================================
+   QUICK ACTIONS SECTION
+================================================================ */
+
+.section-quick-actions {
+  position: relative;
+  z-index: 10;
+  margin-top: 0;
+  border-radius: 0;
+  will-change: clip-path;
+  background-color: var(--white);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.05);
+  padding: 140px var(--space-xl);
+  text-align: center;
+}
+
+/* Subtle orange top-seam accent */
+.section-quick-actions::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 3px;
+  background: var(--orange);
+  border-radius: var(--radius-full);
+  opacity: 0.40;
+}
+
+.section-quick-actions .section-eyebrow { margin-bottom: var(--space-xs); }
+.section-quick-actions .section-heading { margin-bottom: var(--space-3xl); }
+
+.quick-actions__grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 16px;
+  max-width: 880px;
+  margin-inline: auto;
+}
+
+/* GSAP handles hover transforms — CSS only handles shadow and border */
+.quick-actions__grid .btn--selector {
+  flex: 1;
+  min-width: 0;
+  padding: 32px 12px;
+  border-radius: var(--radius-lg);
+  gap: 13px;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  transition: box-shadow 0.22s ease, border-color 0.20s ease, background 0.20s ease;
+}
+
+.quick-actions__grid .btn--selector:hover {
+  box-shadow: 0 12px 32px rgba(27, 75, 39, 0.14);
+  border-color: var(--green-dark);
+  transform: none;  /* GSAP owns the transform */
+}
+
+.quick-actions__grid .btn--selector [data-lucide] {
+  width: 28px;
+  height: 28px;
+}
+
+
+/* ================================================================
+   RECENT UPDATES SECTION
+================================================================ */
+
+.section-updates {
+  position: relative;
+  z-index: 10;
+  margin-top: 0;
+  border-radius: 0;
+  will-change: clip-path;
+  background-color: var(--white);
+  padding: 0 var(--space-xl) 140px;
+}
+
+.section-updates__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--space-2xl);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.section-updates__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 55%) minmax(0, 1fr);
+  gap: var(--space-2xl);
+  align-items: start;
+}
+
+.section-updates__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* GSAP handles hover transforms on post rows */
+.section-updates .post-row--accented {
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg) var(--space-xl);
+  border-left-width: 4px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.048);
+  margin-bottom: 16px;
+  transition: box-shadow 0.22s ease;
+}
+
+.section-updates .post-row--accented:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.10);
+  transform: none;  /* GSAP owns the transform */
+}
+
+.section-updates .post-row--accented.post-row--orange { border-left-color: var(--orange);     }
+.section-updates .post-row--accented.post-row--red    { border-left-color: var(--red);        }
+.section-updates .post-row--accented.post-row--green  { border-left-color: var(--green-dark); }
+
+/* Featured post — fills column height, elevated shadow on hover */
+.post-featured {
+  height: 100%;
+  transition: box-shadow 0.25s ease;
+}
+
+.post-featured:hover { box-shadow: 0 16px 48px rgba(27, 75, 39, 0.26); }
+
+
+/* ================================================================
+   STATS SECTION
+================================================================ */
+
+.section-stats {
+  will-change: clip-path;
+  background-color: var(--white);
+  padding: 0 var(--space-xl) 140px;
+  text-align: center;
+}
+
+.section-stats .stat-grid {
+  max-width: 940px;
+  margin-inline: auto;
+  margin-top: var(--space-3xl);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.section-stats .stat-grid__item    { padding: var(--space-3xl) var(--space-xl); align-items: center; }
+.section-stats .stat-grid__number  { font-size: clamp(2.6rem, 4vw, 3.8rem); }
+.section-stats .stat-grid__divider { margin: var(--space-xl) 0; }
+
+
+/* ================================================================
+   MARQUEE BANNER — home page overrides
+   Speeds up the scroll and adjusts stroke weights.
+================================================================ */
+
+.marquee-banner { --marquee-duration: 22s; }
+
+.marquee-text         { -webkit-text-stroke: 1.5px var(--gray-200); }
+.marquee-text--solid  { -webkit-text-stroke: 0; color: var(--gray-100); }
+
+.marquee-banner--dark {
+  background: var(--green-dark);
+  border-top:    1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.marquee-banner--dark .marquee-text        { -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.12); }
+.marquee-banner--dark .marquee-text--solid { -webkit-text-stroke: 0; color: rgba(255, 255, 255, 0.07); }
+
+
+/* ================================================================
+   DARK FOOTER WRAP
+   Wraps the marquee, CTA, and site footer in the dark green zone.
+   Rounded top appears as the user scrolls toward it.
+   GSAP can also animate the border-radius.
+================================================================ */
+
+.dark-footer-wrap {
+  position: relative;
+  z-index: 10;
+  margin-top: -40px;
+  padding-bottom: 0;
+  will-change: clip-path;
+  background: var(--green-dark);
+  border-radius: 64px 64px 0 0;
+  overflow: hidden;
+  /* Subtle top-seam glow to separate from white sections */
+  box-shadow: 0 -2px 0 rgba(255, 255, 255, 0.04);
+}
+
+
+/* ================================================================
+   CTA SECTION
+================================================================ */
+
+.section-cta {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 130px var(--space-xl) 120px;
+  background-color: var(--green-dark);
+  text-align: center;
+  overflow: visible;
+}
+
+/* Decorative blobs */
+.section-cta::before {
+  content: '';
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.028);
+  right: -140px;
+  top: -130px;
+  pointer-events: none;
+}
+
+.section-cta::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.020);
+  left: -80px;
+  bottom: -90px;
+  pointer-events: none;
+}
+
+/* Floating icon above the heading */
+.section-cta__icon {
+  position: relative;
+  z-index: 1;
+  width: 52px;
+  height: 52px;
+  color: var(--orange);
+  stroke-width: 1.6px;
+  margin-bottom: 48px;
+  animation: iconFloat 3.5s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0);   }
+  50%       { transform: translateY(-8px); }
+}
+
+.section-cta__heading {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 5.5vw, 4.4rem);
+  font-weight: var(--fw-black);
+  color: var(--white);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.04em;
+  max-width: 700px;
+}
+
+.section-cta__desc {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.48);
+  line-height: var(--lh-relaxed);
+  max-width: 480px;
+  margin: var(--space-xl) 0 var(--space-3xl);
+}
+
+.section-cta .btn--orange {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  padding: 18px 44px;
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-lg);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 32px rgba(255, 161, 53, 0.44);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.18s ease;
+}
+
+.section-cta .btn--orange:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 44px rgba(255, 161, 53, 0.54);
+}
+
+.section-cta .btn--orange:active { transform: translateY(0); }
+
+
+/* ================================================================
+   Z-INDEX OVERRIDES
+   Ensure overlays from shared components stack correctly
+   above the hero and sticky sections on this page.
+================================================================ */
+
+.profile-drawer          { position: fixed; top: 0; right: 0; bottom: 0; z-index: 500; overflow-y: auto; }
+.profile-drawer-backdrop { position: fixed; inset: 0; z-index: 499; }
+.modal-overlay           { position: fixed; inset: 0; z-index: 600; }
+
+
+/* ================================================================
+   RESPONSIVE
+================================================================ */
+
+@media (max-width: 1024px) {
+  .hero__right           { width: 270px; }
+  .quick-actions__grid   { gap: 12px; }
+}
+
+@media (max-width: 900px) {
+  .hero__content {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 165px;
+    padding-bottom: 130px;
+    gap: var(--space-2xl);
+  }
+
+  .hero__right   { display: none; }
+  .hero__headline { font-size: clamp(3rem, 9vw, 5rem); }
+
+  .section-updates__grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .quick-actions__grid { flex-wrap: wrap; gap: 12px; }
+  .quick-actions__grid .btn--selector { flex: 1 1 calc(33.333% - 8px); min-width: 100px; }
+
+  .dark-footer-wrap { border-radius: 44px 44px 0 0; }
+  .section-cta      { padding: 90px var(--space-lg); }
+}
+
+@media (max-width: 640px) {
+  .section-quick-actions,
+  .section-updates,
+  .section-stats {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
+
+  .hero__content { padding-left: var(--space-md); padding-right: var(--space-md); }
+
+  .section-updates__header { flex-direction: column; align-items: flex-start; gap: var(--space-sm); }
+  .quick-actions__grid .btn--selector { flex: 1 1 calc(50% - 6px); }
+  .section-cta__heading { font-size: clamp(2rem, 8vw, 2.8rem); }
+}
+
+@media (max-width: 480px) {
+  .hero__headline { font-size: clamp(2.8rem, 10vw, 3.8rem); }
+
+  .hero__cta { flex-direction: column; }
+  .hero__cta .btn--outline-hero { width: 100%; justify-content: center; }
+
+  .quick-actions__grid .btn--selector { flex: 1 1 100%; }
+}

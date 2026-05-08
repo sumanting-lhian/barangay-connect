@@ -1,0 +1,332 @@
+<!--
+================================================
+  index.html — BarangayConnect
+  Sign-in entry point for registered residents.
+  Renders the two-panel login layout: a branded
+  left panel with stats and a right panel with
+  the login form.
+
+  WHAT IS IN HERE:
+    · Left panel — logo, decorative circles, badge,
+      hero text, and animated stats row
+    · Right panel — email/password login form with
+      toggle visibility, forgot password link,
+      and register redirect
+
+  WHAT IS NOT IN HERE:
+    · Form validation and submit logic (auth.js)
+    · Layout and panel styles (auth.css, main.css)
+    · Firebase initialization (firebase-config.js)
+
+  REQUIRED IMPORTS:
+    · css/shared/main.css, css/features/auth/auth.css
+    · https://unpkg.com/lucide — icon set
+    · js/features/auth/auth.js (module)
+    · js/core/firebase-config.js (module)
+
+  QUICK REFERENCE:
+    · #loginForm        — main sign-in form
+    · #loginEmail       — email input field
+    · #loginPassword    — password input field
+    · #togglePassword   — eye button for password visibility
+    · #loginBtn         — submit button
+    · #loginSpinner     — loading spinner (hidden by default)
+    · #loginError       — general credential error message
+    · .auth-left        — branded left panel
+    · .auth-right       — white right panel with form
+================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log In</title>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <link rel="stylesheet" href="/css/shared/main.css" />
+  <link rel="stylesheet" href="/css/shared/buttons.css" />
+  <link rel="stylesheet" href="/css/features/auth/login.css" />
+</head>
+<body class="login-page">
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LEFT PANEL
+       ───────────────────────────────────────────────────────────────
+       Branded panel with logo, decorative circles, hero copy,
+       and a stats row. Visual only — no interactive elements.
+  ══════════════════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════
+       LEFT PANEL — Branded hero with background, stats, testimonials
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="auth-left">
+
+    <!-- Logo — matches reg-logo structure -->
+    <a href="/" class="auth-logo">
+      <img src="/assets/images/logo.svg" alt="BarangayConnect" class="auth-logo__img" />
+      <span class="auth-logo__text">BarangayConnect</span>
+    </a>
+
+    <!-- Hero Text -->
+    <div class="auth-left__hero">
+      <div class="auth-left__badge">
+        <i data-lucide="map-pin"></i>
+        <span>Get Connected</span>
+      </div>
+      <h1 class="auth-left__heading">
+        Sign in to your<br />
+        <span class="highlight">barangay.</span>
+      </h1>
+      <p class="auth-left__subtext">
+        Your one-stop digital hub for barangay services, community updates, and real-time alerts — all in one place.
+      </p>
+    </div>
+
+    <!-- Stats Card -->
+    <div class="auth-stats-card">
+      <div class="auth-stat-item">
+        <div class="auth-stat-item__icon"><i data-lucide="users"></i></div>
+        <span class="auth-stat-item__number">2.4K+</span>
+        <span class="auth-stat-item__label">Residents</span>
+      </div>
+      <div class="auth-stat-item">
+        <div class="auth-stat-item__icon"><i data-lucide="file-check"></i></div>
+        <span class="auth-stat-item__number">180+</span>
+        <span class="auth-stat-item__label">Docs Processed</span>
+      </div>
+      <div class="auth-stat-item">
+        <div class="auth-stat-item__icon"><i data-lucide="shield-check"></i></div>
+        <span class="auth-stat-item__number">12</span>
+        <span class="auth-stat-item__label">Services</span>
+      </div>
+      <div class="auth-stat-item">
+        <div class="auth-stat-item__icon"><i data-lucide="clock"></i></div>
+        <span class="auth-stat-item__number">24h</span>
+        <span class="auth-stat-item__label">Response</span>
+      </div>
+    </div>
+
+    <!-- Testimonial Carousel -->
+    <div class="auth-carousel" id="authCarousel">
+      <div class="auth-carousel__track" id="carouselTrack">
+
+        <div class="auth-carousel__slide">
+          <div class="auth-carousel__stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="auth-carousel__quote">
+            "I received the emergency alert during the typhoon just in time. Sobrang helpful!"
+          </p>
+          <div class="auth-carousel__author">
+            <div class="auth-carousel__avatar">AR</div>
+            <div class="auth-carousel__author-info">
+              <span class="auth-carousel__author-name">Ana Reyes</span>
+              <span class="auth-carousel__author-role">Resident · Brgy. Bancod</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-carousel__slide">
+          <div class="auth-carousel__stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="auth-carousel__quote">
+            "Nakakuha ako ng barangay clearance in less than a day. Ang gaan ng proseso dito!"
+          </p>
+          <div class="auth-carousel__author">
+            <div class="auth-carousel__avatar">JM</div>
+            <div class="auth-carousel__author-info">
+              <span class="auth-carousel__author-name">Jose Mendoza</span>
+              <span class="auth-carousel__author-role">Resident · Brgy. Bancod</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-carousel__slide">
+          <div class="auth-carousel__stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <p class="auth-carousel__quote">
+            "Ang dali mag-report ng concerns. Na-resolve ang flooded road namin in 2 days!"
+          </p>
+          <div class="auth-carousel__author">
+            <div class="auth-carousel__avatar">MC</div>
+            <div class="auth-carousel__author-info">
+              <span class="auth-carousel__author-name">Maria Cruz</span>
+              <span class="auth-carousel__author-role">Resident · Brgy. Bancod</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /carouselTrack -->
+      <div class="auth-carousel__dots" id="carouselDots">
+        <button class="auth-carousel__dot is-active" data-index="0"></button>
+        <button class="auth-carousel__dot" data-index="1"></button>
+        <button class="auth-carousel__dot" data-index="2"></button>
+      </div>
+    </div><!-- /authCarousel -->
+
+  </div><!-- /auth-left -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       RIGHT PANEL
+       ───────────────────────────────────────────────────────────────
+       White panel containing the sign-in form.
+       Handles email/password input, visibility toggle,
+       forgot password link, and redirect to registration.
+  ══════════════════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════
+       RIGHT PANEL — White form panel
+  ══════════════════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════
+       RIGHT PANEL — off-white, matches register layout
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="auth-right">
+    <div class="auth-right__inner">
+
+      <!-- "Don't have an account?" — top right, mirrors reg-signin -->
+      <p class="auth-register-link">
+        Don't have an account? <a href="/register.html">Register here</a>
+      </p>
+
+      <!-- Page title — outside card, mirrors reg-title -->
+      <h2 class="auth-form__title">Welcome back</h2>
+
+      <!-- White form card — mirrors register-card -->
+      <div class="auth-form-wrapper">
+
+        <p class="auth-form__subtitle">Log in to your BarangayConnect account to continue.</p>
+
+        <!-- ── LOGIN FORM — validated by auth.js ── -->
+        <form class="auth-form" id="loginForm" novalidate>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">Email address</label>
+            <div class="form-input-wrap">
+              <input
+                class="form-input"
+                type="email"
+                id="loginEmail"
+                name="email"
+                placeholder="juan@example.com"
+                autocomplete="email"
+              />
+            </div>
+            <span class="form-error" id="emailError" aria-live="polite"></span>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">Password</label>
+            <div class="form-input-wrap form-input-wrap--icon">
+              <input
+                class="form-input"
+                type="password"
+                id="loginPassword"
+                name="password"
+                placeholder="Your password"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                class="form-input__eye"
+                id="togglePassword"
+                aria-label="Toggle password visibility"
+              >
+                <i data-lucide="eye"></i>
+              </button>
+            </div>
+            <span class="form-error" id="passwordError" aria-live="polite"></span>
+          </div>
+
+          <!-- Forgot Password -->
+          <div class="form-forgot">
+            <a href="#" class="form-link">Forgot password?</a>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="btn btn--green btn--full" id="loginBtn">
+            <span>Log In to BarangayConnect</span>
+            <i data-lucide="arrow-right"></i>
+            <span class="btn__spinner" id="loginSpinner" hidden>
+              <i data-lucide="loader-circle"></i>
+            </span>
+          </button>
+
+          <!-- General error -->
+          <p class="form-error form-error--center" id="loginError" aria-live="polite"></p>
+
+        </form><!-- /loginForm -->
+
+        <!-- Divider -->
+        <div class="auth-divider">or</div>
+
+        <!-- Register redirect -->
+        <a href="/register.html" class="btn btn--outline btn--full">
+          Create a free account
+          <i data-lucide="arrow-right"></i>
+        </a>
+
+        <!-- Security notice -->
+        <p class="auth-security-notice">
+          <i data-lucide="shield"></i>
+          BarangayConnect is a secure platform. Your data is protected and never shared with third parties.
+        </p>
+
+      </div><!-- /auth-form-wrapper -->
+
+    </div><!-- /auth-right__inner -->
+  </div><!-- /auth-right -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SCRIPTS
+       ───────────────────────────────────────────────────────────────
+       1. lucide.createIcons() — renders all data-lucide icons
+       2. auth.js (module)    — form validation and sign-in logic
+       3. firebase-config.js  — shared Firebase app instance
+  ══════════════════════════════════════════════════════════════════ -->
+  <script>lucide.createIcons();</script>
+
+  <!-- Carousel auto-scroll — login page only, not touching auth.js -->
+  <script>
+    (function () {
+      const track  = document.getElementById('carouselTrack');
+      const dots   = document.querySelectorAll('.auth-carousel__dot');
+      if (!track) return;
+
+      let current = 0;
+      const total = dots.length;
+
+      function goTo(index) {
+        current = (index + total) % total;
+        track.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, i) => d.classList.toggle('is-active', i === current));
+      }
+
+      /* Dot click */
+      dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.index)));
+
+      /* Auto-advance every 5s */
+      setInterval(() => goTo(current + 1), 5000);
+    })();
+  </script>
+
+  <script type="module" src="js/features/auth/auth.js"></script>
+
+  <script type="module">
+    import { initializeApp }                    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, signInAnonymously }       from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import { getFirestore, doc, getDoc }        from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    import { app } from './js/core/firebase-config.js';
+  </script>
+
+
+</body>
+</html>
