@@ -63,10 +63,18 @@
   TODO
 */
 :root {
+  
 }
 
 .landing-page {
   /* TODO: stack sections vertically, page fills at least the full screen height */
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #4ade80;
 }
 
 
@@ -91,6 +99,16 @@
     when the .is-scrolled class gets added.
     TODO
   */
+
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+  height: var(--navbar-h);
+  background-color: transparent;
+  transition: background-color 0.3 ease;
+  border: none;
 }
 
 /* DO NOT CHANGE — JS adds this class when the user scrolls past 60px */
@@ -109,6 +127,14 @@
     Full height of the navbar.
     TODO
   */
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+
+  flex-direction: row;
+  padding: 20px 0 20px 0;
+  height: 100%;
 }
 
 /* ── Logo ─────────────────────────────────────── */
@@ -120,8 +146,12 @@
 */
 .landing-nav__logo {
   display: flex;
+  flex-direction: row;
   align-items: center;
   text-decoration: none;
+  gap: 5px;
+  flex-shrink: 0;
+
 }
 
 .landing-nav__logo-img {
@@ -131,6 +161,11 @@
     When the nav scrolls to white bg, it switches to green — already handled below.
     TODO: size, filter to make it white
   */
+
+  width: 30px;
+  height: 30px;
+  color: var(--white);
+
 }
 
 /* DO NOT CHANGE — JS adds .is-scrolled, this switches the logo to green */
@@ -144,6 +179,14 @@
     Color transition is already handled by .is-scrolled below.
     TODO: font, weight, size, color (white), letter-spacing, transition
   */
+
+  font: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--text-1xl);
+  letter-spacing: 0px;
+  color: var(--white);
+  transition: var(--transition);
+
 }
 
 /* DO NOT CHANGE — JS adds .is-scrolled */
@@ -164,10 +207,27 @@
 
 .landing-nav__link {
   /* TODO: padding, rounded shape, font, weight, size, color (semi-transparent white), no underline, transition */
+
+  padding: 20px;
+  border-radius: 50px;
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: var(--text-base-sm);
+  color: var(--overlay-white-70);
+  text-decoration: none;
+  transition: var(--transition);
+  
 }
 
 .landing-nav__link:hover {
   /* TODO: brighter text, subtle frosted bg */
+
+  color: var(--white);
+  border: 2px var(--gray-100);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
 }
 
 /* DO NOT CHANGE — JS adds .is-scrolled */
@@ -183,6 +243,7 @@
 .landing-nav__actions {
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 /* DO NOT CHANGE — JS adds .is-scrolled, adjusts outline button for white bg */
@@ -201,6 +262,7 @@
 @media (max-width: 768px) { .landing-nav__links { display: none; } }
 @media (max-width: 520px) {
   /* TODO: reduce inner padding, hide the logo wordmark */
+  
 }
 
 
@@ -220,6 +282,11 @@
     escape. Full viewport height minimum. Centers its inner content.
     TODO
   */
+
+  padding-top: var(--navbar-h);
+  background-color: var(--green-dark);
+  overflow: hidden;
+  height: max-content;
 }
 
 /*
@@ -234,6 +301,9 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 1;
+
+  background-image: url("C:bg-index.jpg");
 }
 
 /*
@@ -245,6 +315,9 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+
+  /*N/A*/
+
 }
 
 /*
@@ -257,7 +330,14 @@
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
+
+  content: '';
+  width: 600px; height: 600px;
+  background: rgba(255,255,255,0.03);
+  
   /* TODO: blur amount */
+  
+  filter: blur(5px);
 }
 
 /*
@@ -266,6 +346,8 @@
   TODO
 */
 .hero__blob--left {
+  left: -10px; top: -100px;
+  pointer-events: none;
 }
 
 /*
@@ -274,6 +356,9 @@
   TODO
 */
 .hero__blob--right {
+  width: 400px; height: 400px;
+  right: -10px; top: 500px;
+  pointer-events: none;
 }
 
 /*
@@ -299,6 +384,18 @@
 .hero__badge {
   display: inline-flex;
   align-items: center;
+
+  color: var(--white);
+  width: fit-content;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  gap: 10px;
+
+  
 }
 
 /*
@@ -307,6 +404,15 @@
   TODO: size, shape, green color, animation
 */
 .hero__badge-dot {
+  
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #4ade80;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.22);
+  animation: hero-dot-pulse 2.2s ease-in-out infinite;
+
 }
 
 @keyframes hero-dot-pulse {
@@ -316,14 +422,29 @@
 
 .hero__heading {
   /* TODO: font, weight, very large size (clamp), white, tight line-height, tight letter-spacing, no margin */
+
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: clamp(5rem, 7vh, 6rem);
+  color: var(--white);
+  line-height: var(--lh-tight);
+  letter-spacing: 0;
+  margin: 0;
+
+  padding: 30px 0 30px 0;
 }
 
 .hero__heading-accent {
   /* The word "Connected." is orange. TODO */
+  color: var(--orange);
 }
 
 .hero__sub {
   /* TODO: max-width, font-size, semi-transparent white, relaxed line-height */
+  width: 100%;
+  font-size: var(--text-base);
+  color: var(--overlay-white-70);
+  line-height: var(--lh-relaxed);
 }
 
 /*
@@ -334,10 +455,14 @@
 .hero__ctas {
   display: flex;
   align-items: center;
+  gap: 15px;
+
+  padding: 30px 0 100px 0;
 }
 
 @media (max-width: 520px) {
   /* TODO: reduce hero padding, shrink heading, stack buttons full-width */
+  
 }
 
 
@@ -351,10 +476,22 @@
 
 .cities-strip {
   /* TODO: padding, background (off-white), bottom border */
+  padding: 50px;
+  background: var(--off-white);
+  border-bottom: 30px;
+  border-bottom: 2px solid var(--gray-100);
 }
 
 .cities-strip__label {
   /* TODO: centered, font, size, weight, uppercase, letter-spacing, gray color, bottom margin */
+  text-align: center;
+  font: var(--font-body);
+  font-size: var(--text-1xl);
+  font-weight: var(--fw-black);
+  text-transform: uppercase;
+  letter-spacing: var(--space-xs);
+  color: var(--gray-400);
+  margin-bottom: 30px;
 }
 
 .cities-strip__row {
@@ -364,14 +501,37 @@
     Cap the width and center it with some horizontal padding.
     TODO
   */
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px 100px 0px 100px;
+
 }
 
 .city-item {
   /* TODO: row layout, gap, font, weight, size, gray color, nowrap */
+  display: flex;
+  flex-direction: row; 
+  gap: 75px;
+  font: var(--font-body);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-1xl);
+  color: var(--gray-500);
+  white-space: nowrap;
+  align-items: center;
+  
 }
 
 .city-item__dot {
   /* TODO: small circle, orange, slight transparency, don't shrink */
+  position: relative;
+  right: -65px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--orange);
+  flex-shrink: 0;
 }
 
 
@@ -389,30 +549,59 @@
 
 .what-we-offer {
   /* TODO: top and bottom padding, off-white background */
+  padding: 140px 0px 200px 0px;
+  background-color: var(--off-white);
 }
 
 .what-we-offer__inner {
   /* TODO: max-width, centered, horizontal padding */
+  width: 100%;
+  text-align: center;
+  padding: 0px 150px 0px 150px;
 }
 
 .what-we-offer__header {
   /* TODO: bottom margin before the bento grid */
+  margin-bottom: 50px;
 }
 
 .what-we-offer__eyebrow {
   /* TODO: font, size, weight, uppercase, letter-spacing, orange-hover color, bottom margin */
+  font: var(--font-body);
+  font-size: var(--text-1xl);
+  font-weight: var(--fw-black);
+  text-transform: uppercase;
+  letter-spacing: var(--space-sm);
+  color: var(--orange-hover);
+  margin-bottom: 15px;
+  text-align: left;
 }
 
 .what-we-offer__title {
   /* TODO: font, weight, large size (clamp), text-dark, tight line-height, letter-spacing, bottom margin */
+  font: var(--font-body);
+  font-size: clamp(3rem, 6vw, 4rem);
+  font-weight: var(--fw-black);
+  color: var(--text-dark);
+  line-height: var(--lh-tight);
+  letter-spacing: 0;
+  margin-bottom: 15px;
+  text-align: left;
+
 }
 
 .what-we-offer__title-accent {
   /* The word "digitized." is dark green. TODO */
+  color: var(--green-dark);
 }
 
 .what-we-offer__sub {
   /* TODO: font-size, gray color, relaxed line-height, max-width */
+  font-size: var(--text-1xl);
+  color: var(--gray-700);
+  line-height: var(--lh-relaxed);
+  width: 100%;
+  text-align: left;
 }
 
 /* ── Bento grid layout ─────────────────────── */
@@ -423,6 +612,11 @@
   TODO
 */
 .bento-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 58%) minmax(0, 1fr);
+  gap: 10px;
+  width: 100%;
+  height: 600px;
 }
 
 /*
@@ -437,11 +631,15 @@
   flex-direction: column;
   overflow: hidden;
   position: relative;
+
+  padding: 20px;
+  gap: 15px;
 }
 
 /* Main card needs a minimum height so it doesn't collapse */
 .bento-card--main {
   /* TODO: min-height */
+  min-height: min-content;
 }
 
 /* Background colors for each card variant */
@@ -463,11 +661,25 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid transparent;
+  border-radius: 13px;
+  width: fit-content;
+  margin: 15px 10px 5px 10px ;
 }
 
 .bento-card__icon-tile [data-lucide],
 .bento-card__icon-tile svg {
   /* TODO: size, orange color, stroke-width */
+
+  width: 22px;
+  height: 22px;
+  color: var(--orange);
+  stroke-width: 2px;
+
+  margin: 15px;
+  
 }
 
 /*
@@ -477,14 +689,26 @@
 */
 .bento-card__icon-sm {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: left;
+  justify-content: left;
   flex-shrink: 0;
+
+  border: 1px solid transparent;
+  border-radius: 13px;
+  width: fit-content;
+  margin: 15px 10px 5px 10px ;
 }
 
 .bento-card__icon-sm [data-lucide],
 .bento-card__icon-sm svg {
   /* TODO: size, stroke-width */
+
+  width: 22px;
+  height: 22px;
+  stroke-width: 2px;
+
+  margin: 15px;
+  
 }
 
 /* Icon background and color per variant */
@@ -507,18 +731,33 @@
 /* ── Titles and descriptions ─────────────────── */
 .bento-card__title {
   /* TODO: font, weight, size, white color (default for main dark card), tight line-height */
+  font: var(--font-body);
+  font-size: x-large;
+  font-weight: var(--fw-black);
+  color: var(--white);
+  line-height: var(--lh-tight);
+  text-align: left;
+  margin: 0px 10px 0px 10px;
+
 }
 
 .bento-card__title--dark {
   /* Side cards have dark text instead of white. TODO */
+  color: var(--text-dark);
 }
 
 .bento-card__desc {
   /* TODO: font-size, semi-transparent white, relaxed line-height */
+  font-size: var(--text-1xl);
+  color: var(--overlay-white-55);
+  line-height: var(--lh-relaxed);
+  text-align: left;
+  margin: 0px 10px 0px 10px;;
 }
 
 .bento-card__desc--dark {
   /* Side cards have gray text instead. TODO */
+  color: var(--gray-700);
 }
 
 /* ── Doc list inside the main card ──────────── */
@@ -530,6 +769,12 @@
   TODO
 */
 .bento-doc-list {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 25px 40px 0px 40px;
+
 }
 
 .bento-doc-item {
@@ -543,6 +788,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  padding: 20px 50px 20px 50px;
+  font: var(--font-body);
+  font-weight: var(--fw-normal);
+  color: var(--overlay-white-55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.20);
+  
 }
 
 .bento-doc-item:last-child { border-bottom: none; }
@@ -572,6 +824,9 @@
   TODO
 */
 .bento-side {
+  display: grid;
+  grid-template-columns: minmax(0, 50%) minmax(0, 1fr);
+  gap: 10px;
 }
 
 /*
@@ -586,10 +841,16 @@
   text-align: left;
   border: 2px solid transparent;
   /* TODO: transitions for transform, shadow, background, border */
+
+  transition: var(--transition);
+  
 }
 
 .bento-side-card:hover:not(.is-selected) {
   /* TODO: lift, shadow, border hint */
+  transform: translateY(-10px);
+  box-shadow: 0px 5px 15px;
+  border: 1px solid;
 }
 
 /* DO NOT CHANGE — JS toggles this class when a card is clicked */
@@ -608,9 +869,18 @@
 
 @media (max-width: 900px) {
   /* TODO: bento grid drops to a single column */
+  .bento-grid{
+    display: flex;
+    flex-direction: column;
+  }
 }
 @media (max-width: 540px) {
   /* TODO: side grid also drops to single column, reduce inner padding */
+  .bento-side{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
 }
 
 
@@ -625,6 +895,13 @@
 
 .ph-marquee {
   /* TODO: dark green background, clip overflow, vertical padding, borders top and bottom, nowrap */
+  background-color: var(--green-dark);
+  overflow: hidden;
+  padding-left: 150px;
+  padding-right: 150px;
+  border-top: 200px;
+  border-bottom: 200px;
+  white-space: nowrap;
 }
 
 /*
@@ -638,6 +915,8 @@
   align-items: center;
   will-change: transform;
   /* TODO: animation using ph-marquee-scroll */
+
+  animation: ph-marquee-scroll 25s linear infinite
 }
 
 @keyframes ph-marquee-scroll {
@@ -647,6 +926,14 @@
 
 .ph-marquee__item {
   /* TODO: font, weight, very large size (clamp), line-height, letter-spacing, uppercase, horizontal padding, nowrap */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: clamp(5rem, 7vh, 3rem);
+  line-height: var(--lh-relaxed);
+  letter-spacing: var(--space-sm);
+  text-transform: uppercase;
+  padding: 5px 0 5px 0;
+  white-space: nowrap;
 }
 
 .ph-marquee__item--white  { color: var(--white); }
@@ -654,6 +941,12 @@
 
 .ph-marquee__sep {
   /* TODO: font, size, weight, muted semi-transparent color, don't shrink */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: 50px;
+  color: var(--overlay-white-55);
+  flex-shrink: 0;
+  margin: 0px 50px 0px 50px;
 }
 
 
@@ -668,26 +961,48 @@
 
 .how-it-works {
   /* TODO: top and bottom padding, white background, top border */
+  padding: 0px 0 100px 0;
+  background-color: var(--white);
+  border-top: 10px;
 }
 
 .how-it-works__inner {
   /* TODO: max-width, centered, horizontal padding */
+  width: 100%;
+  text-align: center;
+  padding: 150px 0 30px 0;
 }
 
 .how-it-works__header {
   /* TODO: center-align text, bottom margin */
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 .how-it-works__eyebrow {
   /* TODO: font, size, weight, uppercase, letter-spacing, orange-hover color, bottom margin */
+  font: var(--font-body);
+  font-size: var(--text-1xl);
+  font-weight: var(--fw-black);
+  text-transform: uppercase;
+  letter-spacing: var(--space-sm);
+  color: var(--orange-hover);
+  margin-bottom: 10px;
 }
 
 .how-it-works__title {
   /* TODO: font, weight, large size (clamp), text-dark, tight line-height, letter-spacing */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: clamp(3rem, 8vh, 6rem);
+  color: var(--text-dark);
+  line-height: var(--lh-tight);
+  letter-spacing: 0px;
 }
 
 .how-it-works__title-accent {
   /* TODO: dark green */
+  color: var(--green-dark);
 }
 
 /*
@@ -696,6 +1011,11 @@
   TODO
 */
 .how-it-works__steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 20px 100px 20px 100px;
+  padding: 60px 50px 60px 50px;
+  height: 350px;
 }
 
 /*
@@ -711,18 +1031,33 @@
   flex-direction: column;
   position: relative;
   border-radius: var(--radius-lg);
+  color: var(--black);
+  text-align: left;
+  gap: 10px;
+
+  padding: 30px 30px 30px 30px;
+  transition: all 0.3s ease-in-out
 }
 
 .step-card:hover {
   /* TODO: dark green bg, shadow, lift, sit above siblings */
+  background-color: var(--green-dark);
+  box-shadow: 0px 10px 20px;
+  position: relative;
+  transform: translateY(-15px);
 }
 
 /* Cards 2 and 3 have a left border divider — removed on hover */
 .step-card--divided {
   /* TODO: left border */
+  border-left: 1px solid var(--gray-100);
+  gap: 10px;
+  padding-bottom: 59px;
+  height: 350px;
 }
 .step-card--divided:hover {
   /* TODO: remove the border */
+  border: 0px;
 }
 
 /*
@@ -747,15 +1082,29 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+
+  width: 65px;
+  height: 65px;
+  border-radius: 30%;
+  background: var(--green-dark);
+  justify-content: center;
+  transition: var(--transition);
 }
 
 .step-card:hover .step-card__icon {
   /* TODO: frosted white bg on hover */
+  background: rgba(255, 255, 255, 0.251);
+  border: 1px solid var(--overlay-white-15);
+  border-radius: 30%;
 }
 
 .step-card__icon [data-lucide],
 .step-card__icon svg {
   /* TODO: size, white color, stroke-width */
+  width: 30px;
+  height: 30px;
+  color: var(--white);
+  stroke-width: 2px;
 }
 
 /*
@@ -765,26 +1114,48 @@
   TODO: font, weight, huge size, gray color, line-height, letter-spacing, no text selection, transition
 */
 .step-card__number {
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: 80px;
+  color: var(--gray-100);
+  line-height: var(--lh-tight);
+  letter-spacing: 0;
+  user-select: none;
+  transition: var(--transition);
 }
 
 .step-card:hover .step-card__number {
   /* TODO: near-invisible on dark green bg */
+  color: var(--overlay-white-05);
 }
 
 .step-card__title {
   /* TODO: font, weight, size, text-dark, tight line-height, transition */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: var(--text-1xl);
+  color: var(--text-dark);
+  line-height: var(--lh-tight);
+  transition: var(--transition);
 }
 
 .step-card:hover .step-card__title {
   /* TODO: white on hover */
+  color: var(--white);
 }
 
 .step-card__desc {
   /* TODO: font-size, gray color, relaxed line-height, flex: 1 to push CTA down, transition */
+  font-size: var(--text-1xl);
+  color: var(--gray-500);
+  line-height: var(--lh-relaxed);
+  flex: 1;
+  transition: var(--transition);
 }
 
 .step-card:hover .step-card__desc {
   /* TODO: semi-transparent white on hover */
+  color: var(--overlay-white-55);
 }
 
 /*
@@ -796,19 +1167,31 @@
   display: inline-flex;
   align-items: center;
   text-decoration: none;
+
+  font-weight: var(--fw-black);
+  gap: 5px;
 }
 
 .step-card:hover .how-it-works__cta {
   /* TODO: orange on hover */
+  color: var(--orange);
 }
 
 .how-it-works__cta [data-lucide],
 .how-it-works__cta svg {
   /* TODO: size, stroke-width */
+  width: 20px;
+  height: 20px;
+  stroke-width: 3px;
 }
 
 @media (max-width: 768px) {
   /* TODO: stack steps vertically, switch divider from left to top border, reduce padding */
+  .step-card{
+    display: flex;
+    flex-direction: row;
+    border-top: 30px;
+  }
 }
 
 
@@ -822,26 +1205,50 @@
 
 .testimonials {
   /* TODO: top and bottom padding, off-white background */
+  padding: 100px 0px 100px 0px;
+  background-color: var(--off-white);
 }
 
 .testimonials__inner {
   /* TODO: max-width, centered, horizontal padding */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center; 
+  padding: 50px 0px 50px 0px; 
 }
 
 .testimonials__header {
   /* TODO: center-align, bottom margin */
+  align-items: center;
+  margin-bottom: 30px;
 }
 
 .testimonials__eyebrow {
   /* TODO: font, size, weight, uppercase, letter-spacing, orange-hover color, bottom margin */
+  font: var(--font-body);
+  font-size: var(--text-1xl);
+  font-weight: var(--fw-black);
+  text-transform: uppercase;
+  letter-spacing: 0px;
+  color: var(--orange-hover);
+  margin-bottom: 30px;
 }
 
 .testimonials__title {
   /* TODO: font, weight, large size (clamp), text-dark, tight line-height, letter-spacing */
+  font: var(--font-body);
+  font-size: clamp(3.5rem, 6vh, 4rem);
+  font-weight: var(--fw-black);
+  color: var(--text-dark);
+  line-height: var(--lh-tight);
+  letter-spacing: 0px;
 }
 
 .testimonials__title-accent {
   /* TODO: dark green */
+  color: var(--green-dark);
 }
 
 /*
@@ -854,6 +1261,14 @@
 .testimonial-featured {
   position: relative;
   overflow: hidden;
+
+  width: 1000px;
+  height: 440px;
+  border: 1px solid;
+  border-radius: 30px;
+  background-color: var(--green-dark);
+  padding: 10px 60px 10px 60px;
+  margin-bottom: 30px;
 }
 
 /*
@@ -863,10 +1278,22 @@
   TODO
 */
 .testimonial-featured__quote-mark {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 125px;
+  font-weight: var(--fw-black);
+  color: var(--overlay-white-15);
+  text-align: left;
 }
 
 .testimonial-featured__text {
   /* TODO: font, weight, large size (clamp), white, line-height, bottom margin */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: clamp(1.6rem, 3vh, 2rem);
+  color: var(--white);
+  line-height: var(--lh-tight);
+  margin-bottom: 30px;
+  text-align: left;
 }
 
 /*
@@ -876,27 +1303,54 @@
 */
 .testimonial-featured__footer {
   display: flex;
+  flex-direction: row;
   align-items: center;
+  border-top: 2px solid var(--overlay-white-12);
+  padding-top: 35px;
+  gap: 10px;
 }
 
 .testimonial-featured__avatar {
   /* TODO: size, circle, cover, don't shrink, subtle white border */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--overlay-white-55);
+  
 }
 
 .testimonial-featured__author {
   /* TODO: stack name and role vertically, small gap, grow to fill */
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .testimonial-featured__name {
   /* TODO: font, weight, size, white */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: var(--text-1xl);
+  color: var(--white);
+  text-align: left;
+
 }
 
 .testimonial-featured__role {
   /* TODO: size, semi-transparent white */
+  font-size: var(--text-1xl);
+  color: var(--overlay-white-55);
+
 }
 
 .testimonial-featured__stars {
   /* TODO: font-size, orange, letter-spacing */
+  font-size: var(--text-2xl);
+  color: var(--orange);
+  letter-spacing: 0px;
+  padding: 0px 0px 0px 480px;
 }
 
 /*
@@ -906,19 +1360,43 @@
   TODO
 */
 .testimonials__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  justify-content: center;
+  width: 1000px;
+  height: 250px;
 }
 
 .testimonial-card {
   display: flex;
   flex-direction: column;
+  width: fit-content;
+  background-color: var(--white);
+  box-shadow: 0px 5px 10px;
+  border: 1px solid;
+  border-radius: 20px;
 }
 
 .testimonial-card__stars {
   /* TODO: orange, size, letter-spacing */
+  color: var(--orange);
+  font-size: 20px;
+  letter-spacing: 0px;
+  padding-top: 30px;
+  margin: 0px 30px 0px 30px;
+  text-align: left;
 }
 
 .testimonial-card__text {
   /* TODO: size, gray-700 color, relaxed line-height, flex: 1 */
+  font-size: var(--text-1xl);
+  color: var(--gray-700);
+  line-height: var(--lh-relaxed);
+  flex: 1;
+  margin: 10px 30px 20px 30px;
+  text-align: left;
+  
 }
 
 /*
@@ -929,22 +1407,51 @@
 .testimonial-card__footer {
   display: flex;
   align-items: center;
+  padding: 20px 0px 20px 0px;
+  gap: 10px;
+  margin: 0px 30px 0px 30px;
+  border-top: 2px solid var(--gray-100);
 }
 
 .testimonial-card__avatar {
   /* TODO: size, circle, cover, don't shrink */
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .testimonial-card__name {
   /* TODO: display block, font, weight, size, text-dark */
+  display: block;
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: var(--text-1xl);
+  color: var(--text-dark);
+  text-align: left;
 }
 
 .testimonial-card__role {
   /* TODO: display block, size, gray-400 color, top margin */
+  display: block;
+  font-size: var(--text-1xl);
+  color: var(--gray-400);
+  margin-top: 0px;
 }
 
 @media (max-width: 640px) {
   /* TODO: stack testimonial grid, reduce inner padding and featured card padding */
+  .testimonials__grid{
+    display: flex;
+    flex-direction: row;
+  }
+  .testimonials__inner{
+    padding: 30px;
+  }
+  .testimonial-featured{
+    padding: 5px 55px 5px 55px;
+  }
 }
 
 
@@ -959,14 +1466,28 @@
 
 .platform-stats {
   /* TODO: orange background, top and bottom padding */
+  background-color: var(--orange);
+  padding: 80px 0px 80px 0px;
 }
 
 .platform-stats__inner {
   /* TODO: max-width, centered, horizontal padding, center-align text */
+  width: 100%;
+  justify-content: center;
+  padding: 10px 0px 10px 0px;
+  text-align: center;
+
 }
 
 .platform-stats__eyebrow {
   /* TODO: font, size, weight, uppercase, letter-spacing, dark green color at low opacity, bottom margin */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  text-transform: uppercase;
+  letter-spacing: var(--space-sm);
+  color: var(--green-dark);
+  opacity: 0.5;
+  margin-bottom: 50px;
 }
 
 /*
@@ -975,10 +1496,17 @@
   TODO
 */
 .platform-stats__grid {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .platform-stat {
   /* TODO: stack number and label vertically, centered, padding left and right */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0px 10px 0px 10px;
 }
 
 /*
@@ -987,18 +1515,37 @@
   TODO
 */
 .platform-stat--divided {
+  border-left: 2px solid var(--alpha-green-12);
 }
 
 .platform-stat__number {
   /* TODO: font, weight, very large size (clamp), dark green, no line-height gap, tight letter-spacing */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: clamp(4rem, 7vh, 6rem);
+  color: var(--green-dark);
+  line-height: none;
+  letter-spacing: var(--lh-tight);
 }
 
 .platform-stat__label {
   /* TODO: font, size, weight, dark green, centered, snug line-height */
+  font: var(--font-body);
+  font-size: var(--text-1xl);
+  font-weight: var(--black);
+  color: var(--green-dark);
+  justify-content: center;
+  line-height: 1.375;
 }
 
 .platform-stats__note {
   /* TODO: top margin, size, dark green at low opacity, font, weight */
+  margin-top: 50px;
+  font-size: var(--text-1xl);
+  color: var(--green-dark);
+  opacity: 0.5;
+  font: var(--font-body);
+  font-weight: var(--fw-black);
 }
 
 @media (max-width: 640px) {
@@ -1006,6 +1553,12 @@
     TODO: drop to 2×2 grid, add top borders for the bottom two stats,
     reduce inner padding.
   */
+  .platform-stats{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-top: 30px;
+    padding: 0px 20px 0px 20px;
+  }
 }
 
 
@@ -1020,6 +1573,11 @@
 
 .cta-banner {
   /* TODO: dark green background, top and bottom padding, position relative, overflow hidden, top border */
+  background-color: var(--green-dark);
+  padding: 80px 0px 80px 0px;
+  position: relative;
+  overflow: hidden;
+  border-top: 30px;
 }
 
 /* Decorative blob in the top-right corner — don't touch */
@@ -1041,26 +1599,63 @@
     Sits above the ::after blob.
     TODO
   */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0px 10px 0px;
 }
 
 .cta-banner__text {
   /* TODO: grows to fill available space, don't overflow */
+  flex: 1;
+  min-width: 0;
+  padding: 0px 0px 0px 150px;
+
 }
 
 .cta-banner__title {
   /* TODO: font, weight, large size (clamp), white, letter-spacing, tight line-height, bottom margin */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: clamp(3.5rem, 7vh, 4rem);
+  color: var(--white);
+  letter-spacing: 0px;
+  line-height: var(--lh-tight);
+  margin-bottom: 10px;
 }
 
 .cta-banner__sub {
   /* TODO: size, semi-transparent white, relaxed line-height, max-width */
+  font-size: var(--text-1xl);
+  color: var(--overlay-white-55);
+  line-height: var(--lh-relaxed);
+  width: 100%;
+  max-width: 1000px;
 }
 
 .cta-banner__actions {
   /* TODO: row layout, gap, don't shrink, wrap if needed */
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  padding: 0px 150px 0px 0px;
 }
 
 @media (max-width: 640px) {
   /* TODO: stack everything vertically, full-width buttons, reduce padding */
+  .cta-banner{
+    display: flex;
+    flex-direction: row;
+    padding: 60px;
+  }
+  .cta-banner__actions{
+    width: 100%;
+  }
 }
 
 
@@ -1075,30 +1670,60 @@
 
 .role-section {
   /* TODO: top and bottom padding, off-white background, thick orange top border */
+  padding: 80px 0px 80px 0px;
+  background-color: var(--off-white);
+  border-top: 5px solid var(--orange);
 }
 
 .role-section__inner {
   /* TODO: max-width, centered, horizontal padding */
+  width: 100%;
+  text-align: center;
+  padding: 80px 100px 80px 100px;
 }
 
 .role-section__header {
   /* TODO: center-align, bottom margin */
+  align-items: center;
+  margin-bottom: 50px;
 }
 
 .role-section__eyebrow {
   /* TODO: font, size, weight, uppercase, letter-spacing, orange-hover color, bottom margin */
+  font: var(--font-body);
+  font-size: var(--text-1xl);
+  font-weight: var(--fw-black);
+  text-transform: uppercase;
+  letter-spacing: 0px;
+  color: var(--orange-hover);
+  margin-bottom: 10px;
+
 }
 
 .role-section__title {
   /* TODO: font, weight, large size (clamp), text-dark, tight line-height, letter-spacing, bottom margin */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: clamp(3rem, 7vh, 6rem);
+  color: var(--text-dark);
+  line-height: var(--lh-tight);
+  letter-spacing: 0px;
+  margin-bottom: 10px;
+
 }
 
 .role-section__title-accent {
   /* TODO: dark green */
+  color: var(--green-dark);
 }
 
 .role-section__sub {
   /* TODO: size, gray color, relaxed line-height, max-width, centered with auto margins */
+  font-size: var(--text-1xl);
+  line-height: var(--lh-relaxed);
+  width: 100%;
+  text-align: center;
+  margin: auto;
 }
 
 /*
@@ -1106,6 +1731,12 @@
   TODO
 */
 .role-cards {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  text-align: justify;
+
 }
 
 /* ── Base role card ─────────────────────────── */
@@ -1120,10 +1751,19 @@
   border-radius: var(--radius-xl);
   display: flex;
   flex-direction: column;
+  background-color: var(--white);
+  border: 1px solid var(--overlay-white-55);
+  box-shadow: 0px 5px 10px;
+  transition: var(--transition);
 }
 
 .role-card:hover {
   /* TODO: dark green bg, no border, bigger shadow, lift */
+  background-color: var(--green-dark);
+  border: none;
+  box-shadow: 0px 15px 30px;
+  position: relative;
+  transform: translateY(-20px);  
 }
 
 /* ── Header row ─────────────────────────────── */
@@ -1135,6 +1775,10 @@
 .role-card__header {
   display: flex;
   align-items: center;
+  flex-direction: row;
+  margin-bottom: 30px;
+  margin: 30px;
+  gap: 7px;
 }
 
 /*
@@ -1148,6 +1792,11 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  transition: var(--transition);
 }
 
 /* Default icon bg colors per card */
@@ -1157,11 +1806,20 @@
 
 .role-card:hover .role-card__icon-wrap {
   /* TODO: frosted white bg, orange icon */
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(18px);
+  color: var(--orange);
 }
 
 .role-card__icon-wrap [data-lucide],
 .role-card__icon-wrap svg {
   /* TODO: size, stroke-width, transition */
+  width: 25px;
+  height: 25px;
+  stroke-width: 2px;
+  transition: var(--transition);
 }
 
 .role-card:hover .role-card__icon-wrap [data-lucide],
@@ -1170,6 +1828,9 @@
 /* The captain card has a stacked label + sublabel */
 .role-card__label-group {
   /* TODO: stack vertically, tiny gap */
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
 }
 
 /*
@@ -1184,6 +1845,7 @@
   text-transform: uppercase;
   letter-spacing: 0.10em;
   /* TODO: transition */
+  transition: var(--transition);
 }
 
 .role-card--resident .role-card__label { color: var(--green-dark); }
@@ -1194,15 +1856,31 @@
 /* "Admin" sublabel on the captain card */
 .role-card__label-sub {
   /* TODO: font, size, weight, uppercase, letter-spacing, gray color, transition */
+  font: var(--font-body);
+  font-size: var(--text-1xl);
+  font-weight: var(--fw-black);
+  text-transform: uppercase;
+  letter-spacing: 0px;
+  color: var(--gray-700);
+  transition: var(--transition);
 }
 
 .role-card:hover .role-card__label-sub {
   /* TODO: faded white on hover */
+  color: var(--off-white);
 }
 
 /* ── Title ──────────────────────────────────── */
 .role-card__title {
   /* TODO: font, weight, large size (clamp), text-dark, tight line-height, letter-spacing, transition */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: clamp(1.6rem, 3vh, 3rem);
+  color: var(--text-dark);
+  line-height: var(--lh-tight);
+  letter-spacing: 0px;
+  transition: var(--transition);
+  padding: 0px 30px 10px 30px;
 }
 
 .role-card:hover .role-card__title { color: var(--white); }
@@ -1210,10 +1888,16 @@
 /* ── Description ────────────────────────────── */
 .role-card__desc {
   /* TODO: size, gray color, relaxed line-height, transition */
+  width: fit-content;
+  height: 90px;
+  line-height: var(--lh-relaxed);
+  transition: var(--transition);
+  padding: 0px 30px 120px 30px;
 }
 
 .role-card:hover .role-card__desc {
   /* TODO: semi-transparent white */
+  color: var(--overlay-white-55);
 }
 
 /* ── Feature list ───────────────────────────── */
@@ -1228,26 +1912,43 @@
   display: flex;
   flex-direction: column;
   /* TODO: gap, top padding, top border, transition */
+  gap: 10px;
+  border-top: 2px solid var(--gray-100);
+  transition: var(--transition);
+  padding: 30px 0px 30px 0px;
+  margin: 0px 30px 0px 30px;
 }
 
 .role-card:hover .role-card__list {
   /* TODO: faded white border on hover */
+  color: var(--off-white);
 }
 
 .role-card__list li {
   display: flex;
   align-items: center;
   /* TODO: gap, font, size, weight, gray-700 color, transition */
+  gap: 10px;
+  font: var(--font-body);
+  font-size: var(--text-1xl);
+  color: var(--gray-700);
+  transition: var(--transition);
 }
 
 .role-card:hover .role-card__list li {
   /* TODO: semi-transparent white */
+  color: var(--overlay-white-55);
 }
 
 /* The checkmark icon next to each list item */
 .role-card__list [data-lucide],
 .role-card__list svg {
   /* TODO: small size, thicker stroke, don't shrink, transition */
+  width: 20px;
+  height: 20px;
+  stroke-width: 2px;
+  flex-shrink: 0;
+  transition: var(--transition);
 }
 
 /* Check icon color per card variant */
@@ -1263,6 +1964,7 @@
 .role-card:hover .role-card__list [data-lucide],
 .role-card:hover .role-card__list svg {
   /* TODO: bright green on hover */
+  color: var(--green-400);
 }
 
 /* ── CTA button ─────────────────────────────── */
@@ -1274,10 +1976,17 @@
   TODO
 */
 .role-card__btn {
+  margin-top: auto;
+  align-self: center;
+  width: 350px;
+  padding: 20px 20px 20px 20px;
 }
 
 .role-card:hover .btn--green {
   /* TODO: orange bg, dark text, orange glow shadow */
+  background-color: var(--orange);
+  color: var(--text-dark);
+  box-shadow: 0 0 10px var(--orange);
 }
 
 /* ── Note text ──────────────────────────────── */
@@ -1293,23 +2002,44 @@
   font-family: var(--font-display);
   font-weight: var(--fw-medium);
   /* TODO: gap, size, gray color, relaxed line-height, transition */
+  gap: 10px;
+  width: fit-content;
+  height: 70px;
+  color: var(--gray-400);
+  line-height: var(--lh-relaxed);
+  transition: var(--transition);
+  margin: 30px 30px 30px 30px;
 }
 
 .role-card:hover .role-card__note {
   /* TODO: near-invisible white */
+  color: var(--overlay-white-05);
 }
 
 .role-card__note [data-lucide],
 .role-card__note svg {
   /* TODO: small size, don't shrink, slight top margin to align with text */
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  margin-top: 5px;
 }
 
 @media (max-width: 900px) {
   /* TODO: stack cards in a single column, cap width and center */
+  .role-card{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 520px) {
   /* TODO: reduce inner padding */
+  .role-section__inner{
+    padding: 60px;
+  }
 }
 
 
@@ -1322,6 +2052,9 @@
 
 .site-footer {
   /* TODO: background (white or off-white), top border, padding */
+  background-color: var(--gray-700);
+  border-top: 30px;
+  padding: 20px;
 }
 
 .site-footer__inner {
@@ -1331,32 +2064,58 @@
     Max-width and centered.
     TODO
   */
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width:  1200px;
 }
 
 .site-footer__brand {
   /* TODO: stack logo and tagline vertically */
+  display: flex;
+  flex-direction: column;
 }
 
 .site-footer__brand-logo {
   /* TODO: row layout, gap, aligned */
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
 }
 
 .site-footer__logo-img {
   /* TODO: size */
+  width: 30px;
+  height: 30px;
 }
 
 .site-footer__logo-text {
   /* TODO: font, weight, size, color */
+  font: var(--font-body);
+  font-weight: var(--fw-black);
+  font-size: var(--text-1xl);
+  color: var(--gray-400);
 }
 
 .site-footer__tagline {
   /* TODO: size, gray color, top margin */
+  font-size: var(--text-1xl);
+  color: var(--gray-400);
+  margin-top: 5px;
 }
 
 .site-footer__links {
   /* TODO: row layout, gap */
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
 }
 
 .site-footer__link {
   /* TODO: size, gray color, no underline, hover color */
+  font-size: var(--text-1xl);
+  color: var(--gray-400);
+  text-decoration: none;
+  color: var(--orange-hover);
 }
