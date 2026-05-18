@@ -60,6 +60,8 @@
   <link rel="stylesheet" href="../../css/shared/components.css" />
   <link rel="stylesheet" href="../../css/shared/frames.css" />
   <link rel="stylesheet" href="../../css/features/services/services.css" />
+  <link rel="stylesheet" href="../../css/features/services/services.css" />
+  <link rel="stylesheet" href="../../css/features/services/concerns.css" />
 
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script type="module" src="../../js/shared/nav-auth.js"></script>
@@ -270,6 +272,7 @@
 
           <div class="form-group">
             <textarea
+              id="concernDescription"
               class="form-input report-step__textarea"
               rows="7"
               placeholder="e.g. There's a large pothole on Rizal Street near the elementary school gate. It's been there since last week and vehicles keep swerving to avoid it..."
@@ -303,7 +306,7 @@
             <button class="btn btn--outline" onclick="goToStep(2)">
               <i data-lucide="chevron-left"></i> Back
             </button>
-            <button class="btn btn--orange" onclick="goToStep(4)">
+            <button class="btn btn--orange" onclick="populateReview(); goToStep(4);">
               Continue <i data-lucide="chevron-right"></i>
             </button>
           </div>
@@ -317,15 +320,15 @@
           <div class="review-table">
             <div class="review-table__row">
               <span class="review-table__label">CATEGORY</span>
-              <span class="review-table__value">Garbage</span>
+              <span class="review-table__value" id="reviewCategory">Garbage</span>
             </div>
             <div class="review-table__row">
               <span class="review-table__label">DESCRIPTION</span>
-              <span class="review-table__value">There's a large pothole on Rizal Street near the elementary school gate. It's been there since last week and vehicles keep swerving to avoid it...</span>
+              <span class="review-table__value" id="reviewDescription">There's a large pothole on Rizal Street near the elementary school gate. It's been there since last week and vehicles keep swerving to avoid it...</span>
             </div>
             <div class="review-table__row">
               <span class="review-table__label">PHOTOS</span>
-              <span class="review-table__value">No photos attached</span>
+              <span class="review-table__value" id="reviewPhotos">No photos attached</span>
             </div>
             <div class="review-table__row">
               <span class="review-table__label">REPORTER</span>
@@ -337,10 +340,16 @@
             <button class="btn btn--outline" onclick="goToStep(3)">
               <i data-lucide="chevron-left"></i> Back
             </button>
-            <button class="btn btn--orange">
+            <button class="btn btn--orange" id="concernSubmitBtn">
               Submit Concern <i data-lucide="upload"></i>
             </button>
           </div>
+          <div class="concerns-list-section">
+            <h2 class="concerns-list__title">Submitted Concerns</h2>
+            <div id="concernsGrid" class="concerns-grid">
+              <!-- cards appear here -->
+          </div>
+
         </div><!-- /report-step-4 -->
 
         <!-- Bullying notice — opens #bullyingModal -->
@@ -1536,5 +1545,6 @@
       });
     });
   </script>
+  <script src="../../js/features/services/concerns.js"></script>
 </body>
 </html>
